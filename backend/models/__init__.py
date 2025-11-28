@@ -1,1 +1,1 @@
-
+from backend.models.gift import FinishedGoods
