@@ -1,10 +1,19 @@
 from fastapi import FastAPI
-from backend.routers import example
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+from backend.database import Base, engine, SessionLocal
+from backend.utils.seed import seed_raw_materials
+from backend.models import gift
 
-app.include_router(example.router)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    seed_raw_materials()
+    yield 
+    print("Shutting down...")
 
-@app.get("/")
-def home():
-    return {"message": "DB-SCDMS Backend is running!"}
+app = FastAPI(lifespan=lifespan)
+
+# --- Routers ---
+from backend.routers import gift
+app.include_router(gift.router)
