@@ -2,13 +2,14 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from backend.database import Base, engine, SessionLocal
-from backend.utils.seed import seed_finished_goods
+from backend.utils.seed import seed_raw_materials, seed_finished_goods
 from backend import models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     seed_finished_goods()
+    seed_raw_materials()
     yield 
     print("Shutting down...")
 

@@ -1,5 +1,9 @@
 from pydantic import BaseModel
 
+class MaterialUpdate(BaseModel):
+    material_id: int
+    amount: int
+
 # 조회용
 class Gift(BaseModel):
     gift_id: int
