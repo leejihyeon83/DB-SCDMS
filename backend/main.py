@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from backend.database import Base, engine, SessionLocal
 from backend.utils.seed import seed_raw_materials, seed_finished_goods, seed_gift_bom, seed_reindeer
-from backend import models
+from backend.models import gift, child, reindeer
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,7 +18,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # --- Routers ---
-from backend.routers import gift, production, reindeer
+from backend.routers import gift, production, reindeer, list_elf_child
 app.include_router(gift.router)
 app.include_router(production.router)
 app.include_router(reindeer.router)
+app.include_router(list_elf_child.router)
