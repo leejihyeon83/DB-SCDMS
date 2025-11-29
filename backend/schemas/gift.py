@@ -14,7 +14,7 @@ class Gift(BaseModel):
     stock_quantity: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # 선물 생산 요청 바디
 class ProduceRequest(BaseModel):
@@ -28,7 +28,7 @@ class GiftRecipeItem(BaseModel):
     quantity_required: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 # 생산 Job 생성 요청 바디
 class ProductionCreateRequest(BaseModel):
@@ -45,4 +45,4 @@ class ProductionLogResponse(BaseModel):
     timestamp: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

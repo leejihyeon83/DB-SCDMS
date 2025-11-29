@@ -14,7 +14,7 @@ class WishlistItem(BaseModel):
     priority: int = Field(..., ge=1, description="1이 가장 높은 우선순위")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # 아이 + 위시리스트 동시 생성 시 입력받는 JSON 구조
@@ -47,7 +47,7 @@ class WishlistItemOut(BaseModel):
     priority: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ChildOut(BaseModel):
@@ -60,4 +60,4 @@ class ChildOut(BaseModel):
     wishlist: list[WishlistItemOut]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
