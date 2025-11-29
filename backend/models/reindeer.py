@@ -30,3 +30,13 @@ class ReindeerHealthLog(Base):
     )
 
     notes = Column(Text, nullable=False)
+
+# 읽기 전용 VIEW 매핑 모델
+# class ReadyReindeerView(Base):
+#     __tablename__ = "ready_reindeer_view"
+
+#     reindeer_id = Column(Integer, primary_key=True)
+#     name = Column(String)
+#     current_stamina = Column(Integer)
+#     current_magic = Column(Integer)
+#     status = Column(String)

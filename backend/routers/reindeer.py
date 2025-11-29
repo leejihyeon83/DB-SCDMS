@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -34,6 +35,8 @@ def update_reindeer_status(
 
     # 상태 변경
     reindeer.status = payload.status
+    reindeer.current_stamina = payload.current_stamina
+    reindeer.current_magic = payload.current_magic
 
     # 커밋 & 갱신
     db.commit()
@@ -68,3 +71,62 @@ def log_reindeer_health(
     db.refresh(log)
 
     return log
+
+
+# 특정 루돌프의 건강 로그 리스트 조회
+@router.get("/{reindeer_id}/health-logs", response_model=list[HealthLogResponse])
+def get_reindeer_health_logs(
+    reindeer_id: int,
+    db: Session = Depends(get_db),
+):
+    """
+    특정 루돌프의 건강 로그 목록 조회
+    - 최신 로그가 위로 오도록 내림차순 정렬
+    """
+
+    # 루돌프 존재 여부 확인 (없으면 404)
+    reindeer = (
+        db.query(Reindeer)
+        .filter(Reindeer.reindeer_id == reindeer_id)
+        .first()
+    )
+    if not reindeer:
+        raise HTTPException(status_code=404, detail="Reindeer not found")
+
+    # 해당 루돌프의 건강 로그 조회 (최근 순)
+    logs = (
+        db.query(ReindeerHealthLog)
+        .filter(ReindeerHealthLog.reindeer_id == reindeer_id)
+        .order_by(ReindeerHealthLog.log_timestamp.desc())
+        .all()
+    )
+
+    return logs
+
+# 비행 가능 루돌프 조회 API
+@router.get("/available", response_model=list[ReindeerResponse])
+def get_available_reindeer(
+    magic_threshold: int = 50,
+    db: Session = Depends(get_db),
+):
+    """
+    비행 가능 루돌프 조회
+    - DB VIEW `ready_reindeer_view` 기준
+    - current_magic >= magic_threshold 조건 추가
+    """
+    rows = db.execute(
+        text("""
+            SELECT
+                reindeer_id,
+                name,
+                current_stamina,
+                current_magic,
+                status
+            FROM ready_reindeer_view
+            WHERE current_magic >= :magic_threshold
+            ORDER BY reindeer_id
+        """),
+        {"magic_threshold": magic_threshold},
+    ).mappings().all()
+
+    return [ReindeerResponse.model_validate(row) for row in rows]
