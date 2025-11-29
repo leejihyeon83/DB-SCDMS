@@ -3,21 +3,30 @@
 - Child INSERT
 - Wishlist 여러 개 INSERT
 - 중간에 실패하면 전부 롤백 (트랜잭션 처리)
+- Child 수정 (PATCH)
+- Child 삭제 (DELETE)
+- Child 상세 조회 (Child + Wishlist)
+- Wishlist 생성
+- Wishlist 수정
+- Wishlist 삭제
 '''
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from backend.database import get_db
 from backend.models.child import Child, Wishlist
-from backend.schemas.child_schema import ChildCreate, ChildOut, WishlistItemOut
 from backend.models.gift import FinishedGoods
+from backend.schemas.child_schema import (
+    ChildCreate, ChildUpdate,
+    ChildOut, ChildDetailOut,
+    WishlistCreate, WishlistUpdate,
+    WishlistItemOut
+)
 
 router = APIRouter(
     prefix="/list-elf/child",
-    tags=["List Elf"],
+    tags=["List Elf"]
 )
-
 
 @router.post("/create", response_model=ChildOut, status_code=status.HTTP_201_CREATED)
 def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_db)):
@@ -96,3 +105,173 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_d
             for w in wishlist_rows
         ]
     )
+
+# Child 수정 (PATCH)
+@router.patch("/{child_id}", response_model=ChildOut)
+def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_db)):
+    '''
+    Child 기본 정보 수정
+    '''
+
+    child = db.query(Child).filter(Child.ChildID == child_id).first()
+    if not child:
+        raise HTTPException(404, "Child not found")
+
+    update_data = payload.dict(exclude_unset=True)
+
+    # SQLAlchemy 컬럼명이 대문자로 시작함(Name, Address 등)
+    for key, value in update_data.items():
+        setattr(child, key.capitalize(), value)
+
+    db.commit()
+    db.refresh(child)
+
+    return ChildOut(
+        child_id=child.ChildID,
+        name=child.Name,
+        address=child.Address,
+        region_id=child.RegionID,
+        status_code=child.StatusCode,
+        delivery_status_code=child.DeliveryStatusCode,
+        wishlist=[
+            WishlistItemOut(
+                wishlist_id=w.WishlistID,
+                gift_id=w.GiftID,
+                priority=w.Priority
+            )
+            for w in child.wishlist_items
+        ]
+    )
+
+
+# Child 삭제 (DELETE)
+@router.delete("/{child_id}")
+def delete_child(child_id: int, db: Session = Depends(get_db)):
+    '''
+    Child 삭제
+    - wishlist는 CASCADE로 자동 삭제됨
+    '''
+
+    child = db.query(Child).filter(Child.ChildID == child_id).first()
+    if not child:
+        raise HTTPException(404, "Child not found")
+
+    db.delete(child)
+    db.commit()
+
+    return {"message": "Child and wishlist deleted successfully"}
+
+
+# Child 상세 조회 (Child + Wishlist)
+@router.get("/{child_id}/details", response_model=ChildDetailOut)
+def get_child_details(child_id: int, db: Session = Depends(get_db)):
+    '''
+    Child + Wishlist 묶음 조회
+    UI/UX 화면에서 '아이 상세 페이지'를 만들 때 필수
+    '''
+
+    child = db.query(Child).filter(Child.ChildID == child_id).first()
+    if not child:
+        raise HTTPException(404, "Child not found")
+
+    return ChildDetailOut(
+        child_id=child.ChildID,
+        name=child.Name,
+        address=child.Address,
+        region_id=child.RegionID,
+        status_code=child.StatusCode,
+        delivery_status_code=child.DeliveryStatusCode,
+        wishlist=[
+            WishlistItemOut(
+                wishlist_id=w.WishlistID,
+                gift_id=w.GiftID,
+                priority=w.Priority,
+            )
+            for w in child.wishlist_items
+        ]
+    )
+
+
+# Wishlist 생성
+@router.post("/{child_id}/wishlist", response_model=WishlistItemOut)
+def add_wishlist(child_id: int, payload: WishlistCreate, db: Session = Depends(get_db)):
+    '''
+    Child에 Wishlist 항목 추가
+    '''
+
+    child = db.query(Child).filter(Child.ChildID == child_id).first()
+    if not child:
+        raise HTTPException(404, "Child not found")
+
+    gift = db.query(FinishedGoods).filter(FinishedGoods.gift_id == payload.gift_id).first()
+    if not gift:
+        raise HTTPException(404, "Gift not found")
+
+    wishlist = Wishlist(
+        ChildID=child_id,
+        GiftID=payload.gift_id,
+        Priority=payload.priority
+    )
+
+    db.add(wishlist)
+    db.commit()
+    db.refresh(wishlist)
+
+    return WishlistItemOut(
+        wishlist_id=wishlist.WishlistID,
+        gift_id=wishlist.GiftID,
+        priority=wishlist.Priority
+    )
+
+
+# Wishlist 수정
+@router.patch("/wishlist/{wishlist_id}", response_model=WishlistItemOut)
+def update_wishlist(wishlist_id: int, payload: WishlistUpdate, db: Session = Depends(get_db)):
+    """
+    Wishlist 항목 단일 수정
+    """
+
+    wishlist = db.query(Wishlist).filter(Wishlist.WishlistID == wishlist_id).first()
+    if not wishlist:
+        raise HTTPException(404, "Wishlist item not found")
+
+    data = payload.dict(exclude_unset=True)
+
+    # gift_id 수정 시 유효한 Gift인지 확인
+    if "gift_id" in data:
+        gift = db.query(FinishedGoods).filter(FinishedGoods.gift_id == data["gift_id"]).first()
+        if not gift:
+            raise HTTPException(404, "Gift not found")
+
+    # 🔥 필드 매핑 정확히 처리
+    for key, value in data.items():
+        if key == "gift_id":
+            setattr(wishlist, "GiftID", value)
+        elif key == "priority":
+            setattr(wishlist, "Priority", value)
+
+    db.commit()
+    db.refresh(wishlist)
+
+    return WishlistItemOut(
+        wishlist_id=wishlist.WishlistID,
+        gift_id=wishlist.GiftID,
+        priority=wishlist.Priority
+    )
+
+
+# Wishlist 삭제
+@router.delete("/wishlist/{wishlist_id}")
+def delete_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
+    '''
+    Wishlist 항목 단일 삭제
+    '''
+
+    wishlist = db.query(Wishlist).filter(Wishlist.WishlistID == wishlist_id).first()
+    if not wishlist:
+        raise HTTPException(404, "Wishlist item not found")
+
+    db.delete(wishlist)
+    db.commit()
+
+    return {"message": "Wishlist item deleted successfully"}
