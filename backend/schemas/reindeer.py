@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, field_validator
 
 # 공통 필드 (조회/응답용)
@@ -38,3 +39,17 @@ class ReindeerUpdateStatus(BaseModel):
         if v not in allowed:
             raise ValueError(f"status must be one of {allowed}")
         return v
+
+class HealthLogCreate(BaseModel):
+    reindeer_id: int
+    notes: str  # Keeper가 남기는 메모
+
+
+class HealthLogResponse(BaseModel):
+    log_id: int
+    reindeer_id: int
+    log_timestamp: datetime
+    notes: str
+
+    class Config:
+        from_attributes = True
