@@ -1,5 +1,6 @@
 from backend.database import SessionLocal
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
+from backend.models.reindeer import Reindeer
 
 def seed_raw_materials():
     db = SessionLocal()
@@ -81,6 +82,36 @@ def seed_gift_bom():
                     output_gift_id=out_id,
                     input_material_id=in_mat,
                     quantity_required=qty,
+                )
+            )
+
+    db.commit()
+    db.close()
+    
+def seed_reindeer():
+    db = SessionLocal()
+
+    default_reindeers = [
+        (1, "빅슨"),
+        (2, "도너"),
+        (3, "댄서"),
+        (4, "큐피드"),
+        (5, "대셔"),
+        (6, "코멧"),
+        (7, "프랜서"),
+        (8, "루돌프"),
+    ]
+
+    for rid, name in default_reindeers:
+        exists = db.query(Reindeer).filter_by(reindeer_id=rid).first()
+        if not exists:
+            db.add(
+                Reindeer(
+                    reindeer_id=rid,
+                    name=name,
+                    current_stamina=100,
+                    current_magic=100,
+                    status="Ready",
                 )
             )
 
