@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from backend.database import SessionLocal
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
 from backend.models.reindeer import Reindeer
@@ -115,5 +116,28 @@ def seed_reindeer():
                 )
             )
 
+    db.commit()
+    db.close()
+    
+
+def create_ready_reindeer_view():
+    """비행 가능 후보 루돌프용 DB VIEW 생성"""
+    db = SessionLocal()
+    
+    # 기존 뷰가 있으면 삭제
+    db.execute(text("DROP VIEW IF EXISTS ready_reindeer_view CASCADE;"))
+    
+    db.execute(text("""
+        CREATE OR REPLACE VIEW ready_reindeer_view AS
+        SELECT
+            reindeer_id,
+            name,
+            current_stamina,
+            current_magic,
+            status
+        FROM reindeer
+        WHERE status = 'Ready'
+          AND current_stamina >= 70;
+    """))
     db.commit()
     db.close()

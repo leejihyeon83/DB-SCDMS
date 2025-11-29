@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from backend.database import Base, engine, SessionLocal
-from backend.utils.seed import seed_raw_materials, seed_finished_goods, seed_gift_bom, seed_reindeer
+from backend.utils.seed import seed_raw_materials, seed_finished_goods, seed_gift_bom, seed_reindeer, create_ready_reindeer_view
 from backend.models import gift, child, reindeer
 
 @asynccontextmanager
@@ -12,6 +12,7 @@ async def lifespan(app: FastAPI):
     seed_raw_materials()
     seed_gift_bom()
     seed_reindeer()
+    create_ready_reindeer_view()
     yield 
     print("Shutting down...")
 

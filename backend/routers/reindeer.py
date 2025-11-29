@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -68,3 +69,31 @@ def log_reindeer_health(
     db.refresh(log)
 
     return log
+
+# 비행 가능 루돌프 조회 API
+@router.get("/available", response_model=list[ReindeerResponse])
+def get_available_reindeer(
+    magic_threshold: int = 50,
+    db: Session = Depends(get_db),
+):
+    """
+    비행 가능 루돌프 조회
+    - DB VIEW `ready_reindeer_view` 기준
+    - current_magic >= magic_threshold 조건 추가
+    """
+    rows = db.execute(
+        text("""
+            SELECT
+                reindeer_id,
+                name,
+                current_stamina,
+                current_magic,
+                status
+            FROM ready_reindeer_view
+            WHERE current_magic >= :magic_threshold
+            ORDER BY reindeer_id
+        """),
+        {"magic_threshold": magic_threshold},
+    ).mappings().all()
+
+    return [ReindeerResponse.model_validate(row) for row in rows]
