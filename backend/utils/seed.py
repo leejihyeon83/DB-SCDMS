@@ -2,6 +2,10 @@ from sqlalchemy import text
 from backend.database import SessionLocal
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
 from backend.models.reindeer import Reindeer
+from backend.models.child_status_code import ChildStatusCode
+from backend.models.delivery_status_code import DeliveryStatusCode
+
+
 
 def seed_raw_materials():
     db = SessionLocal()
@@ -139,5 +143,35 @@ def create_ready_reindeer_view():
         WHERE status = 'Ready'
           AND current_stamina >= 70;
     """))
+    db.commit()
+    db.close()
+
+# 아이 상태 초기값
+def seed_child_status_codes():
+    db = SessionLocal()
+    codes = [
+        ("PENDING", "판정 대기"),
+        ("NICE", "착한 아이"),
+        ("NAUGHTY", "나쁜 아이"),
+    ]
+    for code, desc in codes:
+        if not db.query(ChildStatusCode).filter_by(Code=code).first():
+            db.add(ChildStatusCode(Code=code, Description=desc))
+    db.commit()
+    db.close()
+
+
+# 배송 상태 초기값
+def seed_delivery_status_codes():
+    db = SessionLocal()
+    codes = [
+        ("PENDING", "배송 대기"),
+        ("PACKED", "포장 완료"),
+        ("READY", "배송 준비 완료"),
+        ("DELIVERED", "배송 완료"),
+    ]
+    for code, desc in codes:
+        if not db.query(DeliveryStatusCode).filter_by(Code=code).first():
+            db.add(DeliveryStatusCode(Code=code, Description=desc))
     db.commit()
     db.close()

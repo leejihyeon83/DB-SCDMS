@@ -22,6 +22,8 @@ from backend.schemas.child_schema import (
     WishlistCreate, WishlistUpdate,
     WishlistItemOut
 )
+from sqlalchemy import func
+
 
 router = APIRouter(
     prefix="/list-elf/child",
@@ -58,8 +60,8 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_d
             Name=payload.name,
             Address=payload.address,
             RegionID=payload.region_id,
-            StatusCode="Pending",         # 기본 상태
-            DeliveryStatusCode="Pending"  # 기본 배송 상태
+            StatusCode="PENDING",         # 기본 상태
+            DeliveryStatusCode="PENDING"  # 기본 배송 상태
         )
 
         db.add(child)
@@ -109,9 +111,9 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_d
 # Child 수정 (PATCH)
 @router.patch("/{child_id}", response_model=ChildOut)
 def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_db)):
-    '''
+    """
     Child 기본 정보 수정
-    '''
+    """
 
     child = db.query(Child).filter(Child.ChildID == child_id).first()
     if not child:
@@ -119,9 +121,23 @@ def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_
 
     update_data = payload.dict(exclude_unset=True)
 
-    # SQLAlchemy 컬럼명이 대문자로 시작함(Name, Address 등)
     for key, value in update_data.items():
-        setattr(child, key.capitalize(), value)
+
+        # status_code → StatusCode
+        if key == "status_code":
+            setattr(child, "StatusCode", value)
+
+        # delivery_status_code → DeliveryStatusCode
+        elif key == "delivery_status_code":
+            setattr(child, "DeliveryStatusCode", value)
+
+        # child_note → ChildNote
+        elif key == "child_note":
+            setattr(child, "ChildNote", value)
+
+        # 기본 필드(Name, Address, RegionID)는 capitalize 적용
+        else:
+            setattr(child, key.capitalize(), value)
 
     db.commit()
     db.refresh(child)
@@ -133,6 +149,7 @@ def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_
         region_id=child.RegionID,
         status_code=child.StatusCode,
         delivery_status_code=child.DeliveryStatusCode,
+        child_note=child.ChildNote,
         wishlist=[
             WishlistItemOut(
                 wishlist_id=w.WishlistID,
@@ -243,7 +260,7 @@ def update_wishlist(wishlist_id: int, payload: WishlistUpdate, db: Session = Dep
         if not gift:
             raise HTTPException(404, "Gift not found")
 
-    # 🔥 필드 매핑 정확히 처리
+    # 필드 매핑 정확히 처리
     for key, value in data.items():
         if key == "gift_id":
             setattr(wishlist, "GiftID", value)
@@ -275,3 +292,4 @@ def delete_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Wishlist item deleted successfully"}
+
