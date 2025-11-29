@@ -17,5 +17,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # --- Routers ---
-from backend.routers import gift
+from backend.routers import gift, production
 app.include_router(gift.router)
+app.include_router(production.router)

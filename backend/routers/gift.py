@@ -55,6 +55,17 @@ def get_all_gifts(db: Session = Depends(get_db)):
 # POST /gift/produce
 @router.post("/produce")
 def produce_item(data: ProduceRequest, db: Session = Depends(get_db)):
+    """
+    Gift_BOM 레시피를 사용해 선물 생산을 처리하는 간단 API
+
+    - 요청한 선물(gift_id)과 수량에 따라 필요한 재료량 계산
+    - 재료 재고가 부족하면 오류 반환
+    - 재료가 충분하면 Raw_Materials 재고 차감
+    - Finished_Goods 재고 증가
+
+    Production_Log / Production_Usage 기록은 남기지 않음 -> 실제 요정 UI에서 사용할 API는 /production/create
+    """
+
 
     # 선물 존재 여부 확인
     good = db.query(FinishedGoods).filter_by(gift_id=data.gift_id).first()
@@ -97,7 +108,7 @@ def produce_item(data: ProduceRequest, db: Session = Depends(get_db)):
         if material.stock_quantity < required:
             shortages.append({
                 "material_id": material.material_id,
-                "material_name": material.material_name,  # ← 여기!
+                "material_name": material.material_name,
                 "required": required,
                 "available": material.stock_quantity,
             })

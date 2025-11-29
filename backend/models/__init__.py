@@ -1,1 +1,1 @@
-from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
+from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM, ProductionLog, ProductionUsage
