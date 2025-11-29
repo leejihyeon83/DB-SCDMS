@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.database import get_db
-from backend.models.reindeer import Reindeer
-from backend.schemas.reindeer import ReindeerResponse, ReindeerUpdateStatus
+from backend.models.reindeer import Reindeer, ReindeerHealthLog
+from backend.schemas.reindeer import ReindeerResponse, ReindeerUpdateStatus, HealthLogCreate, HealthLogResponse
 
 router = APIRouter(prefix="/reindeer", tags=["reindeer"])
 
@@ -40,3 +40,31 @@ def update_reindeer_status(
     db.refresh(reindeer)
 
     return reindeer
+
+# 루돌프 건강 로그 기록
+@router.post("/log-health", response_model=HealthLogResponse)
+def log_reindeer_health(
+    payload: HealthLogCreate,
+    db: Session = Depends(get_db),
+):
+    # 대상 루돌프 존재 여부 확인
+    reindeer = (
+        db.query(Reindeer)
+        .filter(Reindeer.reindeer_id == payload.reindeer_id)
+        .first()
+    )
+    if not reindeer:
+        raise HTTPException(status_code=404, detail="Reindeer not found")
+
+    # Health Log 생성
+    log = ReindeerHealthLog(
+        reindeer_id=payload.reindeer_id,
+        notes=payload.notes,
+        # log_timestamp는 넣지 않음 → DB에서 now() 자동 설정
+    )
+
+    db.add(log)
+    db.commit()
+    db.refresh(log)
+
+    return log
