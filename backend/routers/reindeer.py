@@ -72,6 +72,37 @@ def log_reindeer_health(
 
     return log
 
+
+# 특정 루돌프의 건강 로그 리스트 조회
+@router.get("/{reindeer_id}/health-logs", response_model=list[HealthLogResponse])
+def get_reindeer_health_logs(
+    reindeer_id: int,
+    db: Session = Depends(get_db),
+):
+    """
+    특정 루돌프의 건강 로그 목록 조회
+    - 최신 로그가 위로 오도록 내림차순 정렬
+    """
+
+    # 루돌프 존재 여부 확인 (없으면 404)
+    reindeer = (
+        db.query(Reindeer)
+        .filter(Reindeer.reindeer_id == reindeer_id)
+        .first()
+    )
+    if not reindeer:
+        raise HTTPException(status_code=404, detail="Reindeer not found")
+
+    # 해당 루돌프의 건강 로그 조회 (최근 순)
+    logs = (
+        db.query(ReindeerHealthLog)
+        .filter(ReindeerHealthLog.reindeer_id == reindeer_id)
+        .order_by(ReindeerHealthLog.log_timestamp.desc())
+        .all()
+    )
+
+    return logs
+
 # 비행 가능 루돌프 조회 API
 @router.get("/available", response_model=list[ReindeerResponse])
 def get_available_reindeer(
