@@ -31,6 +31,8 @@ class ReindeerResponse(ReindeerBase):
 class ReindeerUpdateStatus(BaseModel):
     reindeer_id: int
     status: str  # Ready / Resting / OnDelivery
+    current_stamina: int
+    current_magic: int
 
     @field_validator("status")
     @classmethod
@@ -38,6 +40,13 @@ class ReindeerUpdateStatus(BaseModel):
         allowed = {"Ready", "Resting", "OnDelivery"}
         if v not in allowed:
             raise ValueError(f"status must be one of {allowed}")
+        return v
+    
+    @field_validator("current_stamina", "current_magic")
+    @classmethod
+    def non_negative(cls, v: int) -> int:
+        if v < 0:
+            raise ValueError("stamina/magic must be >= 0")
         return v
 
 class HealthLogCreate(BaseModel):

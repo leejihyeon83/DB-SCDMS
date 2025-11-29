@@ -35,6 +35,8 @@ def update_reindeer_status(
 
     # 상태 변경
     reindeer.status = payload.status
+    reindeer.current_stamina = payload.current_stamina
+    reindeer.current_magic = payload.current_magic
 
     # 커밋 & 갱신
     db.commit()
