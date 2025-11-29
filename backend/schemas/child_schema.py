@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field, validator
 from pydantic import ConfigDict
 
 
-# 1) Wishlist 단일 요소 입력용
+# Wishlist 단일 요소 입력용
 class WishlistItem(BaseModel):
     '''
     ChildCreate 시 사용되는 위시리스트 단일 요소.
@@ -28,7 +28,7 @@ class WishlistItem(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# 2) Child + Wishlist 동시 생성 시 사용
+# Child + Wishlist 동시 생성 시 사용
 class ChildCreate(BaseModel):
     '''
     Child와 wishlist 여러 개를 한 번에 생성.
@@ -37,6 +37,9 @@ class ChildCreate(BaseModel):
     name: str
     address: str
     region_id: int
+    status_code: Optional[str] = "PENDING" 
+    delivery_status_code: Optional[str] = "PENDING"
+    child_note: Optional[str] = None
     wishlist: List[WishlistItem]
 
     @validator("wishlist")
@@ -53,7 +56,7 @@ class ChildCreate(BaseModel):
         return v
 
 
-# 3) Child 수정용 스키마
+# Child 수정용 스키마
 class ChildUpdate(BaseModel):
     '''
     Child 기본 정보 수정용 스키마
@@ -62,11 +65,14 @@ class ChildUpdate(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
     region_id: Optional[int] = None
+    status_code: Optional[str] = None 
+    delivery_status_code: Optional[str] = None
+    child_note: Optional[str] = None 
 
     model_config = ConfigDict(from_attributes=True)
 
 
-# 4) Wishlist CRUD 입력 스키마
+# Wishlist CRUD 입력 스키마
 class WishlistCreate(BaseModel):
     '''
     Wishlist 항목 생성
@@ -83,7 +89,7 @@ class WishlistUpdate(BaseModel):
     priority: Optional[int] = None
 
 
-# 5) 출력용 스키마
+# 출력용 스키마
 class WishlistItemOut(BaseModel):
     '''
     서버 응답용 wishlist item
@@ -107,6 +113,7 @@ class ChildOut(BaseModel):
     region_id: int
     status_code: str
     delivery_status_code: str
+    child_note: Optional[str] = None
     wishlist: List[WishlistItemOut]
 
     model_config = ConfigDict(from_attributes=True)
@@ -124,6 +131,7 @@ class ChildDetailOut(BaseModel):
     region_id: int
     status_code: str
     delivery_status_code: str
+    child_note: Optional[str] = None
     wishlist: List[WishlistItemOut]
 
     model_config = ConfigDict(from_attributes=True)

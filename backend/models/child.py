@@ -1,56 +1,72 @@
 '''
-Child / Wishlist
-- Child: 아이 기본 정보
-- Wishlist: 아이가 원하는 선물 목록 (1:N)
-- StatusCode / DeliveryStatusCode 는 기본값 "Pending"
-- wishlist_items 관계에 cascade 설정 -> Child 삭제 시 관련 Wishlist 자동 삭제
+Child & Wishlist Model
+------------------------
+Child
+ - 아이 기본 정보
+ - 아이 상태(StatusCode)와 배송상태(DeliveryStatusCode)는 각각 다른 테이블을 FK로 참조
+ - ChildNote는 아이 개별 행동/설명/메모
+
+Wishlist
+ - Child 1 : Wishlist N
+ - Child 삭제 시 Wishlist도 같이 삭제되도록 CASCADE 처리
 '''
+
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from backend.database import Base
 
-
-
 class Child(Base):
-
     __tablename__ = "child"
 
+    # 기본 키
     ChildID = Column(Integer, primary_key=True, autoincrement=True)
+
+    # 아이 기본 정보
     Name = Column(String, nullable=False)
     Address = Column(String, nullable=False)
     RegionID = Column(Integer, nullable=False)
 
-    StatusCode = Column(String, nullable=False, default="Pending")
-    DeliveryStatusCode = Column(String, nullable=False, default="Pending")
+    # 아이의 '행동/판정' 상태 → ChildStatusCode 테이블 참조
+    StatusCode = Column(
+        String,
+        ForeignKey("child_status_code.Code"),
+        nullable=False,
+        default="PENDING"
+    )
 
-    # Child 1명 -> Wishlist N개
+    # 아이의 '배송 상태' → DeliveryStatusCode 테이블 참조
+    DeliveryStatusCode = Column(
+        String,
+        ForeignKey("delivery_status_code.Code"),
+        nullable=False,
+        default="PENDING"
+    )
+
+    # 아이 개별 메모 (행동 기록, 상태 사유 등)
+    ChildNote = Column(String, nullable=True)
+
+    # wishlist 관계 정의
     wishlist_items = relationship(
         "Wishlist",
         back_populates="child",
-        cascade="all, delete-orphan",   # SQLAlchemy 내부적으로도 삭제
-        passive_deletes=True            # DB의 ON DELETE CASCADE 사용
+        cascade="all, delete-orphan",
+        passive_deletes=True
     )
 
 
 class Wishlist(Base):
-    '''
-    Wishlist (아이의 선호 선물)
-    - ChildID: 삭제 시 CASCADE
-    - GiftID : Finished_Goods.gift_id 참조
-    '''
-
     __tablename__ = "wishlist"
 
     WishlistID = Column(Integer, primary_key=True, autoincrement=True)
 
-    # Child 삭제 시 자동 삭제
+    # Child 삭제 시 CASCADE
     ChildID = Column(
         Integer,
         ForeignKey("child.ChildID", ondelete="CASCADE"),
         nullable=False
     )
 
-    # 선물 ID (Finished_Goods.gift_id)
+    # GiftID는 Finished_Goods 테이블 참조
     GiftID = Column(
         Integer,
         ForeignKey("Finished_Goods.gift_id"),
