@@ -19,6 +19,7 @@ from backend.models.gift import FinishedGoods
 from backend.schemas.child_schema import (
     ChildCreate, ChildUpdate,
     ChildOut, ChildDetailOut,
+    ChildNoteOut, ChildFullOut,
     WishlistCreate, WishlistUpdate,
     WishlistItemOut
 )
@@ -295,3 +296,44 @@ def delete_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
 
     return {"message": "Wishlist item deleted successfully"}
 
+# Child 전체 조회 API
+@router.get("/all", response_model=list[ChildFullOut])
+def get_all_children(db: Session = Depends(get_db)):
+
+    children = db.query(Child).all()
+
+    return [
+        ChildFullOut(
+            child_id=c.ChildID,
+            name=c.Name,
+            address=c.Address,
+            region_id=c.RegionID,
+            status_code=c.StatusCode,
+            delivery_status_code=c.DeliveryStatusCode,
+            child_note=c.ChildNote,
+            wishlist=[
+                WishlistItemOut(
+                    wishlist_id=w.WishlistID,
+                    gift_id=w.GiftID,
+                    priority=w.Priority
+                )
+                for w in c.wishlist_items
+            ]
+        )
+        for c in children
+    ]
+
+
+#  ChildNote 단독 조회 API
+@router.get("/{child_id}/note", response_model=ChildNoteOut)
+def get_child_note(child_id: int, db: Session = Depends(get_db)):
+
+    child = db.query(Child).filter(Child.ChildID == child_id).first()
+
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+
+    return ChildNoteOut(
+        child_id=child.ChildID,
+        child_note=child.ChildNote
+    )
