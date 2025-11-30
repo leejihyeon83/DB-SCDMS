@@ -337,3 +337,35 @@ def get_child_note(child_id: int, db: Session = Depends(get_db)):
         child_id=child.ChildID,
         child_note=child.ChildNote
     )
+
+@router.get("/{child_id}/wishlist")
+def get_child_wishlist(child_id: int, db: Session = Depends(get_db)):
+
+    # Child 존재 여부 확인
+    child = db.query(Child).filter(Child.ChildID == child_id).first()
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+
+    # Wishlist + FinishedGoods JOIN
+    results = (
+        db.query(Wishlist, FinishedGoods)
+        .join(FinishedGoods, Wishlist.GiftID == FinishedGoods.gift_id)
+        .filter(Wishlist.ChildID == child_id)
+        .order_by(Wishlist.Priority.asc())
+        .all()
+    )
+
+    wishlist_data = [
+        {
+            "wishlist_id": w.WishlistID,
+            "gift_id": w.GiftID,
+            "priority": w.Priority,
+            "gift_name": fg.gift_name,
+        }
+        for w, fg in results
+    ]
+
+    return {
+        "child_id": child_id,
+        "wishlist": wishlist_data
+    }
