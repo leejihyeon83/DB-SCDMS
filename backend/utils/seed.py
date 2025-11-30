@@ -6,6 +6,7 @@ from backend.models.child_status_code import ChildStatusCode
 from backend.models.delivery_status_code import DeliveryStatusCode
 from backend.models.staff import Staff 
 from backend.models.child import Child, Wishlist
+from backend.models.region import Region
 
 def seed_raw_materials():
     db = SessionLocal()
@@ -166,8 +167,6 @@ def seed_delivery_status_codes():
     db = SessionLocal()
     codes = [
         ("PENDING", "배송 대기"),
-        ("PACKED", "포장 완료"),
-        ("READY", "배송 준비 완료"),
         ("DELIVERED", "배송 완료"),
     ]
     for code, desc in codes:
@@ -235,7 +234,7 @@ def seed_child():
             "address": "45 Reindeer Ave",
             "region_id": 2,
             "status_code": "NICE",
-            "delivery_status_code": "READY",
+            "delivery_status_code": "PENDING",
             "child_note": "학교에서 우수한 성적",
             "wishlist": [
                 {"gift_id": 2, "priority": 1},
@@ -289,6 +288,38 @@ def seed_child():
                 Priority=w["priority"],
             )
             db.add(wishlist_item)
+
+    db.commit()
+    db.close()
+
+# 지역(Region) 기본값 Seed
+def seed_regions():
+    """
+    Region 초기 데이터 삽입
+    - 1: South Korea
+    - 2: North America
+    - 3: Europe
+    - 4: Asia
+    - 5: South America
+    - 6: Africa
+    - 7: Oceania
+    """
+    db = SessionLocal()
+
+    default_regions = [
+        {"RegionID": 1, "RegionName": "South Korea"},
+        {"RegionID": 2, "RegionName": "North America"},
+        {"RegionID": 3, "RegionName": "Europe"},
+        {"RegionID": 4, "RegionName": "Asia"},
+        {"RegionID": 5, "RegionName": "South America"},
+        {"RegionID": 6, "RegionName": "Africa"},
+        {"RegionID": 7, "RegionName": "Oceania"},
+    ]
+
+    for r in default_regions:
+        exists = db.query(Region).filter(Region.RegionID == r["RegionID"]).first()
+        if not exists:
+            db.add(Region(**r))
 
     db.commit()
     db.close()

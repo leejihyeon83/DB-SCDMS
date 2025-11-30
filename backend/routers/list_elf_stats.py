@@ -24,8 +24,7 @@ router = APIRouter(
     tags=["List Elf"]
 )
 
-# Gift Summary API (기존 /gift-demand -> /gift-demand/summary)
-
+# Gift Summary API 
 @router.get("/gift-demand/summary", response_model=list[GiftDemandOut])
 def get_gift_demand_summary(db: Session = Depends(get_db)):
     '''
