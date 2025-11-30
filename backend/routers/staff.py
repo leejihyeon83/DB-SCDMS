@@ -1,7 +1,7 @@
 '''
 Staff 관련 API
 - 간단한 Staff 생성 및 조회용
-- 추후 로그인 기능(JWT 등)을 붙일 수 있는 기반
+- 추후 로그인 기능(JWT 등)을 붙일 수 있는 기반 -> 이긴 하나 사용x 예정
 '''
 
 from fastapi import APIRouter, Depends, HTTPException, status
