@@ -23,10 +23,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # --- Routers ---
-from backend.routers import gift, production, reindeer, list_elf_child, child_status_code, delivery_status_code
+from backend.routers import (gift, production, reindeer, 
+                             list_elf_child, child_status_code, 
+                             delivery_status_code,list_elf_stats)
 app.include_router(gift.router)
 app.include_router(production.router)
 app.include_router(reindeer.router)
 app.include_router(list_elf_child.router)
 app.include_router(child_status_code.router)     # 아이 상태 코드 라우터
 app.include_router(delivery_status_code.router)  # 배송 상태 코드 라우터
+app.include_router(list_elf_stats.router) # Gift Demand 통계 라우터 등록

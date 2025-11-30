@@ -60,8 +60,9 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_d
             Name=payload.name,
             Address=payload.address,
             RegionID=payload.region_id,
-            StatusCode="PENDING",         # 기본 상태
-            DeliveryStatusCode="PENDING"  # 기본 배송 상태
+            StatusCode=(payload.status_code or "PENDING").upper(), # 기본 상태
+            DeliveryStatusCode=(payload.delivery_status_code or "PENDING").upper(), # 기본 배송 상태
+            ChildNote=payload.child_note
         )
 
         db.add(child)
@@ -98,6 +99,7 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_d
         region_id=child.RegionID,
         status_code=child.StatusCode,
         delivery_status_code=child.DeliveryStatusCode,
+        child_note=payload.child_note,
         wishlist=[
             WishlistItemOut(
                 wishlist_id=w.WishlistID,
@@ -125,11 +127,11 @@ def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_
 
         # status_code → StatusCode
         if key == "status_code":
-            setattr(child, "StatusCode", value)
+            setattr(child, "StatusCode", value.upper())
 
         # delivery_status_code → DeliveryStatusCode
         elif key == "delivery_status_code":
-            setattr(child, "DeliveryStatusCode", value)
+            setattr(child, "DeliveryStatusCode", value.upper())
 
         # child_note → ChildNote
         elif key == "child_note":
