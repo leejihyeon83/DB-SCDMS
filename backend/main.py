@@ -46,3 +46,6 @@ app.include_router(delivery_log.router)
 app.include_router(staff.router)
 app.include_router(list_elf_rules.router)
 app.include_router(santa_view.router)
+
+from fastapi.staticfiles import StaticFiles
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
