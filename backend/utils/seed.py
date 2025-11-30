@@ -117,7 +117,7 @@ def seed_reindeer():
                     name=name,
                     current_stamina=100,
                     current_magic=100,
-                    status="Ready",
+                    status="READY",
                 )
             )
 
@@ -141,7 +141,7 @@ def create_ready_reindeer_view():
             current_magic,
             status
         FROM reindeer
-        WHERE status = 'Ready'
+        WHERE status = 'READY'
           AND current_stamina >= 70;
     """))
     db.commit()
@@ -183,8 +183,14 @@ def seed_staff():
     db = SessionLocal()
 
     default_staff = [
-        ("yebin", "1234", "조예빈", "ListElf"),
-        ("santa", "1234", "Santa Claus", "Santa"),
+        ("listelf1", "1234", "명단 관리 요정 1", "ListElf"),
+        ("listelf2", "1234", "명단 관리 요정 2", "ListElf"),
+        ("giftelf1", "1234", "선물 관리 요정 1", "GiftElf"),
+        ("giftelf2", "1234", "선물 관리 요정 2", "GiftElf"),
+        ("keeper1", "1234", "루돌프 관리자 1", "Keeper"),
+        ("keeper2", "1234", "루돌프 관리자 2", "Keeper"),
+        ("santa1", "1234", "산타 1", "Santa"),
+        ("santa2", "1234", "산타 2", "Santa")
     ]
 
     for username, password, name, role in default_staff:

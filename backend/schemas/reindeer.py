@@ -7,13 +7,13 @@ class ReindeerBase(BaseModel):
     # team_name: str | None = None
     current_stamina: int = 100
     current_magic: int = 100
-    status: str = "Ready"  # Ready / Resting / OnDelivery
+    status: str = "READY"  # READY / RESTING / ONDELIVERY
 
     # 상태 검증
     @field_validator("status")
     @classmethod
     def validate_status(cls, v: str) -> str:
-        allowed = {"Ready", "Resting", "OnDelivery"}
+        allowed = {"READY", "RESTING", "ONDELIVERY"}
         if v not in allowed:
             raise ValueError(f"status must be one of {allowed}")
         return v
@@ -30,14 +30,14 @@ class ReindeerResponse(ReindeerBase):
 # 상태만 바꿀 때 쓸 스키마
 class ReindeerUpdateStatus(BaseModel):
     reindeer_id: int
-    status: str  # Ready / Resting / OnDelivery
+    status: str  # READY / RESTING / ONDELIVERY
     current_stamina: int
     current_magic: int
 
     @field_validator("status")
     @classmethod
     def validate_status(cls, v: str) -> str:
-        allowed = {"Ready", "Resting", "OnDelivery"}
+        allowed = {"READY", "RESTING", "ONDELIVERY"}
         if v not in allowed:
             raise ValueError(f"status must be one of {allowed}")
         return v
