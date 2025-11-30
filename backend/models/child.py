@@ -14,6 +14,7 @@ Wishlist
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from backend.database import Base
+from backend.models.region import Region 
 
 class Child(Base):
     __tablename__ = "child"
@@ -24,7 +25,11 @@ class Child(Base):
     # 아이 기본 정보
     Name = Column(String, nullable=False)
     Address = Column(String, nullable=False)
-    RegionID = Column(Integer, nullable=False)
+    RegionID = Column(
+        Integer,
+        ForeignKey("regions.RegionID"),
+        nullable=False,
+    )
 
     # 아이의 '행동/판정' 상태 → ChildStatusCode 테이블 참조
     StatusCode = Column(
@@ -52,6 +57,8 @@ class Child(Base):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+
+    region = relationship("Region", back_populates="children")
 
 
 class Wishlist(Base):
