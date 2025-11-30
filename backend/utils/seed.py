@@ -116,7 +116,7 @@ def seed_reindeer():
                     name=name,
                     current_stamina=100,
                     current_magic=100,
-                    status="Ready",
+                    status="READY",
                 )
             )
 
@@ -140,7 +140,7 @@ def create_ready_reindeer_view():
             current_magic,
             status
         FROM reindeer
-        WHERE status = 'Ready'
+        WHERE status = 'READY'
           AND current_stamina >= 70;
     """))
     db.commit()
