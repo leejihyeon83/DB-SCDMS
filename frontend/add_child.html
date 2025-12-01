@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ListElf - 아이 등록</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --scdms-red: #d64840;
+            --scdms-red-dark: #b73530;
+            --scdms-bg: #f9fbf7;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #ffe7e0 0, #f9fbf7 45%, #f4f7f4 100%);
+            min-height: 100vh;
+        }
+
+        /* 상단 네비게이션 */
+        .scdms-navbar {
+            background: var(--scdms-red);
+        }
+        .scdms-navbar .navbar-brand {
+            font-weight: 700;
+        }
+        .scdms-navbar .brand-icon {
+            margin-right: 6px;
+        }
+
+        /* 상단 탭 네비게이션 */
+        .scdms-tabs {
+            background: #fff5f3;
+            border-bottom: 1px solid #f0d2cd;
+        }
+        .scdms-tabs .nav-link {
+            border-radius: 999px;
+            padding: 8px 20px;
+            margin-right: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        .scdms-tabs .nav-link.active {
+            background: var(--scdms-red);
+            color: #fff;
+        }
+
+        /* 메인 카드 */
+        .scdms-card {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .wishlist-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .wishlist-item select,
+        .wishlist-item input {
+            flex: 1;
+        }
+
+        .btn-main {
+            background: var(--scdms-red);
+            border-color: var(--scdms-red);
+        }
+        .btn-main:hover {
+            background: var(--scdms-red-dark);
+            border-color: var(--scdms-red-dark);
+        }
+    </style>
+</head>
+
+<body>
+<!--상단 글로벌 네비게이션 -->
+<nav class="navbar navbar-expand-lg navbar-dark scdms-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="brand-icon">🎄</span>
+            <span>SCDMS · 명단 관리 요청 제어센터</span>
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="badge bg-light text-dark me-3">ListElf</span>
+            <a href="/login.html" class="btn btn-outline-light btn-sm">로그아웃</a>
+        </div>
+    </div>
+</nav>
+
+<!--상단 탭 (역할 내 메뉴) -->
+<div class="scdms-tabs">
+    <div class="container px-4">
+        <ul class="nav py-3">
+            <li class="nav-item">
+                <a class="nav-link" href="/list_elf.html">아이 목록</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/add_child.html">아이 등록</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/rules.html">규칙 관리</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 메인 콘텐츠 -->
+<div class="container px-4 py-4">
+    <div class="scdms-card p-4 p-md-5">
+
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="fw-bold mb-0">새 아이 등록</h2>
+            <span class="ms-2 text-muted small">노스폴 등록부에 새로운 아이를 추가해요.</span>
+        </div>
+
+        <!-- 이름 + 주소 -->
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <label class="form-label">아이 이름 *</label>
+                <input id="name" class="form-control" placeholder="예: 김민수" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">주소 *</label>
+                <input id="address" class="form-control" placeholder="예: 서울시 강남구" required>
+            </div>
+        </div>
+
+        <!-- 지역 -->
+        <div class="mb-3">
+            <label class="form-label">지역 *</label>
+            <select id="region" class="form-select"></select>
+        </div>
+
+        <!-- 설명 -->
+        <div class="mb-4">
+            <label class="form-label">아이 설명 (child_note)</label>
+            <textarea id="note" rows="3" class="form-control" placeholder="예: 공룡 좋아함, 둘째 아이"></textarea>
+        </div>
+
+        <!-- Wishlist -->
+        <div class="mb-2 d-flex align-items-center justify-content-between">
+            <span class="section-title">위시리스트 *</span>
+            <small class="text-muted" id="wishlistHint">선물 종류 수만큼만 추가할 수 있어요.</small>
+        </div>
+
+        <div id="wishlistContainer" class="mb-2"></div>
+
+        <button class="btn btn-outline-secondary btn-sm mb-4" type="button" onclick="addWishlistItem()">
+            + 소원 추가하기
+        </button>
+
+        <hr />
+
+        <!-- 제출 -->
+        <button class="btn btn-main w-100 py-2" onclick="submitChild()">🎄 아이 등록하기</button>
+    </div>
+</div>
+
+<script>
+const BASE_URL = "http://127.0.0.1:8000";
+
+let gifts = [];
+
+/* -------------------------------
+   1️. 선물 목록 불러오기
+-------------------------------- */
+async function loadGifts() {
+    const res = await fetch(`${BASE_URL}/gift/`);
+    gifts = await res.json();
+
+    // 힌트 텍스트에 최대 개수 표시
+    const hint = document.getElementById("wishlistHint");
+    if (gifts.length > 0) {
+        hint.textContent = `위시리스트는 최대 ${gifts.length}개까지 추가할 수 있어요.`;
+    } else {
+        hint.textContent = "등록 가능한 선물이 아직 없어요.";
+    }
+}
+
+/* -------------------------------
+   2️. 지역 목록 불러오기
+-------------------------------- */
+async function loadRegions() {
+    const res = await fetch(`${BASE_URL}/regions/all`);
+    const regions = await res.json();
+
+    const select = document.getElementById("region");
+    select.innerHTML = "";
+
+    regions.forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r.RegionID;
+        opt.textContent = r.RegionName;
+        select.appendChild(opt);
+    });
+}
+
+/* -------------------------------
+   3️. wishlist 입력행 추가
+   - 기존 선택값이 초기화되지 않도록
+   - gifts.length 개수까지만 추가
+-------------------------------- */
+function addWishlistItem() {
+    const container = document.getElementById("wishlistContainer");
+
+    // 최대 개수 제한
+    const currentCount = container.querySelectorAll(".wishlist-item").length;
+    if (currentCount >= gifts.length) {
+        alert(`위시리스트는 최대 ${gifts.length}개까지만 추가할 수 있어요!`);
+        return;
+    }
+
+    // 🔎 현재 사용된 우선순위 목록
+    const usedPriorities = Array.from(
+        document.querySelectorAll(".wishlist-item .priority")
+    ).map(input => parseInt(input.value))
+     .filter(v => !isNaN(v));
+
+    // 🔢 기본 넣을 우선순위 = 사용되지 않은 가장 작은 번호
+    let defaultPriority = 1;
+    while (usedPriorities.includes(defaultPriority)) {
+        defaultPriority++;
+    }
+
+    // DOM 생성
+    const row = document.createElement("div");
+    row.className = "wishlist-item";
+
+    const giftSelect = document.createElement("select");
+    giftSelect.className = "form-select gift-id";
+
+    gifts.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g.gift_id;
+        opt.textContent = `${g.gift_id} - ${g.gift_name}`;
+        giftSelect.appendChild(opt);
+    });
+
+    const priorityInput = document.createElement("input");
+    priorityInput.className = "form-control priority";
+    priorityInput.placeholder = "우선순위 (1 ~ n)";
+    priorityInput.value = defaultPriority;    
+
+    // 실시간 중복 방지 이벤트 추가
+    priorityInput.addEventListener("change", validatePriorities);
+
+    row.appendChild(giftSelect);
+    row.appendChild(priorityInput);
+
+    container.appendChild(row);
+}
+
+/*------------
+중복 priority 검증 함수 추가
+
+사용자가 priority 값을 변경할 때
+->중복되면 원래 값으로 되돌리고 alert
+
+priority 값이 범위를 벗어나면 자동 조정
+(예: 0 → 1, 99 → gifts.length)
+---------------- */
+function validatePriorities() {
+    const priorityInputs = Array.from(document.querySelectorAll(".priority"));
+
+    // 모든 값 읽기
+    let values = priorityInputs.map(i => parseInt(i.value) || 1);
+
+    // 범위 보정: 1 ~ 선물 개수
+    values = values.map(v => {
+        if (v < 1) return 1;
+        if (v > gifts.length) return gifts.length;
+        return v;
+    });
+
+    // 중복 검사
+    const duplicates = values.filter((v, i, arr) => arr.indexOf(v) !== i);
+
+    if (duplicates.length > 0) {
+        alert("우선순위는 중복될 수 없어요! (1 ~ n 각 1회만 가능)");
+
+        // 입력 되돌리기
+        priorityInputs.forEach((input, i) => {
+            input.value = i + 1 <= gifts.length ? i + 1 : gifts.length;
+        });
+    }
+}
+
+
+/* -------------------------------
+   4. 아이 등록 요청
+-------------------------------- */
+async function submitChild() {
+    const name = document.getElementById("name").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const region_id = parseInt(document.getElementById("region").value);
+    const child_note = document.getElementById("note").value;
+
+    
+    if (!name || !address) {
+        alert("이름과 주소는 필수입니다.");
+        return;
+    }
+
+    const wishlist = [];
+    const priorityInputs = document.querySelectorAll(".wishlist-item .priority");
+    const priorities = Array.from(priorityInputs).map(i => parseInt(i.value));
+
+    // 중복 검사
+    const hasDuplicate = priorities.some(
+        (p, idx) => priorities.indexOf(p) !== idx
+    );
+
+    if (hasDuplicate) {
+        alert("위시리스트 우선순위가 중복되었어요. 서로 다른 번호로 설정해주세요!");
+        return;
+    }
+    document.querySelectorAll(".wishlist-item").forEach(row => {
+        const gift_id = parseInt(row.querySelector(".gift-id").value);
+        const priority = parseInt(row.querySelector(".priority").value) || 1;
+        wishlist.push({ gift_id, priority });
+    });
+
+    const body = {
+        name,
+        address,
+        region_id,
+        child_note,
+        wishlist
+    };
+
+    const res = await fetch(`${BASE_URL}/list-elf/child/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+        alert("아이 등록 완료! 🎁");
+        window.location.href = "/list_elf.html";
+    } else {
+        alert("등록 실패… 서버 로그를 확인해주세요!");
+    }
+}
+
+/* -------------------------------
+   초기 실행
+-------------------------------- */
+(async function init() {
+    await loadGifts();
+    await loadRegions();
+    addWishlistItem(); // 기본 1개 추가
+})();
+</script>
+
+</body>
+</html>
