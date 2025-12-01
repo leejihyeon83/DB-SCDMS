@@ -1,0 +1,150 @@
+/* 전반적인 배경/폰트 */
+body {
+    background-color: #fdfbf7; /* 약간 더 따뜻한 색감 */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  
+  /* 헤더: 루돌프 관리자는 갈색 계열 */
+  .app-header {
+    background: linear-gradient(90deg, #8B4513, #5D4037);
+  }
+  
+  /* 탭 패널 보이기/숨기기 */
+  .tab-panel {
+    display: none;
+  }
+  .tab-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* 네비게이션 탭 커스텀 */
+  .nav-pills .nav-link {
+    color: #5d4037;
+    background-color: transparent;
+    border: 1px solid transparent;
+  }
+  .nav-pills .nav-link.active {
+    background-color: #8B4513;
+    color: white;
+  }
+  
+  /* 루돌프 카드 스타일 */
+  .reindeer-card {
+    border-radius: 0.75rem;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+    height: 100%;
+    transition: transform 0.2s;
+  }
+  .reindeer-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .reindeer-name {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #3e2723;
+  }
+  
+  /* 상태 뱃지 */
+  .status-badge {
+    padding: 0.35em 0.8em;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .status-READY { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+  .status-RESTING { background-color: #FFF3E0; color: #EF6C00; border: 1px solid #FFE0B2; }
+  .status-ONDELIVERY { background-color: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB; }
+  
+  /* 프로그레스 바 영역 */
+  .stat-row {
+    margin-bottom: 0.8rem;
+  }
+  .stat-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0.3rem;
+  }
+  
+  .progress-custom {
+    height: 8px;
+    border-radius: 999px;
+    background-color: #eceff1;
+    overflow: hidden;
+  }
+  
+  .progress-bar-stamina { background-color: #d32f2f; } /* 빨강 */
+  .progress-bar-magic { background-color: #1976d2; }   /* 파랑 */
+  
+  /* 카드 하단 액션 버튼들 */
+  .card-actions {
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .btn-action {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0;
+  }
+  
+  .btn-outline-brown {
+    color: #8B4513;
+    border-color: #8B4513;
+  }
+  .btn-outline-brown:hover {
+    background-color: #8B4513;
+    color: #fff;
+  }
+  
+  /* 비행 준비 완료 섹션 */
+  .ready-header-box {
+    background-color: #f1f8e9;
+    border: 1px solid #dcedc8;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+  
+  /* 토스트 메시지 (GiftElf와 동일) */
+  .toast-custom {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    max-width: 300px;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    background: #333;
+    color: #fff;
+    z-index: 1050;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+  .toast-custom.show { opacity: 1; }
+  .toast-custom.toast-success { background: #2e7d32; }
+  .toast-custom.toast-error { background: #c62828; }
+  .toast-custom.d-none { display: none; }
