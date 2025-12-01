@@ -6,13 +6,15 @@ const API = {
   gifts: `${API_BASE}/gift/`,
   giftRecipe: (id) => `${API_BASE}/gift/${id}/recipe`,
   productionCreate: `${API_BASE}/production/create`,
-  childrenAll: `${API_BASE}/list-elf/child/all`,
+  productionLogs: `${API_BASE}/production/logs`,
+  giftDemandSummary: `${API_BASE}/list-elf/stats/gift-demand/summary`,
 };
 
 const state = {
   materials: [],
   gifts: [],
   demandRows: [],
+  productionLogs: [],
   selectedGiftId: null,
   staffId: 1, // TODO: 로그인 연동 시 교체
 };
@@ -112,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadGifts().then(() => {
     renderGiftList();
     renderGiftStockTable();
+    loadProductionLogs();
     loadDemand();
   });
 });
@@ -394,6 +397,7 @@ async function onClickProduce() {
     renderGiftList();
     renderGiftStockTable();
     loadDemand();
+    await loadProductionLogs();
 
     showToast(res.message || "선물 제작이 완료되었습니다.", "success");
   } catch (err) {
@@ -401,29 +405,91 @@ async function onClickProduce() {
   }
 }
 
+// -------------------- 생산 로그 --------------------
+
+async function loadProductionLogs() {
+  try {
+    const data = await fetchJson(API.productionLogs);
+    state.productionLogs = data;
+    renderProductionLogs();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderProductionLogs() {
+  const tbody = $("#production-log-body");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  if (!state.productionLogs.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 4;
+    td.className = "text-center small text-muted";
+    td.textContent = "생산 로그가 없습니다.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+
+  state.productionLogs.forEach((log) => {
+    const tr = document.createElement("tr");
+
+    // 선물 이름 매핑 (gift_id → gift_name)
+    const gift = state.gifts.find((g) => g.gift_id === log.gift_id);
+    const giftName = gift ? gift.gift_name : `#${log.gift_id}`;
+
+    // 간단한 시간 포맷 (YYYY-MM-DD HH:MM)
+    let timeText = log.timestamp;
+    try {
+      const d = new Date(log.timestamp);
+      if (!isNaN(d.getTime())) {
+        timeText = d.toLocaleString("ko-KR", {
+          year: "2-digit",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+    } catch (_) {}
+
+    tr.innerHTML = `
+      <td>${timeText}</td>
+      <td>${log.produced_by_staff_id}</td>
+      <td>${giftName}</td>
+      <td class="text-end">${log.quantity_produced} 개</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
 // -------------------- 수요 분석 --------------------
 
 async function loadDemand() {
   try {
-    const children = await fetchJson(API.childrenAll);
+    const summaryList = await fetchJson(API.giftDemandSummary);
+    // { gift_id, count, p1, p2, p3 }[]
 
-    const demandByGift = new Map();
-    children.forEach((child) => {
-      if (!Array.isArray(child.wishlist)) return;
-      child.wishlist.forEach((item) => {
-        const gid = item.gift_id;
-        if (!gid) return;
-        demandByGift.set(gid, (demandByGift.get(gid) || 0) + 1);
-      });
+    const summaryByGift = new Map();
+    summaryList.forEach((item) => {
+      summaryByGift.set(item.gift_id, item);
     });
 
     const rows = state.gifts.map((g) => {
-      const requested = demandByGift.get(g.gift_id) || 0;
-      const stock = g.stock_quantity || 0;
-      const diff = stock - requested;
+      const s = summaryByGift.get(g.gift_id);
+      const requested = s ? s.count : 0;          // 총 수요량
+      const stock = g.stock_quantity || 0;        // 현재 재고
+      const diff = stock - requested;             // 재고 - 수요
       let rate = 0;
-      if (requested > 0) rate = Math.round((stock / requested) * 100);
-      else if (stock > 0) rate = 100;
+
+      if (requested > 0) {
+        rate = Math.round((stock / requested) * 100); // 충족률 %
+      } else if (stock > 0) {
+        rate = 100;
+      }
 
       return {
         giftId: g.gift_id,
@@ -439,6 +505,7 @@ async function loadDemand() {
     renderDemandTable();
     renderDemandSummary();
   } catch (err) {
+    console.error(err);
     showToast(err.message, "error");
   }
 }

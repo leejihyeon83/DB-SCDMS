@@ -141,8 +141,22 @@
               </table>
             </div>
           </div>
-          <div class="alert alert-warning mt-3 py-2 small mb-0">
-            💡 생산 로그 및 재료 사용 내역이 자동으로 기록됩니다.
+          <div id="production-log-panel" class="alert alert-warning mt-3">
+            <h6 class="mb-2">최근 생산 로그</h6>
+            <div class="table-responsive">
+              <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>시간</th>
+                  <th>스태프 ID</th>
+                  <th>선물 이름</th>
+                  <th class="text-end">수량</th>
+                </tr>
+              </thead>
+              <tbody id="production-log-body">
+              </tbody>
+              </table>
+            </div>
           </div>
         </section>
       </div>
@@ -212,7 +226,6 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- JS로 채움 -->
               </tbody>
             </table>
           </div>
@@ -235,22 +248,21 @@
   <script src="js/gift_elf.js"></script>
 
   <!-- 레시피 모달 -->
-<div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="recipeModalLabel">선물 레시피</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-      </div>
-      <div class="modal-body" id="recipeModalBody">
-        <!-- JS로 채워짐 -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+  <div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="recipeModalLabel">선물 레시피</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+        <div class="modal-body" id="recipeModalBody">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </body>
 </html>

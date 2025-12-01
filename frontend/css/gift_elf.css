@@ -89,6 +89,11 @@ body {
   background-color: #e0f2f1;
 }
 
+#production-log-panel .table-responsive {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
 /* 수요 분석 바 */
 .demand-bar {
   width: 100%;
