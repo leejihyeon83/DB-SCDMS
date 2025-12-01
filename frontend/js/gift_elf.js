@@ -9,7 +9,6 @@ const API = {
   childrenAll: `${API_BASE}/list-elf/child/all`,
 };
 
-
 const state = {
   materials: [],
   gifts: [],
@@ -44,25 +43,57 @@ function showToast(message, type = "info") {
 }
 
 async function fetchJson(url, options = {}) {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+  const headers = options.headers ? { ...options.headers } : {};
+  if (options.body && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  const res = await fetch(url, { ...options, headers });
+
+  let data = null;
+  try {
+    // 응답을 한 번만 파싱해서 재사용
+    data = await res.json();
+  } catch (e) {
+    data = null;
+  }
 
   if (!res.ok) {
     let msg = "요청 중 오류가 발생했습니다.";
-    try {
-      const data = await res.json();
+
+    if (data) {
+      // FastAPI 기본 에러형식: {"detail": ...}
       if (data.detail) {
         msg =
           typeof data.detail === "string"
             ? data.detail
             : JSON.stringify(data.detail);
       }
-    } catch (e) {}
+      // 우리가 만든 형식: {"message": "...", "shortages": [...]}
+      else if (data.message) {
+        msg = data.message;
+
+        if (Array.isArray(data.shortages) && data.shortages.length > 0) {
+          const list = data.shortages
+            .map(
+              (s) =>
+                `${s.material_name}: 필요 ${s.required}개, 보유 ${s.available}개`
+            )
+            .join(" / ");
+          msg += ` (부족 재료: ${list})`;
+        }
+      }
+      // 그 외에는 그냥 문자열이면 그대로, 객체면 최대한 짧게
+      else if (typeof data === "string") {
+        msg = data;
+      }
+    }
+
     throw new Error(msg);
   }
-  return res.json();
+
+  // 성공인 경우: JSON 파싱한 결과 그대로 반환
+  return data;
 }
 
 // -------------------- 초기화 --------------------
@@ -71,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTabs();
   initActions();
 
-  // ✅ 레시피 모달 인스턴스 생성
+  // 레시피 모달 인스턴스 생성
   const modalEl = document.getElementById("recipeModal");
   if (modalEl && window.bootstrap) {
     recipeModal = new bootstrap.Modal(modalEl);
@@ -84,7 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDemand();
   });
 });
-
 
 // -------------------- 탭 전환 --------------------
 
@@ -130,7 +160,6 @@ async function loadMaterials() {
   }
 }
 
-
 // 재료 목록 그리기
 function renderMaterials() {
   const container = $("#materials-container");
@@ -168,7 +197,7 @@ function renderMaterials() {
       </div>
     `;
 
-    // ✅ 진행바: 최대 100 기준, 1개당 1%
+    // 진행바: 최대 100 기준, 1개당 1%
     const percent = Math.max(
       0,
       Math.min(100, m.stock_quantity) // 0~100으로 클램프
@@ -185,10 +214,9 @@ function renderMaterials() {
   });
 }
 
-// 재료 채굴 버튼 클릭 시 (이제 항상 +1, amount 없음)
+// 재료 채굴 버튼 클릭 시 (항상 +1)
 async function onClickMineMaterial(materialId) {
   try {
-    // ✅ body에는 material_id만 보낸다고 가정
     const body = JSON.stringify({ material_id: materialId });
 
     const res = await fetchJson(API.mineMaterial, {
@@ -333,7 +361,6 @@ async function onClickShowRecipe(giftId, giftName) {
   }
 }
 
-
 async function onClickProduce() {
   if (!state.selectedGiftId) {
     showToast("먼저 제작할 선물을 선택해 주세요.", "error");
@@ -384,7 +411,6 @@ async function loadDemand() {
     children.forEach((child) => {
       if (!Array.isArray(child.wishlist)) return;
       child.wishlist.forEach((item) => {
-        // 필요하다면 item.priority === 1 조건 추가 가능
         const gid = item.gift_id;
         if (!gid) return;
         demandByGift.set(gid, (demandByGift.get(gid) || 0) + 1);
