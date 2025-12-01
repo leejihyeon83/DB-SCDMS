@@ -33,7 +33,7 @@ from backend.routers import (gift, production, reindeer,
                              list_elf_child, child_status_code, 
                              delivery_status_code,list_elf_stats,
                              staff, list_elf_rules, santa_view,
-                             santa, delivery_log, region)
+                             santa, delivery_log, region, auth)
 app.include_router(gift.router)
 app.include_router(production.router)
 app.include_router(reindeer.router)
@@ -47,6 +47,7 @@ app.include_router(staff.router)
 app.include_router(list_elf_rules.router)
 app.include_router(santa_view.router)
 app.include_router(region.router)
+app.include_router(auth.router)
 
 from fastapi.staticfiles import StaticFiles
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
