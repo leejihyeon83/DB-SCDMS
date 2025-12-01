@@ -2,10 +2,17 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
+class MaterialResponse(BaseModel):
+    material_id: int
+    material_name: str
+    stock_quantity: int
+
+    class Config:
+        from_attributes = True
+
 # 원자재 채굴 요청 바디
 class MaterialUpdate(BaseModel):
     material_id: int
-    amount: int
 
 # 선물 재고 조회 응답 스키마
 class Gift(BaseModel):

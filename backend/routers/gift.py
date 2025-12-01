@@ -4,29 +4,41 @@ from typing import List
 
 from backend.database import get_db
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
-from backend.schemas.gift import MaterialUpdate, Gift, ProduceRequest, GiftRecipeItem
+from backend.schemas.gift import MaterialResponse, MaterialUpdate, Gift, ProduceRequest, GiftRecipeItem
 
 router = APIRouter(prefix="/gift", tags=["Gift"])
+
+# 현재 Raw_Materials 목록과 재고 수량 전체 조회
+# GET /gift/materials
+@router.get("/materials", response_model=list[MaterialResponse])
+def get_all_materials(db: Session = Depends(get_db)):
+    materials = (
+        db.query(RawMaterial)
+        .order_by(RawMaterial.material_id.asc())
+        .all()
+    )
+    return materials
 
 # 원자재 채굴
 # POST /gift/materials/mine
 @router.post("/materials/mine")
 def mine_material(data: MaterialUpdate, db: Session = Depends(get_db)):
-    
-    # 음수 요청 자체 차단
-    if data.amount < 0:
-        raise HTTPException(
-            status_code=400,
-            detail="채굴량(amount)은 음수일 수 없습니다."
-        )
-
     material = db.query(RawMaterial).filter_by(material_id=data.material_id).first()
 
     if not material:
         raise HTTPException(status_code=404, detail="해당 재료가 존재하지 않습니다.")
+    
+    amount = 1
+    
+    # 최대 재고량 100 체크
+    if material.stock_quantity >= 100:
+        raise HTTPException(
+            status_code=400,
+            detail=f"최대 재고량(100)에 도달하여 더 이상 채굴할 수 없습니다. (현재 재고: {material.stock_quantity})"
+        )
 
     # 재고 음수 방지
-    new_quantity = material.stock_quantity + data.amount
+    new_quantity = material.stock_quantity + amount
     if new_quantity < 0:
         raise HTTPException(
             status_code=400,
@@ -48,7 +60,11 @@ def mine_material(data: MaterialUpdate, db: Session = Depends(get_db)):
 # GET /gift/
 @router.get("/", response_model=List[Gift])
 def get_all_gifts(db: Session = Depends(get_db)):
-    goods = db.query(FinishedGoods).all()
+    goods = (
+        db.query(FinishedGoods)
+        .order_by(FinishedGoods.gift_id.asc())
+        .all()
+    )
     return goods
 
 # 선물 생산하여 재고 증가시키기 (레시피 + 재료 재고 체크 + 부족한 재료 반환)

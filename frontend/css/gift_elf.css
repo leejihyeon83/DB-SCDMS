@@ -1,0 +1,139 @@
+/* 전반적인 배경/폰트 */
+body {
+  background-color: #f3f7f4;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* 헤더 */
+.app-header {
+  background: linear-gradient(90deg, #264d3b, #173529);
+}
+
+/* 탭 패널 보이기/숨기기 */
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
+
+/* 재료 카드 */
+.material-card {
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  padding: 1rem 1.1rem;
+}
+
+.material-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.material-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f0ff;
+  font-size: 1.1rem;
+}
+
+.material-name {
+  font-weight: 600;
+}
+
+.material-type {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.material-stock-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.material-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.material-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #111827;
+}
+
+/* 선물 리스트 */
+.gift-item {
+  cursor: pointer;
+}
+.gift-item .gift-name {
+  font-weight: 600;
+}
+.gift-item .gift-recipe-text {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+.gift-item.selected {
+  background-color: #e0f2f1;
+}
+
+/* 수요 분석 바 */
+.demand-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.demand-bar-fill {
+  height: 100%;
+  background: #111827;
+}
+
+/* 요약 카드 숫자 */
+.summary-card .summary-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 토스트 */
+.toast-custom {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  max-width: 260px;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  background: #111827;
+  color: #ffffff;
+  z-index: 1050;
+}
+
+.toast-custom.toast-success {
+  background: #15803d;
+}
+.toast-custom.toast-error {
+  background: #b91c1c;
+}
+
+.toast-custom.show {
+  opacity: 1;
+}
+
+.toast-custom.d-none {
+  display: none;
+}
