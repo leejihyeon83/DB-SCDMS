@@ -9,19 +9,19 @@
 
     <style>
         :root {
-            --scdms-red: #d64840;
-            --scdms-red-dark: #b73530;
-            --scdms-bg: #f9fbf7;
+            --scdms-gold: #F5C542;          /* 메인 골드 */
+            --scdms-gold-dark: #D9A620;     /* 다크 골드 */
+            --scdms-gold-bg: #FFF7D6;       /* 연한 배경 */
         }
 
         body {
-            background: radial-gradient(circle at top, #ffe7e0 0, #f9fbf7 45%, #f4f7f4 100%);
+            background: radial-gradient(circle at top, #FFF7D6 0, #FFF7D6 45%, #FFF7D6 100%);
             min-height: 100vh;
         }
 
         /* 상단 네비게이션 */
         .scdms-navbar {
-            background: var(--scdms-red);
+            background: var(--scdms-gold);
         }
         .scdms-navbar .navbar-brand {
             font-weight: 700;
@@ -32,8 +32,8 @@
 
         /* 상단 탭 네비게이션 */
         .scdms-tabs {
-            background: #fff5f3;
-            border-bottom: 1px solid #f0d2cd;
+            background: var(--scdms-gold-bg);
+            border-bottom: 1px solid #E8D9A8;
         }
         .scdms-tabs .nav-link {
             border-radius: 999px;
@@ -43,7 +43,7 @@
             color: #555;
         }
         .scdms-tabs .nav-link.active {
-            background: var(--scdms-red);
+            background: var(--scdms-gold);
             color: #fff;
         }
 
@@ -70,8 +70,9 @@
         .summary-card span.value {
             font-size: 1.2rem;
         }
+
         .summary-nice {
-            background: #e2f6e9;
+            background: #e2f6e9;;
             border: 1px solid #c1e7cf;
         }
         .summary-naughty {
@@ -88,14 +89,16 @@
         .priority-2 { background: #e2e3e5; }
         .priority-3 { background: #d4edda; }
 
+        /* 메인 버튼 */
         .btn-main {
-            background: var(--scdms-red);
-            border-color: var(--scdms-red);
+            background: var(--scdms-gold);
+            border-color: var(--scdms-gold);
         }
         .btn-main:hover {
-            background: var(--scdms-red-dark);
-            border-color: var(--scdms-red-dark);
+            background: var(--scdms-gold-dark);
+            border-color: var(--scdms-gold-dark);
         }
+
     </style>
 </head>
 
