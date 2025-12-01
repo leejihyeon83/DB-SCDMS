@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Santa Dashboard - 배송 실행</title>
+
+    <link rel="stylesheet" href="css/santa.css" />
+    <script defer src="js/santa_api.js"></script>
+    <script defer src="js/santa_groups.js"></script>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <header class="santa-topbar">
+        <div class="topbar-inner">
+            <div class="topbar-left">
+                🎅 <span>SCDMS · 산타 지휘 센터</span>
+            </div>
+
+            <div class="topbar-right">
+                <span class="santa-role">Santa</span>
+                <a href="/index.html" id="logoutBtn" class="logout-btn">로그아웃</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="santa-tabs">
+        <a href="santa.html" class="tab-item">배송 대상</a>
+        <a href="santa_group.html" class="tab-item active">배송 실행</a>
+        <a href="santa_logs.html" class="tab-item">배송 기록</a>
+    </nav>
+
+    <!-- LOADING + ERROR -->
+    <div id="loaderBackdrop" class="loader-backdrop hidden">
+        <div class="loader"></div>
+    </div>
+    <div id="errorBanner" class="error-banner hidden"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-container">
+        <header class="page-header">
+            <div>
+                <h1>🚚 배송 실행</h1>
+                <p class="page-subtitle">
+                    배송 대상 아이들을 루돌프에게 배정하고, 실제 배송을 실행하는 화면입니다.
+                </p>
+            </div>
+        </header>
+
+        <section class="delivery-layout">
+            <!-- LEFT: 배송 그룹 생성 -->
+            <article class="delivery-card">
+                <header class="delivery-card-header">
+                    <div>
+                        <h2>➕ 배송 그룹 생성</h2>
+                        <p class="card-subtitle">
+                            같은 지역의 아이들만 선택해 하나의 배송 그룹으로 묶을 수 있습니다.
+                        </p>
+                    </div>
+                </header>
+
+                <div class="delivery-body">
+                    <!-- 지역 필터 -->
+                    <section class="delivery-block">
+                        <div class="block-header">
+                            <h3 class="block-title">지역 선택</h3>
+                            <span class="block-hint">지역을 선택하면 해당 지역의 아이들만 표시됩니다</span>
+                        </div>
+                        <select id="regionFilter" class="filter-select">
+                            <option value="">전체 지역</option>
+                        </select>
+                    </section>
+
+                    <!-- 아이 선택 -->
+                    <section class="delivery-block">
+                        <div class="block-header">
+                            <h3 class="block-title">아이 선택</h3>
+                            <span class="block-hint">
+                                NICE + 아직 미배송 상태의 아이 목록입니다. 같은 지역의 아이들만 한 그룹에 포함할 수 있어요.
+                            </span>
+                        </div>
+                        <div id="childList" class="child-list">
+                            <!-- JS -->
+                        </div>
+                    </section>
+
+                    <!-- 루돌프 선택 -->
+                    <section class="delivery-block">
+                        <div class="block-header">
+                            <h3 class="block-title">루돌프 선택</h3>
+                            <span class="block-hint">READY 상태이면서 마력이 충분한 루돌프만 표시됩니다</span>
+                        </div>
+                        <select id="reindeerSelect" class="filter-select">
+                            <option value="">루돌프를 선택하세요</option>
+                        </select>
+                    </section>
+
+                    <!-- 버튼 -->
+                    <section class="delivery-actions">
+                        <button id="addToQueueBtn" class="primary-btn">
+                            + 배송 대기열에 추가
+                        </button>
+                    </section>
+
+                    <!-- 트랜잭션 설명 -->
+                    <section class="transaction-hint">
+                        <h4>⚡ 트랜잭션 프로세스</h4>
+                        <ul>
+                            <li>선물 재고 및 아이 상태를 한 번에 검사합니다.</li>
+                            <li>루돌프 스태미나 / 마력을 차감하고 상태를 업데이트합니다.</li>
+                            <li>Child 배송 상태와 DeliveryLog가 원자적으로 처리됩니다.</li>
+                            <li>중간에 오류가 나면 전체 작업이 롤백되고 그룹 상태는 FAILED가 됩니다.</li>
+                        </ul>
+                    </section>
+                </div>
+            </article>
+
+            <!-- RIGHT: 배송 대기열 + 선물 재고 -->
+            <article class="delivery-card">
+                <header class="delivery-card-header">
+                    <div>
+                        <h2>✈ 배송 대기열</h2>
+                        <p class="card-subtitle">
+                            현재 PENDING 상태의 배송 그룹 목록입니다. 그룹 단위로 배송을 실행할 수 있습니다.
+                        </p>
+                    </div>
+                </header>
+
+                <div id="groupList" class="group-list">
+                    <!-- JS -->
+                </div>
+
+                <section class="gift-stock-section">
+                    <h3>🎁 선물 재고 현황</h3>
+                    <p class="gift-stock-hint">
+                        현재 창고에 준비된 완성 선물 개수입니다. 재고가 0인 선물은 먼저 생산해주세요.
+                    </p>
+                    <ul id="giftStockList" class="simple-list"></ul>
+                </section>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

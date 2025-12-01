@@ -14,4 +14,6 @@ class DeliveryLogListItemResponse(BaseModel):
     gift_id: int
     gift_name: str
 
+    delivered_by_staff_id: int | None = None  # ★ 추가
+
     delivery_timestamp: datetime

@@ -99,7 +99,7 @@
     </a>
     <div class="d-flex align-items-center">
       <span class="badge bg-light text-dark me-3">ListElf</span>
-      <a href="/login.html" class="btn btn-outline-light btn-sm">로그아웃</a>
+      <a href="/index.html" id="logoutBtn" class="btn btn-outline-light btn-sm">로그아웃</a>
     </div>
   </div>
 </nav>
@@ -486,6 +486,17 @@
   (async function init() {
     await loadRules();
   })();
+
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            // ★ 나중에 진짜 로그아웃 만들면 여기서 토큰 삭제 추가하면 됨
+            window.location.href = "/index.html";  
+        });
+    }
+});
+
 </script>
 
 </body>
