@@ -1,11 +1,10 @@
-# backend/routers/production.py
-
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.database import get_db
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM, ProductionLog, ProductionUsage
-from backend.schemas.gift import ProductionCreateRequest
+from backend.schemas.gift import ProductionCreateRequest, ProductionLogResponse
 from backend.utils.transactions import transactional_session
 
 router = APIRouter(prefix="/production", tags=["Production"])
@@ -143,3 +142,18 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
         "produced_by_staff_id": log.produced_by_staff_id,
         "new_gift_stock": gift.stock_quantity,
     }
+
+@router.get("/logs", response_model=List[ProductionLogResponse])
+def get_production_logs(db: Session = Depends(get_db)):
+    """
+    Production_Log 테이블의 생산 Job 기록 전체 조회 API.
+
+    - 최근에 생성된 Job 순으로 정렬해서 반환
+    - 추후 gift_id, staff_id, 날짜 범위 등 필터를 추가해 확장 가능
+    """
+    logs = (
+        db.query(ProductionLog)
+        .order_by(ProductionLog.timestamp.desc())
+        .all()
+    )
+    return logs
