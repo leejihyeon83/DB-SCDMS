@@ -74,13 +74,24 @@
             margin-right: 6px;
         }
 
+        .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 64px;
+        }
+
+        .logo-icon {
+        font-size: 1.4rem;
+        }
+
         /* 상단 탭 네비게이션 */
         .scdms-tabs {
             background: var(--scdms-gold-bg);
             border-bottom: 1px solid #E8D9A8;
         }
         .scdms-tabs .nav-link {
-            border-radius: 999px;
+            border-radius: 10px;
             padding: 8px 20px;
             margin-right: 8px;
             font-weight: 600;
@@ -153,12 +164,12 @@
 </head>
 
 <body>
-<!-- 🔴 상단 글로벌 네비게이션 -->
+<!--  상단 글로벌 네비게이션 -->
 <nav class="navbar navbar-expand-lg navbar-dark scdms-navbar">
     <div class="container-fluid px-4">
         <a class="navbar-brand d-flex align-items-center" href="#">
             <span class="brand-icon">🎄</span>
-            <span>SCDMS · 명단 관리 요청 제어센터</span>
+            <span>SCDMS · 명단 관리 센터</span>
         </a>
         
         <div class="d-flex align-items-center gap-3">
@@ -177,7 +188,7 @@
     </div>
 </nav>
 
-<!-- 🔴 상단 탭 (역할 내 메뉴) -->
+<!-- 상단 탭 (역할 내 메뉴) -->
 <div class="scdms-tabs">
     <div class="container px-4">
         <ul class="nav py-3">
@@ -557,6 +568,17 @@ function initLogout() {
     await loadRegions();
     await loadChildren();
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            // ★ 나중에 진짜 로그아웃 만들면 여기서 토큰 삭제 추가하면 됨
+            window.location.href = "/index.html";  
+        });
+    }
+});
+
 </script>
 
 </body>

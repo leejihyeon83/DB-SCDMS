@@ -361,7 +361,7 @@ def deliver_group(
                 log = DeliveryLog(
                     child_id=child.ChildID,
                     gift_id=gift.gift_id,
-                    # delivered_by_staff_id 나중에 staff 생성하면 추가
+                    delivered_by_staff_id=1   # ★ 지금 산타 1명이라 가정 이후 수정해야 함
                 )
                 tx.add(log)
 

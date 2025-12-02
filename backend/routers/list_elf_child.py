@@ -201,6 +201,7 @@ def get_child_details(child_id: int, db: Session = Depends(get_db)):
         region_id=child.RegionID,
         status_code=child.StatusCode,
         delivery_status_code=child.DeliveryStatusCode,
+        child_note=child.ChildNote,
         wishlist=[
             WishlistItemOut(
                 wishlist_id=w.WishlistID,

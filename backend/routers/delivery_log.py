@@ -35,6 +35,7 @@ def list_delivery_logs(
             Child.Name.label("child_name"),
             DeliveryLog.gift_id,
             FinishedGoods.gift_name.label("gift_name"),
+            DeliveryLog.delivered_by_staff_id,
             DeliveryLog.delivery_timestamp,
         )
         .join(Child, DeliveryLog.child_id == Child.ChildID)
@@ -54,6 +55,7 @@ def list_delivery_logs(
             child_name=row.child_name,
             gift_id=row.gift_id,
             gift_name=row.gift_name,
+            delivered_by_staff_id=row.delivered_by_staff_id,
             delivery_timestamp=row.delivery_timestamp,
         )
         for row in rows
