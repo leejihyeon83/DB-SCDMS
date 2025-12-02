@@ -165,7 +165,14 @@ function renderMyLogs() {
     const tbody = document.getElementById("myLogsTableBody");
     tbody.innerHTML = "";
 
-    const myLogs = logs.filter((log) => log.delivered_by_staff_id === 1);
+    const myId = santaState.staffId;
+
+    if (!myId) {
+         tbody.innerHTML = `<tr><td colspan="4" class="empty-text-cell">로그인 정보가 없습니다.</td></tr>`;
+         return;
+    }
+
+    const myLogs = logs.filter((log) => log.delivered_by_staff_id === myId);
 
     if (!myLogs.length) {
         tbody.innerHTML =

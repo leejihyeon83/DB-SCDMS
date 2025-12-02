@@ -1,5 +1,3 @@
-// js/santa_groups.js
-
 let allTargets = [];    // 모든 배송 대상 아이
 let targets = [];       // 현재 필터(지역)에 맞는 아이
 let regions = [];
@@ -316,6 +314,11 @@ async function fetchInitialData() {
 }
 
 async function handleAddToQueue() {
+    if (!santaState.staffId) {
+        showError("로그인 정보가 없어 작업을 수행할 수 없습니다.");
+        return;
+    }
+
     const checkboxes = document.querySelectorAll(".child-checkbox");
     const selectedIds = Array.from(checkboxes)
         .filter((cb) => cb.checked)
@@ -408,6 +411,11 @@ async function handleAddToQueue() {
 
 async function handleDeliverGroup(groupId) {
     if (!confirm("이 배송 그룹의 선물 배송을 실행할까요?")) return;
+
+    if (!santaState.staffId) {
+        showError("로그인 정보가 확인되지 않습니다.");
+        return;
+    }
 
     try {
         setLoading(true);
