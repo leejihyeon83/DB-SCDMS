@@ -1,7 +1,7 @@
 '''
 Rules 모델
 - Child.StatusCode를 수동으로 판단할 때 참고하는 '심사 기준 문구' 저장 테이블
-- 자동 분류 X, 운영 참고용
+- 자동 분류 x, 운영 참고용
 '''
 
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey

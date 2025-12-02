@@ -127,13 +127,13 @@ def seed_reindeer():
     
 
 def create_ready_reindeer_view():
-    """비행 가능 후보 루돌프용 DB VIEW 생성"""
+    '''비행 가능 후보 루돌프용 DB VIEW 생성'''
     db = SessionLocal()
     
     # 기존 뷰가 있으면 삭제
     db.execute(text("DROP VIEW IF EXISTS ready_reindeer_view CASCADE;"))
     
-    db.execute(text("""
+    db.execute(text('''
         CREATE OR REPLACE VIEW ready_reindeer_view AS
         SELECT
             reindeer_id,
@@ -144,7 +144,7 @@ def create_ready_reindeer_view():
         FROM reindeer
         WHERE status = 'READY'
           AND current_stamina >= 70;
-    """))
+    '''))
     db.commit()
     db.close()
 
@@ -216,11 +216,11 @@ def seed_staff():
     db.close()
 
 def seed_child():
-    """
+    '''
     Child + Wishlist 더미데이터 자동 생성
     - Name 기준 중복 체크
     - StatusCode / DeliveryStatusCode / ChildNote 값까지 포함
-    """
+    '''
     db = SessionLocal()
 
     dummy_children = [
@@ -301,7 +301,7 @@ def seed_child():
 
 # 지역(Region) 기본값 Seed
 def seed_regions():
-    """
+    '''
     Region 초기 데이터 삽입
     - 1: South Korea
     - 2: North America
@@ -310,7 +310,7 @@ def seed_regions():
     - 5: South America
     - 6: Africa
     - 7: Oceania
-    """
+    '''
     db = SessionLocal()
 
     default_regions = [

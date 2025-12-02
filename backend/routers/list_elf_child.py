@@ -114,9 +114,9 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_d
 # Child 수정 (PATCH)
 @router.patch("/{child_id}", response_model=ChildOut)
 def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_db)):
-    """
+    '''
     Child 기본 정보 수정
-    """
+    '''
 
     child = db.query(Child).filter(Child.ChildID == child_id).first()
     if not child:
@@ -248,9 +248,9 @@ def add_wishlist(child_id: int, payload: WishlistCreate, db: Session = Depends(g
 # Wishlist 수정
 @router.patch("/wishlist/{wishlist_id}", response_model=WishlistItemOut)
 def update_wishlist(wishlist_id: int, payload: WishlistUpdate, db: Session = Depends(get_db)):
-    """
+    '''
     Wishlist 항목 단일 수정
-    """
+    '''
 
     wishlist = db.query(Wishlist).filter(Wishlist.WishlistID == wishlist_id).first()
     if not wishlist:

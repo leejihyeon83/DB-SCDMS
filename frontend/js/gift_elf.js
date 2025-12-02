@@ -50,7 +50,7 @@ function initUserInfo() {
 
 let recipeModal;
 
-// -------------------- 공통 유틸 --------------------
+// -------------------- 공통 util --------------------
 
 function $(sel, parent = document) {
   return parent.querySelector(sel);
