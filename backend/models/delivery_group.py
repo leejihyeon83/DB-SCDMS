@@ -19,6 +19,13 @@ class DeliveryGroup(Base):
         ForeignKey("reindeer.reindeer_id"),
         nullable=False,
     )
+    
+    # 그룹 생성자 ID 기록
+    created_by_staff_id = Column(
+        Integer,
+        ForeignKey("staff.StaffID"),
+        nullable=True, 
+    )
 
     # PENDING / FAILED / DONE
     status = Column(String, nullable=False, default="PENDING")

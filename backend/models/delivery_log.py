@@ -23,10 +23,9 @@ class DeliveryLog(Base):
         nullable=False,
     )
 
-    # 나중에 로그인/인증 붙이면 Santa(Staff)의 ID 넣을 예정
     delivered_by_staff_id = Column(
         Integer,
-        # ForeignKey("staff.staff_id"),
+        ForeignKey("staff.StaffID"),
         nullable=True,
     )
 
