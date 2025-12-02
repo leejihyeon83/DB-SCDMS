@@ -34,3 +34,23 @@ async function apiPOST(path, body = {}) {
     }
     return res.json();
 }
+
+async function apiDELETE(path) {
+    const res = await fetch(API_BASE + path, {
+        method: "DELETE",
+    });
+
+    // 204 No Content → JSON 없음 → 바로 성공 처리
+    if (res.status === 204) {
+        return true;
+    }
+
+    // 에러 처리
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `DELETE ${path} failed (${res.status})`);
+    }
+
+    // (204가 아닌 경우에 대비)
+    return res.json();
+}
