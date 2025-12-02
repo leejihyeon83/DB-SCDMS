@@ -301,7 +301,11 @@ def delete_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
 @router.get("/all", response_model=list[ChildFullOut])
 def get_all_children(db: Session = Depends(get_db)):
 
-    children = db.query(Child).all()
+    children = (
+        db.query(Child)
+        .order_by(Child.ChildID.asc())
+        .all()
+    )
 
     return [
         ChildFullOut(

@@ -12,6 +12,7 @@ let failedDetails = [];
 let reindeers = [];
 let reindeerMap = new Map();
 let childToReindeer = new Map();
+let staffList = [];
 
 // ============================
 // 공통 유틸
@@ -286,20 +287,23 @@ async function loadLogsPage() {
             logsRes,
             doneGroupsRes,
             failedGroupsRes,
-            reindeerRes
+            reindeerRes,
+            staffRes
         ] = await Promise.all([
             apiGET("/delivery-log/"),
             apiGET("/santa/groups?status_filter=DONE"),
             apiGET("/santa/groups?status_filter=FAILED"),
-            apiGET("/reindeer/"),   // 전체 루돌프 목록
+            apiGET("/reindeer/"),  
+            apiGET("/staff")
         ]);
 
         logs = logsRes;
         doneGroups = doneGroupsRes;
         failedGroups = failedGroupsRes;
         reindeers = reindeerRes;
+        staffList = staffRes;
 
-        // ID → 이름 매핑
+        // ID -> 이름 매핑
         reindeerMap = new Map(
             reindeers.map((r) => [r.reindeer_id, r.name])
         );
@@ -337,6 +341,7 @@ async function loadLogsPage() {
 
         // 렌더링
         renderMyLogs();
+        populateStaffFilter();
         applyStaffFilter();
         calculateSummary();
         renderAllLogs();
@@ -358,6 +363,23 @@ function calculateSummary() {
     renderSummaryCounts(successCount, failedCount);
 }
 
+function populateStaffFilter() {
+    const select = document.getElementById("logStaffFilter");
+    if (!select) return;
+
+    select.innerHTML = '<option value="">전체 산타</option>';
+
+    staffList.forEach(staff => {
+        if (staff.role !== 'Santa') return; 
+
+        const option = document.createElement("option");
+        option.value = String(staff.staff_id);
+        
+        option.textContent = `${staff.name}`;
+        
+        select.appendChild(option);
+    });
+}
 
 // ============================
 // DOM 이벤트
