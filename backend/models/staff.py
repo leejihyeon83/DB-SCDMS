@@ -5,6 +5,8 @@ Staff 모델
 '''
 
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
 from backend.database import Base
 
 
@@ -25,3 +27,5 @@ class Staff(Base):
 
     # 역할: ListElf / Santa / GiftElf / Keeper 등
     Role = Column(String, nullable=False)
+    
+    production_logs = relationship("ProductionLog", back_populates="staff")

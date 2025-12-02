@@ -62,7 +62,7 @@ class ProductionLog(Base):
     # 누가 생산했는지(스태프/사용자 ID)
     produced_by_staff_id = Column(
         Integer,
-        # ForeignKey("Staff.StaffID"),  # 나중에 Staff 테이블 생성했을 때 추가
+        ForeignKey("staff.StaffID"),
         nullable=False,
     )
 
@@ -74,7 +74,7 @@ class ProductionLog(Base):
     )
 
     gift = relationship("FinishedGoods", back_populates="production_logs")
-    # staff = relationship("Staff", back_populates="production_logs")  # 나중에 Staff 테이블 생성했을 때 추가
+    staff = relationship("Staff", back_populates="production_logs")
     
     # 이번 생산 Job에서 사용된 재료 목록
     usages = relationship("ProductionUsage", back_populates="job")

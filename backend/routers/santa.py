@@ -1,5 +1,5 @@
 # backend/routers/santa.py
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
@@ -26,7 +26,12 @@ router = APIRouter(prefix="/santa", tags=["Santa"])
 def create_delivery_group(
     payload: DeliveryGroupCreate,
     db: Session = Depends(get_db),
+    x_staff_id: str | None = Header(default=None, alias="x-staff-id")
 ):
+    
+    # 로그인 정보 확인
+    staff_id = int(x_staff_id) if x_staff_id and x_staff_id.isdigit() else None
+    
     # 루돌프 존재 여부 확인
     reindeer = (
         db.query(Reindeer)
@@ -46,6 +51,7 @@ def create_delivery_group(
     group = DeliveryGroup(
         group_name=payload.group_name,
         reindeer_id=payload.reindeer_id,
+        created_by_staff_id=staff_id,
         status="PENDING",
     )
     db.add(group)
@@ -236,6 +242,7 @@ def delete_delivery_group(
 def deliver_group(
     group_id: int,
     db: Session = Depends(get_db),
+    x_staff_id: str | None = Header(default=None, alias="x-staff-id")
 ):
     """
     배송 그룹 단위로 실제 배송 실행
@@ -252,6 +259,8 @@ def deliver_group(
         * 성공 시 status = 'DONE'
         * 트랜잭션 내에서 예외 나면 ROLLBACK 후 status = 'FAILED'
     """
+    
+    staff_id = int(x_staff_id) if x_staff_id and x_staff_id.isdigit() else None
 
     # 그룹 기본 체크 (존재 여부 + 상태)
     group = (
@@ -361,7 +370,7 @@ def deliver_group(
                 log = DeliveryLog(
                     child_id=child.ChildID,
                     gift_id=gift.gift_id,
-                    delivered_by_staff_id=1   # ★ 지금 산타 1명이라 가정 이후 수정해야 함
+                    delivered_by_staff_id=staff_id
                 )
                 tx.add(log)
 
