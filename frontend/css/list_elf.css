@@ -1,0 +1,163 @@
+/* =========================================
+   1. 공통 기본 설정 (변수, 바디)
+   ========================================= */
+:root {
+    --scdms-gold: #F5C542;          /* 메인 골드 */
+    --scdms-gold-dark: #D9A620;     /* 다크 골드 */
+    --scdms-gold-bg: #FFF7D6;       /* 연한 배경 */
+}
+
+body {
+    background: radial-gradient(circle at top, #FFF7D6 0, #FFF7D6 45%, #FFF7D6 100%);
+    min-height: 100vh;
+}
+
+/* =========================================
+   2. 공통 컴포넌트 (네비게이션, 탭, 카드, 버튼)
+   ========================================= */
+
+/* 상단 글로벌 네비게이션 */
+.scdms-navbar {
+    background: var(--scdms-gold);
+}
+.scdms-navbar .navbar-brand {
+    font-weight: 700;
+}
+.scdms-navbar .brand-icon {
+    margin-right: 6px;
+}
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+}
+.logo-icon {
+    font-size: 1.4rem;
+}
+
+/* 상단 탭 네비게이션 */
+.scdms-tabs {
+    background: var(--scdms-gold-bg);
+    border-bottom: 1px solid #E8D9A8;
+}
+.scdms-tabs .nav-link {
+    border-radius: 10px;
+    padding: 8px 20px;
+    margin-right: 8px;
+    font-weight: 600;
+    color: #555;
+}
+.scdms-tabs .nav-link.active {
+    background: var(--scdms-gold);
+    color: #fff;
+}
+
+/* 메인 콘텐츠 카드 */
+.scdms-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* 메인 버튼 */
+.btn-main {
+    background: var(--scdms-gold);
+    border-color: var(--scdms-gold);
+}
+.btn-main:hover {
+    background: var(--scdms-gold-dark);
+    border-color: var(--scdms-gold-dark);
+}
+
+/* 섹션 제목 (공통) */
+.section-title {
+    font-weight: 700;
+    font-size: 1.15rem; /* 페이지마다 1.1rem, 1.15rem 달랐던 것 통일 */
+}
+
+/* 상단 유저 정보 바 (리스트 페이지 등) */
+#user-info-bar {
+    padding: 10px 16px;
+    background: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+}
+.user-info-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+}
+.user-label {
+    color: #374151;
+}
+.role-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 0.8rem;
+}
+.logout-button {
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: none;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.logout-button:hover {
+    background: #dc2626;
+}
+
+/* =========================================
+   3. 페이지별 특수 스타일
+   ========================================= */
+
+/* [아이 목록 페이지] 요약 카드 */
+.summary-card {
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.summary-card span.label { font-size: 0.9rem; }
+.summary-card span.value { font-size: 1.2rem; }
+
+.summary-nice { background: #e2f6e9; border: 1px solid #c1e7cf; }
+.summary-naughty { background: #ffe6e3; border: 1px solid #f6b9b4; }
+.summary-pending { background: #fff8de; border: 1px solid #f0dfaa; }
+
+/* [아이 목록 페이지] 우선순위 색상 */
+.priority-1 { background: #fff3cd; }
+.priority-2 { background: #e2e3e5; }
+.priority-3 { background: #d4edda; }
+
+/* [아이 등록 페이지] 위시리스트 아이템 */
+.wishlist-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.wishlist-item select,
+.wishlist-item input {
+    flex: 1;
+}
+
+/* [규칙 관리 페이지] 테이블 및 텍스트 */
+.rule-row-title { font-weight: 600; }
+.text-meta { font-size: 0.8rem; color: #888; }
+.rules-empty {
+    text-align: center;
+    padding: 24px 0;
+    color: #999;
+    font-size: 0.95rem;
+}
