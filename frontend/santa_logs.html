@@ -14,6 +14,18 @@
 </head>
 
 <body>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    <div id="scdmsToast" class="toast align-items-center text-bg-dark border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="scdmsToastMessage">
+                <!-- JS에서 메시지 채움 -->
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
 <header class="app-header navbar navbar-dark px-3" style="background: var(--santa-red);">
     <!-- Left: logo + service name -->
     <div class="d-flex align-items-center gap-2">
@@ -49,7 +61,6 @@
     <div id="loaderBackdrop" class="loader-backdrop hidden">
         <div class="loader"></div>
     </div>
-    <div id="errorBanner" class="error-banner hidden"></div>
 
     <!-- MAIN CONTENT -->
     <main class="page-container">
