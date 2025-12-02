@@ -1,0 +1,175 @@
+/* 전체 배경 + 오버레이 */
+* {
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e5e7eb;
+}
+
+.bg-overlay {
+  width: 100%;
+  min-height: 100vh;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+/* 로그인 카드 */
+.login-card {
+  width: 100%;
+  max-width: 540px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 22px;
+  padding: 32px 40px 36px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  border: 4px solid #cf4b43; /* 붉은 테두리 */
+  position: relative;
+}
+
+/* 상단 아이콘 (동그란 원) */
+.login-icon-wrapper {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.login-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #c8453d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(200, 69, 61, 0.5);
+}
+
+/* 제목 영역 */
+.login-header {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 28px;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #c8453d;
+  font-weight: 700;
+}
+
+.login-subtitle {
+  margin: 6px 0 0;
+  font-size: 1.05rem;
+  color: #314047;
+}
+
+/* 폼 */
+.login-form {
+  margin-top: 8px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #f97373;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.25);
+}
+
+/* 버튼 */
+.login-button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #cf4b43;
+  color: #ffffff;
+  box-shadow: 0 10px 18px rgba(207, 75, 67, 0.45);
+  transition: background 0.12s ease, transform 0.08s ease,
+    box-shadow 0.12s ease;
+}
+
+.login-button:hover {
+  background-color: #e1584f;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(207, 75, 67, 0.55);
+}
+
+.login-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 14px rgba(207, 75, 67, 0.4);
+}
+
+.login-button:disabled {
+  cursor: default;
+  opacity: 0.75;
+  box-shadow: none;
+}
+
+/* 에러 메시지 */
+.error-message {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  display: none;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .bg-overlay {
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .login-card {
+    max-width: 95%;
+    padding: 28px 20px 30px;
+  }
+}

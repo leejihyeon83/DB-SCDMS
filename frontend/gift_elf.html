@@ -12,6 +12,11 @@
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/gift_elf.css" />
+
+  <script src="/js/auth.js"></script>
+  <script>
+    const currentUser = requireRole(["GiftElf"]);
+  </script>
 </head>
 <body>
   <!-- 상단 헤더 -->
@@ -25,11 +30,7 @@
 
     <div class="d-flex align-items-center gap-2">
       <span class="badge bg-success">GiftElf</span>
-      <button
-        class="btn btn-outline-light btn-sm"
-        type="button"
-        onclick="window.location.href='login.html'"
-      >
+      <button type="button" class="btn btn-outline-danger" onclick="logout()">
         로그아웃
       </button>
     </div>
@@ -244,8 +245,6 @@
 
   <!-- Bootstrap Bundle JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- 페이지 스크립트 -->
-  <script src="js/gift_elf.js"></script>
 
   <!-- 레시피 모달 -->
   <div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModalLabel" aria-hidden="true">
@@ -263,6 +262,6 @@
       </div>
     </div>
   </div>
-
+  <script src="./js/gift_elf.js"></script>
 </body>
 </html>

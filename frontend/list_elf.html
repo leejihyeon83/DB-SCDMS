@@ -19,6 +19,50 @@
             min-height: 100vh;
         }
 
+        /* 상단 유저 정보 바 */
+        #user-info-bar {
+            padding: 10px 16px;
+            background: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .user-info-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .user-label {
+            color: #374151;
+        }
+
+        .role-badge {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 0.8rem;
+        }
+
+        .logout-button {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: none;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #dc2626;
+        }
+
         /* 상단 네비게이션 */
         .scdms-navbar {
             background: var(--scdms-gold);
@@ -100,10 +144,15 @@
         }
 
     </style>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        // 이 페이지는 ListElf만 접근
+        const currentUser = requireRole(["ListElf"]);
+    </script>
 </head>
 
 <body>
-
 <!-- 🔴 상단 글로벌 네비게이션 -->
 <nav class="navbar navbar-expand-lg navbar-dark scdms-navbar">
     <div class="container-fluid px-4">
@@ -113,7 +162,7 @@
         </a>
         <div class="d-flex align-items-center">
             <span class="badge bg-light text-dark me-3">ListElf</span>
-            <a href="/login.html" class="btn btn-outline-light btn-sm">로그아웃</a>
+            <button type="button" class="btn btn-outline-light btn-sm" onclick="logout()">로그아웃</button>
         </div>
     </div>
 </nav>
@@ -263,7 +312,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="./js/ex.js"></script>
 <script>
 const BASE_URL = "http://127.0.0.1:8000";
 

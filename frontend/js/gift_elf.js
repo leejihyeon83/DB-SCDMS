@@ -10,14 +10,29 @@ const API = {
   giftDemandSummary: `${API_BASE}/list-elf/stats/gift-demand/summary`,
 };
 
+
 const state = {
   materials: [],
   gifts: [],
   demandRows: [],
   productionLogs: [],
   selectedGiftId: null,
-  staffId: 1, // TODO: 로그인 연동 시 교체
+  staffId: null,
 };
+
+// 로그인 정보에서 staffId 채우기
+(function initStaffIdFromLogin() {
+  const raw = localStorage.getItem("currentUser");
+  if (!raw) return;
+  try {
+    const user = JSON.parse(raw);
+    if (user && typeof user.staff_id === "number") {
+      state.staffId = user.staff_id;
+    }
+  } catch (e) {
+    console.warn("currentUser 파싱 실패:", e);
+  }
+})();
 
 let recipeModal;
 
@@ -367,6 +382,11 @@ async function onClickShowRecipe(giftId, giftName) {
 async function onClickProduce() {
   if (!state.selectedGiftId) {
     showToast("먼저 제작할 선물을 선택해 주세요.", "error");
+    return;
+  }
+
+  if (!state.staffId) {
+    showToast("로그인 정보가 없어 스태프 ID를 확인할 수 없습니다.", "error");
     return;
   }
 
