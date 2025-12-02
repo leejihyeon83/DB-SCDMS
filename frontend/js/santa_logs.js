@@ -21,14 +21,33 @@ function setLoading(isLoading) {
     loader.classList.toggle("hidden", !isLoading);
 }
 
-function showError(message) {
-    if (!errorBanner) {
-        alert(message);
-        return;
+function showToast(message, type = "info") {
+    const toastEl = document.getElementById("scdmsToast");
+    const msgEl = document.getElementById("scdmsToastMessage");
+
+    msgEl.textContent = message;
+
+    // 기존 클래스 초기화 (기본 디자인 유지 후 색상만 변경)
+    toastEl.classList.remove("text-bg-danger", "text-bg-success", "text-bg-dark");
+
+    // 타입별 색상 적용
+    if (type === "error") {
+        toastEl.classList.add("text-bg-danger");
+    } else if (type === "success") {
+        toastEl.classList.add("text-bg-success");
+    } else {
+        toastEl.classList.add("text-bg-dark");
     }
-    errorBanner.textContent = message;
-    errorBanner.classList.remove("hidden");
-    setTimeout(() => errorBanner.classList.add("hidden"), 5000);
+
+    // Bootstrap Toast 인스턴스 생성 및 표시
+    // { delay: 3000 } -> 3초 뒤 자동 사라짐
+    // 기존 인스턴스가 있다면 재사용하는 것이 좋으나, 간편 구현을 위해 새로 생성
+    const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    bsToast.show();
+}
+
+function showError(message) {
+    showToast(message, "error");
 }
 
 function formatDateTime(isoString) {
@@ -45,7 +64,7 @@ function formatDateTime(isoString) {
 function statusBadgeSuccess() {
     const span = document.createElement("span");
     span.className = "badge badge-success";
-    span.textContent = "배송완료";
+    span.textContent = "DELIVERED";
     return span;
 }
 
@@ -58,7 +77,49 @@ function renderSummaryCounts(successCount, failedCount) {
 }
 
 // ============================
-// 배송 로그 테이블
+// 실패 그룹 -> 실패 로그 변환
+// ============================
+function convertFailedGroupsToLogs() {
+    const failedLogs = [];
+
+    failedDetails.forEach(group => {
+        const timestamp = group.updated_at || group.created_at || new Date().toISOString();
+
+        group.items.forEach(item => {
+            failedLogs.push({
+                log_id: `F-${group.group_id}-${item.child_id}`,
+                delivery_timestamp: timestamp,
+                child_name: item.child_name || "알 수 없음",
+                gift_name: item.gift_name || "재고 없음",
+                status: "FAILED"
+            });
+        });
+    });
+
+    return failedLogs;
+}
+
+// ============================
+// 성공/실패 통합 로그 렌더링
+// ============================
+function renderAllLogs() {
+    const successLogs = logs.map(l => ({
+        ...l,
+        status: "SUCCESS"
+    }));
+
+    const failedLogs = convertFailedGroupsToLogs();
+
+    const allLogs = [...successLogs, ...failedLogs].sort(
+        (a, b) => new Date(b.delivery_timestamp) - new Date(a.delivery_timestamp)
+    );
+
+    renderLogsTable(allLogs);
+}
+
+
+// ============================
+// SUCCESS / FAILED 구분 렌더링
 // ============================
 function renderLogsTable(logsToRender) {
     const tbody = document.getElementById("logsTableBody");
@@ -73,13 +134,18 @@ function renderLogsTable(logsToRender) {
     }
 
     logsToRender.forEach((log) => {
+        const isFailed = log.status === "FAILED";
+        const badge = isFailed
+            ? `<span class="badge badge-failed">FAILED</span>`
+            : `<span class="badge badge-success">DELIVERED</span>`;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>#${log.log_id}</td>
             <td>${formatDateTime(log.delivery_timestamp)}</td>
             <td>${log.child_name}</td>
             <td>${log.gift_name}</td>
-            <td>${statusBadgeSuccess().outerHTML}</td>
+            <td>${badge}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -266,6 +332,7 @@ async function loadLogsPage() {
         renderMyLogs();
         applyStaffFilter();
         calculateSummary();
+        renderAllLogs();
 
 
     } catch (error) {

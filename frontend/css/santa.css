@@ -261,9 +261,50 @@ body {
 }
 
 .badge-delivery {
-    background: #e0f3ff;
-    color: #005d9b;
+    background: #73aed6;
+    color: #73aed6;
 }
+
+/* NICE*/
+.badge-nice {
+    background: #7ad692;
+    color: #7ad692;
+    border: 1px solid #9fdcb1;
+    font-weight: 700;
+}
+
+/* NAUGHTY */
+.badge-naughty {
+    background: #dc3232;
+    color: #dc3232;
+    border: 1px solid #f5b5c9;
+    font-weight: 700;
+}
+
+/* PENDING */
+.badge-pending {
+    background: #d2c267;
+    color: #d2c267;
+    border: 1px solid #f2d28c;
+    font-weight: 700;
+}
+
+/* DELIVERED */
+.badge-delivered {
+    background: #57bbfd;
+    color: #57bbfd;
+    border: 1px solid #a8d1f0;
+    font-weight: 700;
+}
+
+/* FAILED */
+.badge-failed {
+    background: #c62828;
+    color: #c62828;
+    border: 1px solid #f3b0b0;
+    font-weight: 700;
+}
+
 
 /* 로딩 */
 .loader-backdrop {
@@ -308,7 +349,7 @@ body {
 }
 
 /* 모달 */
-.modal-overlay {
+.santa-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(35, 8, 8, 0.5);
@@ -318,7 +359,7 @@ body {
     z-index: 100;
 }
 
-.modal {
+.santa-modal {
     background: #fffaf6;
     border-radius: 16px;
     max-width: 480px;
@@ -328,14 +369,14 @@ body {
     border: 1px solid #f2d5c9;
 }
 
-.modal-header {
+.santa-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
 }
 
-.modal-header h3 {
+.santa-modal-header h3 {
     margin: 0;
     font-size: 1.1rem;
 }
@@ -711,23 +752,23 @@ body {
 
 /* 배송 완료 (SUCCESS — Green) */
 .badge-success {
-    background: #1e7c37;         
-    color: #1e7c37;   
+    background: #7ad692;         
+    color: #7ad692;   
     border: 1px solid #9bd8ac;  
     font-weight: 700;
 }
 
 /* 배송 실패 (FAILED — Red) */
 .badge-failed {
-    background: #c62828;       
-    color: #c62828;           
+    background: #ff7676;       
+    color: #ff7676;           
     border: 1px solid #f5b5b5;   
     font-weight: 700;
 }
 
 .badge-pending {
-    background: #a36b14;        
-    color: #a36b14;             
+    background: #ffee6e;        
+    color: #ffee6e;             
     border: 1px solid #f0d49a;    
     font-weight: 700;
 }
@@ -933,3 +974,137 @@ body {
     background: #c9302c;
 }
 
+/* Toast 컨테이너 위치 수정: 화면 중앙 상단 고정 */
+.toast-container {
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+    p-3: 0 !important; /* bootstrap class override */
+}
+
+/* Toast 본체 디자인 */
+.toast {
+    background-color: rgba(43, 26, 25, 0.95) !important; /* 진한 갈색 배경 */
+    color: #fff !important;
+    border-radius: 50px !important; /* 둥근 알약 모양 */
+    padding: 4px 10px !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    min-width: 300px;
+    justify-content: center;
+}
+
+/* 닫기 버튼 숨기기 (자동으로 사라지므로 깔끔하게 제거) */
+.toast .btn-close {
+    display: none;
+}
+
+/* Toast 내부 바디 정렬 */
+.toast-body {
+    text-align: center;
+    width: 100%;
+    padding: 10px 20px;
+    word-break: keep-all;
+}
+
+/* 에러일 경우 (빨간색) */
+.text-bg-danger {
+    background-color: #d64840 !important; /* 산타 레드 */
+    border: 2px solid #fff;
+}
+
+/* 성공일 경우 (초록색) */
+.text-bg-success {
+    background-color: #4CAF50 !important;
+    border: 2px solid #fff;
+}
+
+/* =========================================
+   커스텀 체크박스 & 리스트 아이템 스타일링
+   ========================================= */
+
+/* 1. 리스트 아이템 (카드) 기본 스타일 */
+.child-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #f0ddd7; /* 연한 테두리 */
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 8px; /* 아이템 간 간격 */
+    position: relative;
+}
+
+/* 마우스 올렸을 때 */
+.child-item:hover {
+    background: #fff5f2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(214, 72, 64, 0.08);
+    border-color: #f2c2b8;
+}
+
+/* 2. 체크되었을 때 (카드 전체 스타일 변경) */
+/* :has() 선택자는 최신 브라우저에서 작동합니다. */
+.child-item:has(.child-checkbox:checked) {
+    background: #ffebe6; /* 아주 연한 빨간 배경 */
+    border-color: var(--santa-red); /* 진한 빨간 테두리 */
+    box-shadow: 0 0 0 1px var(--santa-red); /* 테두리 강조 */
+}
+
+/* 3. 체크박스 인풋 숨기기 & 커스텀 디자인 */
+.child-checkbox {
+    appearance: none; /* 기본 스타일 제거 */
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e0c0b8;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0; /* 크기 줄어듦 방지 */
+    transition: all 0.2s ease;
+}
+
+/* 체크박스 선택 시 색상 */
+.child-checkbox:checked {
+    background-color: var(--santa-red);
+    border-color: var(--santa-red);
+}
+
+/* 체크 표시 (가상 요소로 V자 만들기) */
+.child-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+}
+
+/* 텍스트 정보 정렬 */
+.child-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.child-name-row {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.child-sub-row {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}

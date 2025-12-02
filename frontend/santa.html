@@ -81,7 +81,6 @@
                 <select id="deliveryFilter" class="filter-select">
                     <option value="">배송상태 전체</option>
                     <option value="PENDING">PENDING</option>
-                    <option value="SCHEDULED">SCHEDULED</option>
                     <option value="DELIVERED">DELIVERED</option>
                 </select>
             </div>
@@ -100,8 +99,8 @@
                 <div class="summary-value" id="pendingCount">0 건</div>
             </article>
 
-            <article class="summary-card summary-scheduled">
-                <div class="summary-label">배송 준비 완료 (SCHEDULED)</div>
+            <article class="summary-card summary-delivered">
+                <div class="summary-label">배송 완료 (DELIVERED)</div>
                 <div class="summary-value" id="readyCount">0 건</div>
             </article>
 
@@ -134,14 +133,14 @@
     </main>
 
     <!-- DETAIL MODAL -->
-    <div id="childModalOverlay" class="modal-overlay hidden">
-        <div class="modal">
-            <header class="modal-header">
+    <div id="childModalOverlay" class="santa-modal-overlay hidden">
+        <div class="santa-modal">
+            <header class="santa-modal-header">
                 <h3 id="modalChildName">아이 상세정보</h3>
                 <button id="modalCloseBtn" class="icon-btn">&times;</button>
             </header>
 
-            <section class="modal-body">
+            <section class="santa-modal-body">
                 <div class="modal-row">
                     <span class="modal-label">주소</span>
                     <span id="modalAddress" class="modal-value"></span>
@@ -152,11 +151,11 @@
                 </div>
                 <div class="modal-row">
                     <span class="modal-label">판정</span>
-                    <span id="modalStatus" class="badge badge-status"></span>
+                    <span id="modalStatus"></span>
                 </div>
                 <div class="modal-row">
                     <span class="modal-label">배송상태</span>
-                    <span id="modalDeliveryStatus" class="badge badge-delivery"></span>
+                    <span id="modalDeliveryStatus" ></span>
                 </div>
                 <div class="modal-row">
                     <span class="modal-label">메모</span>
@@ -175,7 +174,7 @@
                 </table>
             </section>
 
-            <footer class="modal-footer">
+            <footer class="santa-modal-footer">
                 <button id="modalCloseFooter" class="primary-btn">닫기</button>
             </footer>
         </div>

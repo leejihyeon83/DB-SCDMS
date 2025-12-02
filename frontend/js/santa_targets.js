@@ -120,7 +120,7 @@ function updateSummary(arr) {
         arr.filter(c => c.delivery_status_code === "PENDING").length + " 건";
 
     document.getElementById("readyCount").textContent =
-        arr.filter(c => c.delivery_status_code === "SCHEDULED").length + " 건";
+        arr.filter(c => c.delivery_status_code === "DELIVERED").length + " 건";
 }
 
 // 상세 모달 호출
@@ -142,9 +142,17 @@ function fillModal(detail) {
     document.getElementById("modalChildName").textContent = detail.name;
     document.getElementById("modalAddress").textContent = detail.address;
     document.getElementById("modalRegion").textContent = regionsMap[detail.region_id] || "-";
-    document.getElementById("modalStatus").textContent = detail.status_code;
-    document.getElementById("modalDeliveryStatus").textContent = detail.delivery_status_code;
     document.getElementById("modalNote").textContent = detail.child_note || "(메모 없음)";
+
+    document.getElementById("modalStatus").innerHTML =
+        `<span class="badge ${getStatusBadgeClass(detail.status_code)}">
+            ${detail.status_code}
+        </span>`;
+
+    document.getElementById("modalDeliveryStatus").innerHTML =
+        `<span class="badge ${getDeliveryBadgeClass(detail.delivery_status_code)}">
+            ${detail.delivery_status_code}
+        </span>`;
 
     const tbody = document.getElementById("modalWishlistBody");
     tbody.innerHTML = "";
@@ -159,4 +167,41 @@ function fillModal(detail) {
             `;
             tbody.appendChild(tr);
         });
+}
+
+function getStatusBadgeClass(code) {
+    code = code.toUpperCase();
+    if (code === "NICE") return "badge-nice";
+    if (code === "NAUGHTY") return "badge-naughty";
+    return "badge-pending";   // PENDING 등
+}
+
+function getDeliveryBadgeClass(code) {
+    code = code.toUpperCase();
+    if (code === "DELIVERED") return "badge-delivered";
+    if (code === "FAILED") return "badge-failed";
+    return "badge-pending";   // 나머지는 PENDING 처리
+}
+
+function makeBadgeHtml(type, value) {
+    if (!value) return "-";
+    
+    const text = value.toUpperCase(); // 대소문자 무시
+    let className = "badge-pending";  // 기본값
+
+    // 1. 상태/판정 관련 (NICE, NAUGHTY, SUCCESS, FAILED)
+    if (type === 'status') {
+        if (text === 'NICE') className = "badge-nice";
+        else if (text === 'NAUGHTY') className = "badge-naughty";
+        else if (text === 'SUCCESS') className = "badge-success"; // 로그용
+        else if (text === 'FAILED') className = "badge-failed";   // 로그용
+    } 
+    // 2. 배송 관련 (PENDING, SCHEDULED, DELIVERED, DONE)
+    else if (type === 'delivery') {
+        if (text === 'PENDING') className = "badge-pending";
+        else if (text === 'DELIVERED' || text === 'DONE') className = "badge-delivered";
+        else if (text === 'FAILED') className = "badge-failed";
+    }
+
+    return `<span class="badge ${className}">${text}</span>`;
 }

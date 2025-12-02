@@ -15,16 +15,33 @@ function setLoading(isLoading) {
     loader.classList.toggle("hidden", !isLoading);
 }
 
-function showError(message) {
-    if (!errorBanner) {
-        alert(message);
-        return;
+function showToast(message, type = "info") {
+    const toastEl = document.getElementById("scdmsToast");
+    const msgEl = document.getElementById("scdmsToastMessage");
+
+    msgEl.textContent = message;
+
+    // 기존 클래스 초기화 (기본 디자인 유지 후 색상만 변경)
+    toastEl.classList.remove("text-bg-danger", "text-bg-success", "text-bg-dark");
+
+    // 타입별 색상 적용
+    if (type === "error") {
+        toastEl.classList.add("text-bg-danger");
+    } else if (type === "success") {
+        toastEl.classList.add("text-bg-success");
+    } else {
+        toastEl.classList.add("text-bg-dark");
     }
-    errorBanner.textContent = message;
-    errorBanner.classList.remove("hidden");
-    setTimeout(() => {
-        errorBanner.classList.add("hidden");
-    }, 5000);
+
+    // Bootstrap Toast 인스턴스 생성 및 표시
+    // { delay: 3000 } -> 3초 뒤 자동 사라짐
+    // 기존 인스턴스가 있다면 재사용하는 것이 좋으나, 간편 구현을 위해 새로 생성
+    const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    bsToast.show();
+}
+
+function showError(message) {
+    showToast(message, "error");
 }
 
 function formatChildSubtitle(target) {
@@ -38,26 +55,30 @@ function renderTargets(list) {
     if (!container) return;
 
     const source = list || targets;
-
     container.innerHTML = "";
 
     if (!source.length) {
-        const empty = document.createElement("p");
+        const empty = document.createElement("div"); // p -> div로 변경하여 스타일링 용이하게
         empty.className = "empty-text";
+        empty.style.padding = "20px";
+        empty.style.textAlign = "center";
         empty.textContent = "표시할 배송 대상 아이가 없습니다. (지역 또는 상태를 확인해주세요)";
         container.appendChild(empty);
         return;
     }
 
     source.forEach((t) => {
+        // 1. 전체를 감싸는 Label (클릭 시 체크박스 동작)
         const label = document.createElement("label");
-        label.className = "child-item";
+        label.className = "child-item"; // CSS에서 스타일링한 클래스
 
+        // 2. 체크박스
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.value = String(t.child_id);
-        checkbox.className = "child-checkbox";
+        checkbox.className = "child-checkbox"; // CSS에서 커스텀한 클래스
 
+        // 3. 정보 영역
         const info = document.createElement("div");
         info.className = "child-info";
 
@@ -72,6 +93,7 @@ function renderTargets(list) {
         info.appendChild(nameRow);
         info.appendChild(subRow);
 
+        // 4. 조립
         label.appendChild(checkbox);
         label.appendChild(info);
 
@@ -315,6 +337,8 @@ async function fetchInitialData() {
     }
 }
 
+// santa_groups.js
+
 async function handleAddToQueue() {
     const checkboxes = document.querySelectorAll(".child-checkbox");
     const selectedIds = Array.from(checkboxes)
@@ -333,7 +357,7 @@ async function handleAddToQueue() {
         return;
     }
 
-    // 선택된 아이들의 region_id가 모두 동일한지 체크
+    // 지역 체크 등 기존 로직 유지
     const selectedTargets = allTargets.filter((t) =>
         selectedIds.includes(t.child_id)
     );
@@ -349,12 +373,24 @@ async function handleAddToQueue() {
         return;
     }
 
-    if (!confirm("선택한 아이들로 새 배송 그룹을 생성할까요?")) return;
+    // SweetAlert2 사용 
+    const result = await Swal.fire({
+        title: '배송 그룹 생성',
+        text: "선택한 아이들로 새 배송 그룹을 생성할까요?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d64840', // 산타 레드
+        cancelButtonColor: '#999',
+        confirmButtonText: '네, 생성할게요',
+        cancelButtonText: '취소',
+        background: '#fffaf6'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
         setLoading(true);
 
-        // 자동 선물 배정 API 호출 (전체 대상 중에서, 우리는 선택된 아이만 사용)
         const assignments = await apiGET("/santa/assign-gifts");
         const mapByChild = new Map(
             assignments.map((a) => [a.child_id, a.gift_id])
@@ -368,9 +404,7 @@ async function handleAddToQueue() {
             .filter((p) => p.gift_id != null);
 
         if (!pairs.length) {
-            showError(
-                "선택한 아이들 중 재고가 있는 선물이 있는 아이가 없습니다. 선물 재고를 먼저 준비해주세요."
-            );
+            showToast("선물 재고가 부족하여 그룹을 생성할 수 없습니다.", "warning");
             return;
         }
 
@@ -378,13 +412,11 @@ async function handleAddToQueue() {
         const regionName = selectedTargets[0].region_name || "지역";
         const groupName = `배송 그룹 (${regionName} · ${reindeerName} · ${pairs.length}명)`;
 
-        // 1) 배송 그룹 생성
         const groupId = await apiPOST("/santa/groups", {
             group_name: groupName,
             reindeer_id: reindeerId,
         });
 
-        // 2) 그룹에 아이/선물 추가
         for (const pair of pairs) {
             await apiPOST(`/santa/groups/${groupId}/items`, {
                 child_id: pair.child_id,
@@ -392,12 +424,10 @@ async function handleAddToQueue() {
             });
         }
 
-        // 체크박스 해제
         checkboxes.forEach((cb) => (cb.checked = false));
 
-        // 데이터 새로고침
         await fetchInitialData();
-        alert("배송 그룹이 생성되어 대기열에 추가되었습니다.");
+        showToast("배송 그룹이 생성되어 대기열에 추가되었습니다.", "success");
     } catch (err) {
         console.error(err);
         showError("배송 그룹 생성 중 오류가 발생했습니다.\n" + err);
@@ -406,23 +436,71 @@ async function handleAddToQueue() {
     }
 }
 
+// santa_groups.js
+
 async function handleDeliverGroup(groupId) {
-    if (!confirm("이 배송 그룹의 선물 배송을 실행할까요?")) return;
+    // ▼▼▼ [수정된 부분] ▼▼▼
+    const result = await Swal.fire({
+        title: '!배송 시작!',
+        text: "이 그룹의 선물 배송을 실제로 시작할까요?",
+        icon: 'warning', 
+        showCancelButton: true,
+        confirmButtonColor: '#d64840',
+        cancelButtonColor: '#999',
+        confirmButtonText: '시작',
+        cancelButtonText: '취소',
+        background: '#fffaf6'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
         setLoading(true);
-        const result = await apiPOST(`/santa/groups/${groupId}/deliver`);
-        console.log(result);
+        const res = await apiPOST(`/santa/groups/${groupId}/deliver`);
+        
+        // 성공 메시지도 SweetAlert로 예쁘게
+        await Swal.fire({
+            title: '배송 완료!',
+            text: `총 ${res.delivered_count}개의 선물이 전달되었습니다.`,
+            icon: 'success',
+            confirmButtonColor: '#d64840'
+        });
 
-        alert(
-            `배송이 완료되었습니다!\n전달된 선물 수: ${result.delivered_count}`
-        );
-
-        // 다시 데이터 로딩 (대기 그룹, 타겟, 루돌프 상태, 재고 모두 갱신)
         await fetchInitialData();
     } catch (err) {
         console.error(err);
         showError("배송 실행 중 오류가 발생했습니다.\n" + err);
+        await fetchInitialData();
+    } finally {
+        setLoading(false);
+    }
+}
+
+async function handleDeleteGroup(groupId) {
+    // ▼▼▼ [수정된 부분] ▼▼▼
+    const result = await Swal.fire({
+        title: '그룹 삭제',
+        html: "정말로 이 배송 그룹을 삭제할까요?<br><small>(대기중 또는 실패한 그룹만 삭제됩니다)</small>",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33', // 삭제는 강렬한 빨강
+        cancelButtonColor: '#999',
+        confirmButtonText: '네, 삭제합니다',
+        cancelButtonText: '취소',
+        background: '#fffaf6'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        setLoading(true);
+        await apiDELETE(`/santa/groups/${groupId}`);
+        
+        showToast("배송 그룹이 삭제되었습니다.", "success");
+        await fetchInitialData();
+    } catch (err) {
+        console.error(err);
+        showError("배송 그룹 삭제 중 오류가 발생했습니다.\n" + err);
     } finally {
         setLoading(false);
     }
@@ -437,24 +515,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchInitialData();
 });
-
-async function handleDeleteGroup(groupId) {
-    if (!confirm("정말로 이 배송 그룹을 삭제할까요?\n(대기중 또는 실패한 그룹만 삭제할 수 있습니다.)")) return;
-
-    try {
-        setLoading(true);
-
-        // DELETE API 호출
-        await apiDELETE(`/santa/groups/${groupId}`);
-
-        alert("배송 그룹이 삭제되었습니다.");
-
-        // 데이터 새로고침
-        await fetchInitialData();
-    } catch (err) {
-        console.error(err);
-        showError("배송 그룹 삭제 중 오류가 발생했습니다.\n" + err);
-    } finally {
-        setLoading(false);
-    }
-}
