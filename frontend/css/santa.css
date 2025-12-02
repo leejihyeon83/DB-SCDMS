@@ -23,10 +23,25 @@ body {
 
 /* 상단 네비게이션 */
 /* 1단: 상단 헤더 바 */
-.santa-topbar {
-    background: var(--santa-red);          /* 산타라서 빨강 */
+/* .santa-topbar {
+    background: var(--santa-red);         
     padding: 14px 24px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    } */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+}
+
+.logo-icon {
+    font-size: 1.4rem;
+}
+
+.page-title {
+    text-align: center;
+    flex-grow: 1;
 }
 
 .topbar-title {
@@ -47,27 +62,23 @@ body {
     border-bottom: 1px solid #f0d1cd;
 }
 
+/* 기본 탭 버튼 */
 .tab-item {
     padding: 7px 18px;
-    border-radius: 999px;
+    border-radius: 10px;
     font-weight: 600;
     text-decoration: none;
     color: #8a3b2b;
     font-size: 0.95rem;
-    transition: background 0.15s, color 0.15s, transform 0.05s;
+    transition: background 0.15s, color 0.15s;
 }
 
-.tab-item:hover {
-    background: #ffe0d7;
-    transform: translateY(-1px);
-}
-
+/* 선택(active)된 탭 버튼 */
 .tab-item.active {
-    background: #ffffff;
-    color: var(--santa-red-dark);
-    box-shadow: 0 2px 6px rgba(150, 40, 20, 0.25);
+    background: var(--santa-red);        /* 빨간색 배경 */
+    color: #ffffff;                      /* 글자는 하얀색 */
+    box-shadow: none;                    /* 그림자 제거 */
 }
-
 
 /* 메인 컨테이너 */
 .page-container {
@@ -136,7 +147,6 @@ body {
 .summary-card {
     flex: 1;
     min-width: 200px;
-    background: linear-gradient(135deg, #fffdfa, #fff1e1);
     border-radius: 14px;
     padding: 14px 16px;
     border: 1px solid #f3ddcd;
@@ -145,16 +155,19 @@ body {
     overflow: hidden;
 }
 
-.summary-card::before {
-    content: "";
-    position: absolute;
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(245, 197, 66, 0.7), transparent);
-    top: -30px;
-    right: -30px;
-    opacity: 0.8;
+.summary-card.summary-nice {
+    background: #e2f6e9;
+    border: 1px solid #c1e7cf;
+}
+
+.summary-card.summary-pending {
+    background: #fff8de;
+    border: 1px solid #f0dfaa;
+}
+
+.summary-card.summary-scheduled {
+    background: #e8f1ff;
+    border: 1px solid #c3d9ff;
 }
 
 .summary-label {
@@ -696,20 +709,29 @@ body {
     font-weight: 600;
 }
 
+/* 배송 완료 (SUCCESS — Green) */
 .badge-success {
-    background: #e3f6e8;
-    color: #237b3c;
+    background: #1e7c37;         
+    color: #1e7c37;   
+    border: 1px solid #9bd8ac;  
+    font-weight: 700;
 }
 
+/* 배송 실패 (FAILED — Red) */
 .badge-failed {
-    background: #ffe3e3;
-    color: #c23636;
+    background: #c62828;       
+    color: #c62828;           
+    border: 1px solid #f5b5b5;   
+    font-weight: 700;
 }
 
 .badge-pending {
-    background: #fff4db;
-    color: #a06215;
+    background: #a36b14;        
+    color: #a36b14;             
+    border: 1px solid #f0d49a;    
+    font-weight: 700;
 }
+
 
 /* 배송 로그 페이지 */
 
@@ -911,54 +933,3 @@ body {
     background: #c9302c;
 }
 
-/* ===== 상단 Santa + 로그아웃 정렬 ===== */
-.topbar-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.topbar-left {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #fff;     /* 글씨 흰색 통일 */
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-
-.logout-btn {
-    background: #ffffff22;
-    border: 1px solid #ffffff66;
-    color: #fff;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    text-decoration: none;
-    transition: 0.15s;
-}
-
-.logout-btn:hover {
-    background: #ffffff44;
-    border-color: #ffffffaa;
-}
-
-.santa-role {
-    background: #fff;
-    color: var(--santa-red-dark);
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    transition: 0.15s;
-}
-
-.santa-role:hover {
-    background: #ffe8e2;
-}
