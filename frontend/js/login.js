@@ -122,6 +122,5 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", handleLogin);
   }
 
-  // 이미 로그인 상태면 바로 분기하고 싶다면 주석 해제
-  // tryAutoRedirect();
+  tryAutoRedirect();
 });
