@@ -233,7 +233,7 @@ function renderGroups() {
 
         footer.appendChild(infoText);
         footer.appendChild(btn);
-        footer.appendChild(deleteBtn);  // ★ 여기 추가됨!
+        footer.appendChild(deleteBtn);
 
         card.appendChild(header);
         card.appendChild(footer);
