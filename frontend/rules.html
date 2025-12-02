@@ -85,26 +85,38 @@
         color: #999;
         font-size: 0.95rem;
         }
-
   </style>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    const currentUser = requireRole(["ListElf"]);
+  </script>
 </head>
 
 <body>
-<!-- 상단 글로벌 네비게이션 -->
 <nav class="navbar navbar-expand-lg navbar-dark scdms-navbar">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="#">
       <span class="brand-icon">🎄</span>
       <span>SCDMS · 명단 관리 요청 제어센터</span>
     </a>
-    <div class="d-flex align-items-center">
-      <span class="badge bg-light text-dark me-3">ListElf</span>
-      <button type="button" class="btn btn-outline-light btn-sm" onclick="logout()">로그아웃</button>
+    
+    <div class="d-flex align-items-center gap-3">
+        <div class="text-end lh-1">
+            <div id="header-user-name" class="text-white fw-bold small mb-1">
+                사용자
+            </div>
+            <span id="header-user-role" class="badge bg-light text-dark rounded-pill" style="font-size: 0.7rem;">
+                ListElf
+            </span>
+        </div>
+        <button type="button" class="btn btn-outline-light btn-sm" id="btn-logout">
+            로그아웃
+        </button>
     </div>
   </div>
 </nav>
 
-<!-- 상단 탭 -->
 <div class="scdms-tabs">
   <div class="container px-4">
     <ul class="nav py-3">
@@ -121,11 +133,9 @@
   </div>
 </div>
 
-<!-- 메인 콘텐츠 -->
 <div class="container px-4 py-4">
   <div class="scdms-card p-4 p-md-5">
 
-    <!-- 타이틀 -->
     <div class="mb-4">
       <h2 class="fw-bold mb-1">규칙 관리</h2>
       <p class="text-muted mb-0">
@@ -133,7 +143,6 @@
       </p>
     </div>
 
-    <!-- 1. 새 규칙 만들기 -->
     <div class="mb-4">
       <div class="section-title mb-2">➕ 새 규칙 만들기</div>
       <p class="text-muted mb-3 small">제목과 상세 기준을 입력하고 규칙을 추가하세요.</p>
@@ -156,20 +165,17 @@
 
     <hr class="my-4" />
 
-    <!-- 2. 활성 규칙 목록 -->
     <div>
       <div class="section-title mb-2">📖 활성 규칙</div>
       <p class="text-muted mb-3 small">현재 운영 중인 분류 기준들입니다.</p>
 
       <div id="rulesContainer">
-        <!-- 규칙 리스트 렌더링 영역 -->
-      </div>
+        </div>
     </div>
 
   </div>
 </div>
 
-<!-- 📄 규칙 상세보기 모달 -->
 <div class="modal fade" id="ruleDetailModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -197,7 +203,6 @@
   </div>
 </div>
 
-<!-- ✏ 규칙 수정 모달 -->
 <div class="modal fade" id="ruleEditModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -235,15 +240,64 @@
   let rules = [];
   let currentRuleId = null; // 상세보기 / 수정 대상 rule_id
 
-  /* Staff ID 가져오기 (로그인 연동되면 여기만 맞추면 됨) */
-  /*⭐⭐⭐⭐⭐⭐⭐⭐⭐수정⭐⭐⭐⭐⭐⭐⭐⭐*/
-  function getStaffId() {
-    const stored = localStorage.getItem("staff_id");
-    if (stored) return parseInt(stored);
-    // 임시: 로그인 연동 전이면 1로 고정
-    return 1;
+  /* -------------------------------
+     사용자 정보 초기화
+  -------------------------------- */
+  function initUserInfo() {
+    const raw = localStorage.getItem("currentUser");
+    if (!raw) return;
+
+    try {
+        const user = JSON.parse(raw);
+        
+        const nameEl = document.getElementById("header-user-name");
+        if (nameEl) nameEl.textContent = `${user.name || "이름 없음"} 요정`;
+
+        const roleEl = document.getElementById("header-user-role");
+        if (roleEl) roleEl.textContent = user.role || "ListElf";
+
+    } catch (e) {
+        console.warn("사용자 정보 파싱 실패", e);
+    }
   }
-   /*⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐*/
+
+  /* -------------------------------
+     로그아웃
+  -------------------------------- */
+  function initLogout() {
+    const btn = document.getElementById("btn-logout");
+    if (btn) {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (!confirm("정말 로그아웃 하시겠습니까?")) {
+                return; 
+            }
+
+            if (typeof logout === "function") {
+                logout();
+            } else {
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("token");
+                window.location.href = "../index.html";
+            }
+        });
+    }
+  }
+
+  /* -------------------------------
+     Staff ID 가져오기
+  -------------------------------- */
+  function getStaffId() {
+    const raw = localStorage.getItem("currentUser");
+    if (!raw) return null;
+    try {
+        const user = JSON.parse(raw);
+        return user.staff_id || null;
+    } catch(e) {
+        return null;
+    }
+  }
 
   /* 규칙 생성 */
   async function createRule() {
@@ -254,6 +308,11 @@
     if (!title || !description) {
       alert("규칙 제목과 상세 기준을 모두 입력해주세요.");
       return;
+    }
+
+    if (!staffId) {
+        alert("로그인 정보(staff_id)를 찾을 수 없습니다.");
+        return;
     }
 
     const body = {
@@ -410,6 +469,11 @@
       alert("규칙 제목과 상세 기준을 모두 입력해주세요.");
       return;
     }
+    
+    if (!staffId) {
+        alert("로그인 정보(staff_id)를 찾을 수 없습니다.");
+        return;
+    }
 
     const body = {
       title,
@@ -484,6 +548,8 @@
 
   /* 초기 실행 */
   (async function init() {
+    initUserInfo();
+    initLogout();
     await loadRules();
   })();
 </script>

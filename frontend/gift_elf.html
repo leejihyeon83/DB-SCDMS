@@ -21,20 +21,29 @@
 <body>
   <!-- 상단 헤더 -->
   <header class="app-header navbar navbar-dark px-3">
-    <div class="d-flex align-items-center gap-2">
-      <span class="logo-icon">❄</span>
-      <span class="navbar-brand mb-0 h1">SCDMS</span>
-    </div>
+  <div class="d-flex align-items-center gap-2">
+    <span class="logo-icon">❄</span>
+    <span class="navbar-brand mb-0 h1">SCDMS</span>
+  </div>
 
-    <h1 class="h5 mb-0 text-white">선물 요청 작업장</h1>
+  <h1 class="h5 mb-0 text-white position-absolute start-50 translate-middle-x">
+    선물 요청 작업장
+  </h1>
 
-    <div class="d-flex align-items-center gap-2">
-      <span class="badge bg-success">GiftElf</span>
-      <button type="button" class="btn btn-outline-danger" onclick="logout()">
-        로그아웃
-      </button>
+  <div class="d-flex align-items-center gap-3">
+    <div class="text-end lh-1">
+      <div id="header-user-name" class="text-white fw-bold small mb-1">
+        사용자
+      </div>
+      <span id="header-user-role" class="badge bg-success rounded-pill" style="font-size: 0.7rem;">
+        Role
+      </span>
     </div>
-  </header>
+    <button type="button" class="btn btn-outline-light btn-sm" id="btn-logout">
+      로그아웃
+    </button>
+  </div>
+</header>
 
   <main class="container my-4">
     <!-- 탭 메뉴 -->

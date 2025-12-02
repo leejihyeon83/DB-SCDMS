@@ -64,9 +64,53 @@ async function fetchJson(url, options = {}) {
   }
 }
 
-// -------------------- 초기화 --------------------
+// -------------------- 초기화 및 사용자 관리 --------------------
+
+// 사용자 정보 초기화
+function initUserInfo() {
+  const raw = localStorage.getItem("currentUser");
+  if (!raw) return;
+
+  try {
+      const user = JSON.parse(raw);
+      
+      const nameEl = document.getElementById("header-user-name");
+      const roleEl = document.getElementById("header-user-role");
+
+      if (nameEl) nameEl.textContent = `${user.name || "이름 없음"} 님`;
+      if (roleEl) roleEl.textContent = user.role || "Keeper";
+
+  } catch (e) {
+      console.warn("currentUser 파싱 실패:", e);
+  }
+}
+
+// 로그아웃 버튼 초기화
+function initLogout() {
+  const btn = document.getElementById("btn-logout");
+  if (btn) {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      if (!confirm("정말 로그아웃 하시겠습니까?")) {
+        return;
+      }
+
+      if (typeof logout === "function") {
+        logout();
+      } else {
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("token");
+        window.location.href = "../index.html";
+      }
+    });
+  }
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
+  initUserInfo(); // 사용자 정보 로드
+  initLogout();   // 로그아웃 이벤트 연결
   initTabs();
   
   // 모달 인스턴스
@@ -75,12 +119,18 @@ document.addEventListener("DOMContentLoaded", () => {
     editModal = new bootstrap.Modal(modalEl);
   }
 
-  // 버튼 이벤트 리스너
-  $("#btn-submit-edit").addEventListener("click", submitEdit);
-  $("#btn-save-health-log").addEventListener("click", submitHealthLog);
-  $("#health-reindeer-select").addEventListener("change", (e) => {
-    loadHealthLogs(e.target.value);
-  });
+  const btnSubmitEdit = $("#btn-submit-edit");
+  if (btnSubmitEdit) btnSubmitEdit.addEventListener("click", submitEdit);
+
+  const btnSaveHealth = $("#btn-save-health-log");
+  if (btnSaveHealth) btnSaveHealth.addEventListener("click", submitHealthLog);
+
+  const selectHealth = $("#health-reindeer-select");
+  if (selectHealth) {
+    selectHealth.addEventListener("change", (e) => {
+      loadHealthLogs(e.target.value);
+    });
+  }
 
   // 초기 데이터 로드
   loadReindeers();
@@ -122,11 +172,13 @@ async function loadReindeers() {
   } catch (err) {
     console.error(err);
     showToast("데이터 로드 실패: " + err.message, "error");
+    return [];
   }
 }
 
 function renderReindeerCards() {
   const container = $("#reindeer-list-container");
+  if (!container) return;
   container.innerHTML = "";
 
   state.reindeers.forEach((r) => {
@@ -157,7 +209,7 @@ function renderReindeerCards() {
 
         <div class="stat-row">
           <div class="stat-label">
-            <span>⚡ 마법력</span>
+            <span>⚡ 마력</span>
             <span>${r.current_magic} / 100</span>
           </div>
           <div class="progress-custom">
@@ -182,7 +234,7 @@ function renderReindeerCards() {
   });
 }
 
-// 🥕 & 💎 아이템 주기 로직 (프론트 계산 후 API 호출)
+// 🥕 & 💎 아이템 주기 로직
 async function giveItem(id, type) {
   const target = state.reindeers.find(r => r.reindeer_id === id);
   if (!target) return;
@@ -266,7 +318,8 @@ async function submitEdit() {
 
 function renderSelectOptions() {
   const select = $("#health-reindeer-select");
-  // 기존 옵션 유지 여부는 로직에 따라 결정 (여기선 초기화 후 재생성)
+  if (!select) return;
+
   const currentVal = select.value; 
   
   select.innerHTML = `<option value="" disabled selected>루돌프를 선택하세요</option>`;
@@ -285,7 +338,6 @@ async function loadHealthLogs(reindeerId) {
   if(!reindeerId) return;
   state.selectedHealthReindeerId = reindeerId;
 
-  // UI 이름 업데이트
   const target = state.reindeers.find(r => r.reindeer_id == reindeerId);
   if(target) $("#health-log-target-name").textContent = `Target: ${target.name}`;
 
@@ -293,7 +345,7 @@ async function loadHealthLogs(reindeerId) {
   tbody.innerHTML = `<tr><td colspan="2" class="text-center py-3">로딩 중...</td></tr>`;
 
   try {
-    const logs = await fetchJson(API.getLogs(reindeerId)); // GET /reindeer/{id}/health-logs
+    const logs = await fetchJson(API.getLogs(reindeerId)); 
     renderHealthLogs(logs);
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="2" class="text-center text-danger py-3">기록을 불러오지 못했습니다.</td></tr>`;
@@ -312,7 +364,6 @@ function renderHealthLogs(logs) {
   logs.forEach(log => {
     const tr = document.createElement("tr");
     
-    // 날짜 포맷팅
     let dateStr = log.log_timestamp;
     try {
         const d = new Date(log.log_timestamp);
@@ -342,7 +393,7 @@ async function submitHealthLog() {
     
     showToast("건강 기록이 추가되었습니다.", "success");
     $("#health-note").value = "";
-    loadHealthLogs(id); // 목록 갱신
+    loadHealthLogs(id); 
   } catch (err) {
     showToast("기록 저장 실패: " + err.message, "error");
   }
@@ -352,6 +403,8 @@ async function submitHealthLog() {
 
 async function loadAvailable() {
   const tbody = $("#ready-reindeer-tbody");
+  if (!tbody) return;
+
   tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3">로딩 중...</td></tr>`;
 
   try {

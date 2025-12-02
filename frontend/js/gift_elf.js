@@ -21,18 +21,32 @@ const state = {
 };
 
 // 로그인 정보에서 staffId 채우기
-(function initStaffIdFromLogin() {
+function initUserInfo() {
   const raw = localStorage.getItem("currentUser");
-  if (!raw) return;
+  if (!raw) {
+    // 비로그인 상태라면 로그인 페이지로 튕겨내거나 처리 (auth.js가 있다면 생략 가능)
+    return;
+  }
+
   try {
     const user = JSON.parse(raw);
+    
+    // 1. State 업데이트
     if (user && typeof user.staff_id === "number") {
       state.staffId = user.staff_id;
     }
+
+    // 2. UI 업데이트 (헤더)
+    const nameEl = document.getElementById("header-user-name");
+    const roleEl = document.getElementById("header-user-role");
+
+    if (nameEl) nameEl.textContent = `${user.name || "이름 없음"} 요정`;
+    if (roleEl) roleEl.textContent = user.role || "Unknown";
+
   } catch (e) {
     console.warn("currentUser 파싱 실패:", e);
   }
-})();
+}
 
 let recipeModal;
 
@@ -116,8 +130,10 @@ async function fetchJson(url, options = {}) {
 // -------------------- 초기화 --------------------
 
 document.addEventListener("DOMContentLoaded", () => {
+  initUserInfo(); // 사용자 정보 로드 먼저 실행
   initTabs();
   initActions();
+  initLogout();
 
   // 레시피 모달 인스턴스 생성
   const modalEl = document.getElementById("recipeModal");
@@ -133,6 +149,21 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDemand();
   });
 });
+
+// 로그아웃 버튼 초기화
+function initLogout() {
+  const btn = document.getElementById("btn-logout");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      if (!confirm("정말 로그아웃 하시겠습니까?")) {
+        return;
+      }
+
+      localStorage.removeItem("currentUser");
+      window.location.href = "../index.html"; 
+    });
+  }
+}
 
 // -------------------- 탭 전환 --------------------
 
