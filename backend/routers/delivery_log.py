@@ -40,6 +40,9 @@ def list_delivery_logs(
         )
         .join(Child, DeliveryLog.child_id == Child.ChildID)
         .join(FinishedGoods, DeliveryLog.gift_id == FinishedGoods.gift_id)
+        .distinct(
+            DeliveryLog.log_id 
+        )
         .order_by(DeliveryLog.delivery_timestamp.desc())
         .offset(offset)
         .limit(limit)
