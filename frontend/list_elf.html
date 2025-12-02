@@ -19,6 +19,50 @@
             min-height: 100vh;
         }
 
+        /* 상단 유저 정보 바 */
+        #user-info-bar {
+            padding: 10px 16px;
+            background: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .user-info-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .user-label {
+            color: #374151;
+        }
+
+        .role-badge {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 0.8rem;
+        }
+
+        .logout-button {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: none;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #dc2626;
+        }
+
         /* 상단 네비게이션 */
         .scdms-navbar {
             background: var(--scdms-gold);
@@ -111,33 +155,38 @@
         }
 
     </style>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        // 이 페이지는 ListElf만 접근
+        const currentUser = requireRole(["ListElf"]);
+    </script>
 </head>
 
 <body>
-
 <!--  상단 글로벌 네비게이션 -->
-<header class="app-header navbar navbar-dark px-3" style="background: var(--scdms-gold);">
-  <!-- 왼쪽: 로고 + 사이트명 -->
-  <div class="d-flex align-items-center gap-2">
-    <span class="logo-icon">🎄</span>
-    <span class="navbar-brand mb-0 h1">SCDMS</span>
-  </div>
-
-  <!-- 가운데: 페이지 타이틀 -->
-  <h1 class="h5 mb-0 text-white">명단 관리 센터</h1>
-
-  <!-- 오른쪽: Role + 로그아웃 -->
-  <div class="d-flex align-items-center gap-2">
-    <span class="badge bg-light text-dark">ListElf</span>
-    <button
-      class="btn btn-outline-light btn-sm"
-      type="button"
-      onclick="window.location.href='login.html'"
-    >
-      로그아웃
-    </button>
-  </div>
-</header>
+<nav class="navbar navbar-expand-lg navbar-dark scdms-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="brand-icon">🎄</span>
+            <span>SCDMS · 명단 관리 센터</span>
+        </a>
+        
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-end lh-1">
+                <div id="header-user-name" class="text-white fw-bold small mb-1">
+                    사용자
+                </div>
+                <span id="header-user-role" class="badge bg-light text-dark rounded-pill" style="font-size: 0.7rem;">
+                    ListElf
+                </span>
+            </div>
+            <button type="button" class="btn btn-outline-light btn-sm" id="btn-logout">
+                로그아웃
+            </button>
+        </div>
+    </div>
+</nav>
 
 <!-- 상단 탭 (역할 내 메뉴) -->
 <div class="scdms-tabs">
@@ -284,7 +333,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="./js/ex.js"></script>
 <script>
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -464,9 +513,58 @@ async function updateStatus(childId, newStatus) {
 }
 
 /* -------------------------
+   [추가] 사용자 정보 초기화
+------------------------- */
+function initUserInfo() {
+    const raw = localStorage.getItem("currentUser");
+    if (!raw) return;
+
+    try {
+        const user = JSON.parse(raw);
+        
+        // 이름 표시
+        const nameEl = document.getElementById("header-user-name");
+        if (nameEl) nameEl.textContent = `${user.name || "이름 없음"} 요정`;
+
+        // 역할 표시
+        const roleEl = document.getElementById("header-user-role");
+        if (roleEl) roleEl.textContent = user.role || "ListElf";
+
+    } catch (e) {
+        console.warn("사용자 정보 파싱 실패", e);
+    }
+}
+
+/* -------------------------
+   로그아웃
+------------------------- */
+function initLogout() {
+    const btn = document.getElementById("btn-logout");
+    if (btn) {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (!confirm("정말 로그아웃 하시겠습니까?")) {
+                return;
+            }
+
+            if (typeof logout === "function") {
+                logout();
+            } else {
+                localStorage.removeItem("currentUser");
+                window.location.href = "./index.html";
+            }
+        });
+    }
+}
+
+/* -------------------------
    초기 실행
 ------------------------- */
 (async function init() {
+    initUserInfo(); // 사용자 정보 표시
+    initLogout();   // 로그아웃 버튼 연결
+    
     await loadRegions();
     await loadChildren();
 })();

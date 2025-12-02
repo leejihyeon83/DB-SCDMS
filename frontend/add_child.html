@@ -92,32 +92,37 @@
         }
 
     </style>
+    <script src="/js/auth.js"></script>
+    <script>
+        const currentUser = requireRole(["ListElf"]);
+    </script>
 </head>
 
 <body>
 <!--  상단 글로벌 네비게이션 -->
-<header class="app-header navbar navbar-dark px-3" style="background: var(--scdms-gold);">
-  <!-- 왼쪽: 로고 + 사이트명 -->
-  <div class="d-flex align-items-center gap-2">
-    <span class="logo-icon">🎄</span>
-    <span class="navbar-brand mb-0 h1">SCDMS</span>
-  </div>
-
-  <!-- 가운데: 페이지 타이틀 -->
-  <h1 class="h5 mb-0 text-white">명단 관리 센터</h1>
-
-  <!-- 오른쪽: Role + 로그아웃 -->
-  <div class="d-flex align-items-center gap-2">
-    <span class="badge bg-light text-dark">ListElf</span>
-    <button
-      class="btn btn-outline-light btn-sm"
-      type="button"
-      onclick="window.location.href='login.html'"
-    >
-      로그아웃
-    </button>
-  </div>
-</header>
+<nav class="navbar navbar-expand-lg navbar-dark scdms-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="brand-icon">🎄</span>
+            <span>SCDMS · 명단 관리 요청 제어센터</span>
+        </a>
+        
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-end lh-1">
+                <div id="header-user-name" class="text-white fw-bold small mb-1">
+                    사용자
+                </div>
+                <span id="header-user-role" class="badge bg-light text-dark rounded-pill" style="font-size: 0.7rem;">
+                    ListElf
+                </span>
+            </div>
+            <button type="button" class="btn btn-outline-light btn-sm" id="btn-logout">
+                로그아웃
+            </button>
+        </div>
+    </div>
+</nav>
+ 
 <!--상단 탭 (역할 내 메뉴) -->
 <div class="scdms-tabs">
     <div class="container px-4">
@@ -135,7 +140,6 @@
     </div>
 </div>
 
-<!-- 메인 콘텐츠 -->
 <div class="container px-4 py-4">
     <div class="scdms-card p-4 p-md-5">
 
@@ -144,7 +148,6 @@
             <span class="ms-2 text-muted small">노스폴 등록부에 새로운 아이를 추가해요.</span>
         </div>
 
-        <!-- 이름 + 주소 -->
         <div class="row mb-3">
             <div class="col-md-6 mb-3 mb-md-0">
                 <label class="form-label">아이 이름 *</label>
@@ -156,19 +159,16 @@
             </div>
         </div>
 
-        <!-- 지역 -->
         <div class="mb-3">
             <label class="form-label">지역 *</label>
             <select id="region" class="form-select"></select>
         </div>
 
-        <!-- 설명 -->
         <div class="mb-4">
             <label class="form-label">아이 설명 (child_note)</label>
             <textarea id="note" rows="3" class="form-control" placeholder="예: 공룡 좋아함, 둘째 아이"></textarea>
         </div>
 
-        <!-- Wishlist -->
         <div class="mb-2 d-flex align-items-center justify-content-between">
             <span class="section-title">위시리스트 *</span>
             <small class="text-muted" id="wishlistHint">선물 종류 수만큼만 추가할 수 있어요.</small>
@@ -182,7 +182,6 @@
 
         <hr />
 
-        <!-- 제출 -->
         <button class="btn btn-main w-100 py-2" onclick="submitChild()">🎄 아이 등록하기</button>
     </div>
 </div>
@@ -193,13 +192,57 @@ const BASE_URL = "http://127.0.0.1:8000";
 let gifts = [];
 
 /* -------------------------------
+    사용자 정보 초기화
+-------------------------------- */
+function initUserInfo() {
+    const raw = localStorage.getItem("currentUser");
+    if (!raw) return;
+
+    try {
+        const user = JSON.parse(raw);
+        
+        const nameEl = document.getElementById("header-user-name");
+        if (nameEl) nameEl.textContent = `${user.name || "이름 없음"} 요정`;
+
+        const roleEl = document.getElementById("header-user-role");
+        if (roleEl) roleEl.textContent = user.role || "ListElf";
+
+    } catch (e) {
+        console.warn("사용자 정보 파싱 실패", e);
+    }
+}
+
+/* -------------------------------
+    로그아웃
+-------------------------------- */
+function initLogout() {
+    const btn = document.getElementById("btn-logout");
+    if (btn) {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (!confirm("정말 로그아웃 하시겠습니까?")) {
+                return; 
+            }
+
+            if (typeof logout === "function") {
+                logout();
+            } else {
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("token");
+                window.location.href = "../index.html";
+            }
+        });
+    }
+}
+
+/* -------------------------------
    1️. 선물 목록 불러오기
 -------------------------------- */
 async function loadGifts() {
     const res = await fetch(`${BASE_URL}/gift/`);
     gifts = await res.json();
 
-    // 힌트 텍스트에 최대 개수 표시
     const hint = document.getElementById("wishlistHint");
     if (gifts.length > 0) {
         hint.textContent = `위시리스트는 최대 ${gifts.length}개까지 추가할 수 있어요.`;
@@ -228,32 +271,26 @@ async function loadRegions() {
 
 /* -------------------------------
    3️. wishlist 입력행 추가
-   - 기존 선택값이 초기화되지 않도록
-   - gifts.length 개수까지만 추가
 -------------------------------- */
 function addWishlistItem() {
     const container = document.getElementById("wishlistContainer");
 
-    // 최대 개수 제한
     const currentCount = container.querySelectorAll(".wishlist-item").length;
     if (currentCount >= gifts.length) {
         alert(`위시리스트는 최대 ${gifts.length}개까지만 추가할 수 있어요!`);
         return;
     }
 
-    // 🔎 현재 사용된 우선순위 목록
     const usedPriorities = Array.from(
         document.querySelectorAll(".wishlist-item .priority")
     ).map(input => parseInt(input.value))
      .filter(v => !isNaN(v));
 
-    // 🔢 기본 넣을 우선순위 = 사용되지 않은 가장 작은 번호
     let defaultPriority = 1;
     while (usedPriorities.includes(defaultPriority)) {
         defaultPriority++;
     }
 
-    // DOM 생성
     const row = document.createElement("div");
     row.className = "wishlist-item";
 
@@ -272,7 +309,6 @@ function addWishlistItem() {
     priorityInput.placeholder = "우선순위 (1 ~ n)";
     priorityInput.value = defaultPriority;    
 
-    // 실시간 중복 방지 이벤트 추가
     priorityInput.addEventListener("change", validatePriorities);
 
     row.appendChild(giftSelect);
@@ -281,35 +317,25 @@ function addWishlistItem() {
     container.appendChild(row);
 }
 
-/*------------
-중복 priority 검증 함수 추가
-
-사용자가 priority 값을 변경할 때
-->중복되면 원래 값으로 되돌리고 alert
-
-priority 값이 범위를 벗어나면 자동 조정
-(예: 0 → 1, 99 → gifts.length)
----------------- */
+/* -------------------------------
+   중복 priority 검증
+-------------------------------- */
 function validatePriorities() {
     const priorityInputs = Array.from(document.querySelectorAll(".priority"));
 
-    // 모든 값 읽기
     let values = priorityInputs.map(i => parseInt(i.value) || 1);
 
-    // 범위 보정: 1 ~ 선물 개수
     values = values.map(v => {
         if (v < 1) return 1;
         if (v > gifts.length) return gifts.length;
         return v;
     });
 
-    // 중복 검사
     const duplicates = values.filter((v, i, arr) => arr.indexOf(v) !== i);
 
     if (duplicates.length > 0) {
         alert("우선순위는 중복될 수 없어요! (1 ~ n 각 1회만 가능)");
 
-        // 입력 되돌리기
         priorityInputs.forEach((input, i) => {
             input.value = i + 1 <= gifts.length ? i + 1 : gifts.length;
         });
@@ -336,7 +362,6 @@ async function submitChild() {
     const priorityInputs = document.querySelectorAll(".wishlist-item .priority");
     const priorities = Array.from(priorityInputs).map(i => parseInt(i.value));
 
-    // 중복 검사
     const hasDuplicate = priorities.some(
         (p, idx) => priorities.indexOf(p) !== idx
     );
@@ -377,9 +402,12 @@ async function submitChild() {
    초기 실행
 -------------------------------- */
 (async function init() {
+    initUserInfo(); // [추가]
+    initLogout();   // [추가]
+    
     await loadGifts();
     await loadRegions();
-    addWishlistItem(); // 기본 1개 추가
+    addWishlistItem();
 })();
 
 document.addEventListener("DOMContentLoaded", () => {

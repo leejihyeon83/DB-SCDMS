@@ -1,3 +1,4 @@
+import bcrypt
 from sqlalchemy import text
 from backend.database import SessionLocal
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
@@ -195,15 +196,21 @@ def seed_staff():
 
     for username, password, name, role in default_staff:
         exists = db.query(Staff).filter_by(Username=username).first()
-        if not exists:
-            db.add(
-                Staff(
-                    Username=username,
-                    Password=password,
-                    Name=name,
-                    Role=role,
-                )
+        if exists:
+            continue
+
+        # 비밀번호: bcrypt로 해시
+        hashed_pw = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        hashed_pw = hashed_pw.decode("utf-8")
+
+        db.add(
+            Staff(
+                Username=username,
+                Password=hashed_pw,
+                Name=name,
+                Role=role,
             )
+        )
 
     db.commit()
     db.close()
