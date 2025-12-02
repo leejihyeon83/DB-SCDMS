@@ -42,14 +42,15 @@ def get_gift_demand_summary(db: Session = Depends(get_db)):
         db.query(
             Wishlist.GiftID.label("gift_id"),
             func.count(Wishlist.GiftID).label("total"),
-            priority_1,
-            priority_2,
-            priority_3
+            func.sum(case((Wishlist.Priority == 1, 1), else_=0)).label("p1"),
+            func.sum(case((Wishlist.Priority == 2, 1), else_=0)).label("p2"),
+            func.sum(case((Wishlist.Priority == 3, 1), else_=0)).label("p3")
         )
         .join(Child, Wishlist.ChildID == Child.ChildID)
         .filter(func.upper(Child.StatusCode) == "NICE")
         .filter(func.upper(Child.DeliveryStatusCode) != "DELIVERED")
         .group_by(Wishlist.GiftID)
+        .having(func.count(Wishlist.GiftID) > 0)  
         .order_by(func.count(Wishlist.GiftID).desc())
         .all()
     )
