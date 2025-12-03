@@ -37,16 +37,32 @@ BEGIN
         CREATE ROLE santa1 LOGIN PASSWORD '1234' IN ROLE role_santa;
     END IF;
 
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'santa2') THEN
+        CREATE ROLE santa2 LOGIN PASSWORD '1234' IN ROLE role_santa;
+    END IF;
+
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'listelf1') THEN
         CREATE ROLE listelf1 LOGIN PASSWORD '1234' IN ROLE role_listelf;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'listelf2') THEN
+        CREATE ROLE listelf2 LOGIN PASSWORD '1234' IN ROLE role_listelf;
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'giftelf1') THEN
         CREATE ROLE giftelf1 LOGIN PASSWORD '1234' IN ROLE role_giftelf;
     END IF;
 
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'giftelf2') THEN
+        CREATE ROLE giftelf2 LOGIN PASSWORD '1234' IN ROLE role_giftelf;
+    END IF;
+
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'keeper1') THEN
         CREATE ROLE keeper1 LOGIN PASSWORD '1234' IN ROLE role_keeper;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'keeper2') THEN
+        CREATE ROLE keeper2 LOGIN PASSWORD '1234' IN ROLE role_keeper;
     END IF;
 END $$;
 

@@ -13,7 +13,7 @@ DeliveryStatusCode Router
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.delivery_status_code import DeliveryStatusCode
 from backend.schemas.status_code_schema import (
     StatusCodeCreate,
@@ -31,7 +31,7 @@ router = APIRouter(
 # 1) 전체 목록 조회
 # ------------------------------------------------------
 @router.get("/", response_model=list[StatusCodeOut])
-def list_codes(db: Session = Depends(get_db)):
+def list_codes(db: Session = Depends(get_authorized_db)):
     """
     배송 상태 코드 전체 조회
     """
@@ -44,7 +44,7 @@ def list_codes(db: Session = Depends(get_db)):
 # 2) 상태 코드 생성
 # ------------------------------------------------------
 @router.post("/", response_model=StatusCodeOut, status_code=status.HTTP_201_CREATED)
-def create_code(payload: StatusCodeCreate, db: Session = Depends(get_db)):
+def create_code(payload: StatusCodeCreate, db: Session = Depends(get_authorized_db)):
     """
     새로운 배송 상태 코드 생성
     - code 중복 시 409 Conflict
@@ -76,7 +76,7 @@ def create_code(payload: StatusCodeCreate, db: Session = Depends(get_db)):
 # 3) 상태 코드 설명 수정 (description만)
 # ------------------------------------------------------
 @router.patch("/{code}", response_model=StatusCodeOut)
-def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_db)):
+def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_authorized_db)):
     """
     배송 상태 코드 설명(description) 수정
     - code는 PK이므로 변경 불가
@@ -103,7 +103,7 @@ def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_
 # 4) 상태 코드 삭제
 # ------------------------------------------------------
 @router.delete("/{code}")
-def delete_code(code: str, db: Session = Depends(get_db)):
+def delete_code(code: str, db: Session = Depends(get_authorized_db)):
     """
     배송 상태 코드 삭제
     - 아직 Child.DeliveryStatusCode에서 FK로 참조 중이면 나중에 막을 수도 있음

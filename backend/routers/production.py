@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM, ProductionLog, ProductionUsage
 from backend.schemas.gift import ProductionCreateRequest, ProductionLogResponse
 from backend.utils.transactions import transactional_session
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/production", tags=["Production"])
 
 
 @router.post("/create")
-def create_production_job(data: ProductionCreateRequest, db: Session = Depends(get_db)):
+def create_production_job(data: ProductionCreateRequest, db: Session = Depends(get_authorized_db)):
     """
     생산 Job 1건을 생성하고
     - 재료 재고 검증
@@ -144,7 +144,7 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
     }
 
 @router.get("/logs", response_model=List[ProductionLogResponse])
-def get_production_logs(db: Session = Depends(get_db)):
+def get_production_logs(db: Session = Depends(get_authorized_db)):
     """
     Production_Log 테이블의 생산 Job 기록 전체 조회 API.
 

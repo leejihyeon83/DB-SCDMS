@@ -13,7 +13,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.child import Child, Wishlist
 from backend.models.gift import FinishedGoods
 from backend.schemas.child_schema import (
@@ -32,7 +32,7 @@ router = APIRouter(
 )
 
 @router.post("/create", response_model=ChildOut, status_code=status.HTTP_201_CREATED)
-def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_db)):
+def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_authorized_db)):
     '''
     Child와 Wishlist를 한 요청에서 생성하는 API
     '''

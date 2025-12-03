@@ -7,7 +7,7 @@ Staff 관련 API
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.staff import Staff
 from backend.schemas.staff_schema import StaffCreate, StaffOut
 
@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.post("", response_model=StaffOut, status_code=status.HTTP_201_CREATED)
-def create_staff(payload: StaffCreate, db: Session = Depends(get_db)):
+def create_staff(payload: StaffCreate, db: Session = Depends(get_authorized_db)):
     '''
     Staff 계정 생성
     - Username 중복 체크
@@ -51,7 +51,7 @@ def create_staff(payload: StaffCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[StaffOut])
-def get_staff_list(db: Session = Depends(get_db)):
+def get_staff_list(db: Session = Depends(get_authorized_db)):
     '''
     Staff 전체 목록 조회
     - 운영자 계정 확인용 (관리자 화면에서 사용)

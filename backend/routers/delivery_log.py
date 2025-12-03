@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.delivery_log import DeliveryLog
 from backend.models.child import Child
 from backend.models.gift import FinishedGoods
@@ -19,7 +19,7 @@ router = APIRouter(
 def list_delivery_logs(
     limit: int = 100,
     offset: int = 0,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     """
     배송 로그 목록 조회

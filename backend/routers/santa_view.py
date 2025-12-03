@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.child import Child, Wishlist
 from backend.models.gift import FinishedGoods
 from backend.schemas.santa_schema import (
@@ -31,7 +31,7 @@ router = APIRouter(
 @router.get("/targets", response_model=list[SantaTargetOut])
 def get_santa_targets(
     region_id: int | None = None,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     '''
     배송 대상 아이 전체 조회 API
@@ -70,7 +70,7 @@ def get_santa_targets(
 @router.get("/targets/{child_id}", response_model=SantaTargetDetailOut)
 def get_santa_target_detail(
     child_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     '''
     배송 대상 아이 1명 상세 조회 API
@@ -112,7 +112,7 @@ def get_santa_target_detail(
 @router.get("/assign-gifts")
 def assign_gifts(
     region_id: int | None = None,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     """
     배송 대상 아이별 자동 선물 선정 API

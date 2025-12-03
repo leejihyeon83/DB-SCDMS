@@ -7,7 +7,7 @@ ListElf용 Rules 관리 API
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.rules import Rule
 from backend.models.staff import Staff
 from backend.schemas.rule_schema import RuleCreate, RuleUpdate, RuleOut
@@ -19,7 +19,7 @@ router = APIRouter(
 
 
 @router.post("/create", response_model=RuleOut, status_code=status.HTTP_201_CREATED)
-def create_rule(payload: RuleCreate, db: Session = Depends(get_db)):
+def create_rule(payload: RuleCreate, db: Session = Depends(get_authorized_db)):
     '''
     Rule 생성
     - created_by_staff_id가 실제 존재하는 Staff인지 검증
@@ -52,7 +52,7 @@ def create_rule(payload: RuleCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/update/{rule_id}", response_model=RuleOut)
-def update_rule(rule_id: int, payload: RuleUpdate, db: Session = Depends(get_db)):
+def update_rule(rule_id: int, payload: RuleUpdate, db: Session = Depends(get_authorized_db)):
     '''
     Rule 수정
     - title / description / updated_by_staff_id 일부만 수정 가능
@@ -97,7 +97,7 @@ def update_rule(rule_id: int, payload: RuleUpdate, db: Session = Depends(get_db)
 
 
 @router.get("/all", response_model=list[RuleOut])
-def get_all_rules(db: Session = Depends(get_db)):
+def get_all_rules(db: Session = Depends(get_authorized_db)):
     '''
     Rule 전체 목록 조회
     - ListElf/Staff들이 운영 기준 문구를 확인하는 용도
@@ -120,7 +120,7 @@ def get_all_rules(db: Session = Depends(get_db)):
 
 
 @router.get("/{rule_id}", response_model=RuleOut)
-def get_rule(rule_id: int, db: Session = Depends(get_db)):
+def get_rule(rule_id: int, db: Session = Depends(get_authorized_db)):
     '''
     단일 Rule 조회
     '''
@@ -141,7 +141,7 @@ def get_rule(rule_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/{rule_id}")
-def delete_rule(rule_id: int, db: Session = Depends(get_db)):
+def delete_rule(rule_id: int, db: Session = Depends(get_authorized_db)):
     '''
     Rule 삭제
     '''
