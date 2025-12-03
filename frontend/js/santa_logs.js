@@ -14,6 +14,8 @@ let reindeerMap = new Map();
 let childToReindeer = new Map();
 let staffList = [];
 
+let childMap = {};
+let giftMap = {};
 // ============================
 // 공통 유틸
 // ============================
@@ -91,7 +93,7 @@ function convertFailedGroupsToLogs() {
                 log_id: `F-${group.group_id}-${item.child_id}`,
                 delivery_timestamp: timestamp,
                 child_name: item.child_name || "알 수 없음",
-                gift_name: item.gift_name || "재고 없음",
+                gift_name: item.gift_name || "선물 재고 부족",
                 status: "FAILED"
             });
         });
@@ -140,6 +142,11 @@ function renderLogsTable(logsToRender) {
             ? `<span class="badge badge-failed">FAILED</span>`
             : `<span class="badge badge-success">DELIVERED</span>`;
 
+        let displayGift = log.gift_name;
+        if (displayGift && displayGift.includes("재고 없음")) {
+            displayGift = `<span style="color: #dc2626; font-weight: bold;">${displayGift}</span>`;
+        }
+        
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>#${log.log_id}</td>
@@ -288,13 +295,17 @@ async function loadLogsPage() {
             doneGroupsRes,
             failedGroupsRes,
             reindeerRes,
-            staffRes
+            staffRes,
+            allChildrenRes,
+            allGiftsRes
         ] = await Promise.all([
             apiGET("/delivery-log/"),
             apiGET("/santa/groups?status_filter=DONE"),
             apiGET("/santa/groups?status_filter=FAILED"),
             apiGET("/reindeer/"),  
-            apiGET("/staff")
+            apiGET("/staff"),
+            apiGET("/list-elf/child/all"), 
+            apiGET("/gift/")
         ]);
 
         logs = logsRes;
@@ -327,6 +338,21 @@ async function loadLogsPage() {
         // child → reindeer_id 매핑
         childToReindeer = new Map();
 
+        allChildrenRes.forEach(c => {
+            childMap[c.child_id] = c.name;
+        });
+        
+        allGiftsRes.forEach(g => {
+            giftMap[g.gift_id] = g.gift_name;
+        });
+
+        allGiftsRes.forEach(g => {
+            giftMap[g.gift_id] = {
+                name: g.gift_name,
+                stock: g.stock_quantity
+            };
+        });
+
         doneDetails.forEach((group) => {
             group.items.forEach((item) =>
                 childToReindeer.set(item.child_id, group.reindeer_id)
@@ -353,6 +379,39 @@ async function loadLogsPage() {
     } finally {
         setLoading(false);
     }
+}
+
+function convertFailedGroupsToLogs() {
+    const failedLogs = [];
+
+    failedDetails.forEach(group => {
+        const timestamp = group.updated_at || group.created_at || new Date().toISOString();
+
+        group.items.forEach(item => {
+            const cName = childMap[item.child_id] || `아이 #${item.child_id}`;
+            
+            const giftInfo = giftMap[item.gift_id];
+            let gName = `선물 #${item.gift_id}`; 
+
+            if (giftInfo) {
+                if (giftInfo.stock <= 0) {
+                    gName = `재고 없음 (${giftInfo.name})`;
+                } else {
+                    gName = giftInfo.name;
+                }
+            }
+
+            failedLogs.push({
+                log_id: `F-${group.group_id}-${item.child_id}`,
+                delivery_timestamp: timestamp,
+                child_name: cName, 
+                gift_name: gName,  
+                status: "FAILED"
+            });
+        });
+    });
+
+    return failedLogs;
 }
 
 function calculateSummary() {

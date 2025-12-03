@@ -36,12 +36,21 @@
         <span class="navbar-brand mb-0 h1">SCDMS</span>
     </div>
 
-    <h1 class="h5 mb-0 text-white page-title">산타 배송 관리</h1>
+    <h1 class="h5 mb-0 text-white position-absolute start-50 translate-middle-x page-title">
+        산타 배송 관리
+    </h1>
 
     <!-- Right: role badge + logout -->
-    <div class="d-flex align-items-center gap-2">
-        <span class="badge bg-light text-dark">Santa</span>
-        <a href="/index.html" id="logoutBtn" class="btn btn-outline-light btn-sm">로그아웃</a>
+    <div class="d-flex align-items-center gap-3">
+        <div class="text-end lh-1">
+            <div id="header-user-name" class="text-white fw-bold small mb-1">
+                사용자
+            </div>
+            <span id="header-user-role" class="badge bg-light text-dark rounded-pill" style="font-size: 0.7rem;">
+                Role
+            </span>
+        </div>
+        <button type="button" id="logoutBtn" class="btn btn-outline-light btn-sm" onclick="logout()">로그아웃</button>
     </div>
 </header>
 
@@ -115,7 +124,6 @@
             <span class="filter-label">🎅🏻산타별 보기🧑🏻‍🎄</span>
             <select id="logStaffFilter" class="filter-select filter-select-inline">
                 <option value="">전체 산타</option>
-                <option value="1">산타 #1</option>
             </select>
         </div>
 

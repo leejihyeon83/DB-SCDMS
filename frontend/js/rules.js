@@ -115,7 +115,7 @@ async function createRule() {
     }
 }
 
-/* 📥 규칙 전체 조회 */
+/* 규칙 전체 조회 */
 async function loadRules() {
     try {
         const res = await fetch(`${BASE_URL}/list-elf/rules/all`);
@@ -185,7 +185,7 @@ function renderRules() {
     container.appendChild(table);
 }
 
-/* 📄 규칙 상세 보기 모달 열기 */
+/*  규칙 상세 보기 모달 열기 */
 function openRuleDetail(ruleId) {
     const rule = rules.find(r => r.rule_id === ruleId);
     if (!rule) return;
@@ -218,7 +218,7 @@ function openRuleDetail(ruleId) {
     }
 }
 
-/* ✏ 상세보기에서 수정 모달 열기 */
+/* 상세보기에서 수정 모달 열기 */
 function openEditModal() {
     const rule = rules.find(r => r.rule_id === currentRuleId);
     if (!rule) return;
@@ -240,7 +240,7 @@ function openEditModal() {
     }
 }
 
-/* 💾 규칙 수정 저장 */
+/* 규칙 수정 저장 */
 async function saveRuleEdit() {
     const titleInput = document.getElementById("editTitle");
     const descInput = document.getElementById("editDescription");

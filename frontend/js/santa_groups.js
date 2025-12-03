@@ -19,7 +19,6 @@ function showToast(message, type = "info") {
 
     msgEl.textContent = message;
 
-    // 기존 클래스 초기화 (기본 디자인 유지 후 색상만 변경)
     toastEl.classList.remove("text-bg-danger", "text-bg-success", "text-bg-dark");
 
     // 타입별 색상 적용
@@ -394,7 +393,7 @@ async function handleAddToQueue() {
     const reindeerSelect = document.getElementById("reindeerSelect");
     const reindeerId = Number(reindeerSelect.value);
     if (!reindeerId) {
-        showError("배송에 사용할 루돌프를 선택하세요.");
+        showError("배송 보낼 루돌프를 선택하세요.");
         return;
     }
 
@@ -510,7 +509,7 @@ async function handleDeliverGroup(groupId) {
             { "x-staff-id": String(santaState.staffId) } // Headers
         );
         
-        // 성공 메시지도 SweetAlert로 예쁘게
+        // 성공 메시지 SweetAlert로
         await Swal.fire({
             title: '배송 완료!',
             text: `총 ${res.delivered_count}개의 선물이 전달되었습니다.`,

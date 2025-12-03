@@ -176,10 +176,11 @@ function fillModal(detail) {
     detail.wishlist
         .sort((a, b) => a.priority - b.priority)
         .forEach(w => {
+            const giftName = w.gift_name || giftsMap[w.gift_id] || `#${w.gift_id}`;
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${w.priority}</td>
-                <td>#${w.gift_id}</td>
+                <td>${giftName}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -205,14 +206,13 @@ function makeBadgeHtml(type, value) {
     const text = value.toUpperCase(); // 대소문자 무시
     let className = "badge-pending";  // 기본값
 
-    // 1. 상태/판정 관련 (NICE, NAUGHTY, SUCCESS, FAILED)
     if (type === 'status') {
         if (text === 'NICE') className = "badge-nice";
         else if (text === 'NAUGHTY') className = "badge-naughty";
         else if (text === 'SUCCESS') className = "badge-success"; // 로그용
         else if (text === 'FAILED') className = "badge-failed";   // 로그용
     } 
-    // 2. 배송 관련 (PENDING, SCHEDULED, DELIVERED, DONE)
+
     else if (type === 'delivery') {
         if (text === 'PENDING') className = "badge-pending";
         else if (text === 'DELIVERED' || text === 'DONE') className = "badge-delivered";

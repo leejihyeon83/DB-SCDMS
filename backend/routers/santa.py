@@ -318,6 +318,28 @@ def deliver_group(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Reindeer stamina/magic is not enough for delivery",
                 )
+            
+            from collections import defaultdict
+
+            needed_counts = defaultdict(int)
+            for item in items:
+                needed_counts[item.gift_id] += 1
+
+            shortages = []
+            
+            for gift_id, count_needed in needed_counts.items():
+                gift = tx.query(FinishedGoods).filter(FinishedGoods.gift_id == gift_id).first()
+            
+                if not gift:
+                    shortages.append(f"상품#{gift_id}(존재하지 않음)")
+                elif gift.stock_quantity < count_needed:
+                    shortages.append(f"{gift.gift_name} (부족: {count_needed - gift.stock_quantity}개)")
+
+            if shortages:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"재고 부족 품목이 있습니다: {', '.join(shortages)}"
+                )
 
             delivered_count = 0
 
