@@ -34,7 +34,7 @@ function redirectByRole(role) {
       window.location.href = "gift_elf_materials.html";
       break;
     case "Keeper":
-      window.location.href = "reindeer.html";
+      window.location.href = "reindeer_status.html";
       break;
     case "Santa":
       window.location.href = "santa.html";

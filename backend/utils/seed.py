@@ -143,7 +143,7 @@ def create_ready_reindeer_view():
             status
         FROM reindeer
         WHERE status = 'READY'
-          AND current_stamina >= 70;
+          AND current_stamina >= 30;
     '''))
     db.commit()
     db.close()
