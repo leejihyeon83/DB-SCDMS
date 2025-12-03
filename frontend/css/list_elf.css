@@ -1,6 +1,3 @@
-/* =========================================
-   1. 공통 기본 설정 (변수, 바디)
-   ========================================= */
 :root {
     --scdms-gold: #F5C542;          /* 메인 골드 */
     --scdms-gold-dark: #D9A620;     /* 다크 골드 */
@@ -9,12 +6,9 @@
 
 body {
     background: radial-gradient(circle at top, #FFF7D6 0, #FFF7D6 45%, #FFF7D6 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     min-height: 100vh;
 }
-
-/* =========================================
-   2. 공통 컴포넌트 (네비게이션, 탭, 카드, 버튼)
-   ========================================= */
 
 /* 상단 글로벌 네비게이션 */
 .scdms-navbar {
@@ -74,7 +68,7 @@ body {
 /* 섹션 제목 (공통) */
 .section-title {
     font-weight: 700;
-    font-size: 1.15rem; /* 페이지마다 1.1rem, 1.15rem 달랐던 것 통일 */
+    font-size: 1.15rem; 
 }
 
 /* 상단 유저 정보 바 (리스트 페이지 등) */
@@ -103,34 +97,26 @@ body {
     color: #b91c1c;
     font-size: 0.8rem;
 }
-.logout-button {
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: none;
-    background: #ef4444;
-    color: #fff;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-.logout-button:hover {
-    background: #dc2626;
-}
-
-/* =========================================
-   3. 페이지별 특수 스타일
-   ========================================= */
 
 /* [아이 목록 페이지] 요약 카드 */
+.summary-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
 .summary-card {
+    flex: 1 1 0;
+    min-width: 220px;
     border-radius: 16px;
     padding: 14px 18px;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
 }
-.summary-card span.label { font-size: 0.9rem; }
-.summary-card span.value { font-size: 1.2rem; }
 
 .summary-nice { background: #e2f6e9; border: 1px solid #c1e7cf; }
 .summary-naughty { background: #ffe6e3; border: 1px solid #f6b9b4; }
@@ -152,7 +138,65 @@ body {
     flex: 1;
 }
 
-/* [규칙 관리 페이지] 테이블 및 텍스트 */
+/* 아이 목록 페이지 등에서 사용되는 커스텀 뱃지 */
+.badge {
+    padding: 0.35em 0.65em; 
+    border-radius: 0.375rem;
+    font-weight: 600;
+}
+
+.badge-pending {
+    background-color: #f8e184 !important;
+    color: #b45309 !important;
+}
+
+.badge-delivered, .badge-success-custom {
+    background-color: #9fd9ff !important;
+    color: #0369a1 !important;
+}
+
+/* 규칙 목록 테이블 공통 스타일 */
+#rulesContainer table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+/* 헤더 줄 색 (아이 목록 테이블이랑 비슷한 연노랑) */
+#rulesContainer thead tr {
+    background: linear-gradient(90deg, #fff3cd, #fff7d6);
+}
+
+/* 셀 공통 스타일 */
+#rulesContainer th,
+#rulesContainer td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid #f3e6bf;
+    white-space: nowrap;
+}
+
+/* 호버 시 살짝 강조 */
+#rulesContainer tbody tr:hover {
+    background-color: #fff9e6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(170, 135, 40, 0.12);
+    transition: background-color 0.15s ease,
+                box-shadow 0.15s ease,
+                transform 0.15s ease;
+}
+
+/* 호버 시 살짝 강조 */
+#rulesContainer tbody tr:hover {
+    background-color: #fff9e6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(170, 135, 40, 0.12);
+    transition: background-color 0.15s ease,
+                box-shadow 0.15s ease,
+                transform 0.15s ease;
+}
+
+/* 기존 텍스트 스타일 유지 */
 .rule-row-title { font-weight: 600; }
 .text-meta { font-size: 0.8rem; color: #888; }
 .rules-empty {
@@ -160,4 +204,260 @@ body {
     padding: 24px 0;
     color: #999;
     font-size: 0.95rem;
+}
+
+/* ===== 페이지 레이아웃 / 헤더 ===== */
+.page-container {
+    max-width: 1080px;
+    margin: 24px auto 40px;
+    padding: 0 16px 32px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.page-header h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+}
+
+.page-subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #7a6a40;
+}
+
+.page-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+/* 검색/필터 박스 (산타 filter-box 포트) */
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    min-width: 220px;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.search-input:focus {
+    border-color: var(--scdms-gold);
+    box-shadow: 0 0 0 2px rgba(245, 197, 66, 0.25);
+}
+
+.filter-select {
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 0.85rem;
+}
+
+/* 아이 목록 테이블 카드 */
+.table-section {
+    background: #fffdf4;
+    border-radius: 16px;
+    padding: 16px 18px 22px;
+    border: 1px solid rgba(240, 220, 150, 0.9);
+    box-shadow: 0 6px 18px rgba(170, 135, 40, 0.12);
+    margin-top: 20px;
+}
+
+.table-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+}
+
+.table-header-row h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+/* 산타 .santa-table 느낌을 노랑으로 */
+.listElf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.listElf-table thead {
+    background: linear-gradient(90deg, #fff3cd, #fff7d6);
+}
+
+.listElf-table thead th {
+    background: #ffe9a9;      
+    color: #4b3b1a;          
+    border-bottom: 1px solid #f1d58a;
+}
+
+.listElf-table th,
+.listElf-table td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid #e9d599;
+    white-space: nowrap;
+}
+
+.listElf-table tbody tr:hover {
+    background-color: #fff9e6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(170, 135, 40, 0.12);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.child-form-card {
+    margin-top: 8px;
+}
+
+.form-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.form-section-header-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.form-section-emoji {
+    font-size: 1.4rem;
+    margin-top: 2px;
+}
+
+.form-section-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.form-section-subtitle {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: #7a6a40;
+}
+
+.badge-required {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #fff3cd;
+    color: #8b5e00;
+    white-space: nowrap;
+}
+
+.section-divider {
+    border-color: #f3e3b2;
+    opacity: 1;
+}
+
+.child-form-card .form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* 위시리스트 박스 느낌 */
+.wishlist-container {
+    background: #fffdf4;
+    border-radius: 12px;
+    border: 1px dashed #f1d698;
+    padding: 10px 12px;
+}
+
+.wishlist-helper {
+    font-size: 0.8rem;
+    color: #8b6e20;
+}
+
+.btn-add-wishlist {
+    border-style: dashed;
+}
+
+.btn-add-wishlist:hover {
+    background-color: #fff7d6;
+}
+
+/* =========================================
+   [규칙 관리 페이지] 카드/섹션
+   ========================================= */
+.rules-card {
+    margin-top: 8px;
+}
+
+.rule-section {
+    border-radius: 14px;
+    padding: 16px 18px;
+}
+
+.rule-section-create {
+    background: #fffdf4;
+    border: 1px dashed #f1d698;
+    margin-bottom: 18px;
+}
+
+.rule-section-list {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+}
+
+.rules-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.rules-pill {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #fff3cd;
+    color: #8b5e00;
+}
+
+
+.toast-container {
+    top: 20px !important; 
+    left: 50% !important; 
+    transform: translateX(-50%);
+    right: auto !important; 
+    z-index: 9999;
+}
+
+#scdmsToast {
+    background-color: var(--scdms-gold-dark) !important;
+    color: #333333 !important;
+    border-radius: 999px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+    max-width: 350px; 
+    font-weight: 600;
+    text-align: center !important;
+}
+
+#scdmsToastMessage {
+    padding-right: 1.5rem !important;
 }

@@ -1,17 +1,24 @@
-/* =========================================
-   [수정됨] 화면 로딩 후 실행되도록 안전장치 추가
-   ========================================= */
-
-// 전역 변수 선언
 const BASE_URL = "http://127.0.0.1:8000";
 let childrenData = [];
 let regions = [];
 let currentEditChildId = null;
-let currentUser = null; // 나중에 할당
+let currentUser = null; 
 
-/* -------------------------
-   Region 불러오기
-------------------------- */
+
+// 토스트 메시지 표시 유틸리티
+
+function showToast(message) {
+    const toastEl = document.getElementById('scdmsToast');
+    const toastBody = document.getElementById('scdmsToastMessage');
+    if (toastBody) toastBody.textContent = message;
+    if (toastEl) {
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+    }
+}
+
+// Region 불러오기
+
 async function loadRegions() {
     const res = await fetch(`${BASE_URL}/regions/all`);
     regions = await res.json();
@@ -26,28 +33,29 @@ async function loadRegions() {
     }
 }
 
-/* -------------------------
-   Child 목록 불러오기
-------------------------- */
+
+// Child 목록 불러오기
+
 async function loadChildren() {
     const res = await fetch(`${BASE_URL}/list-elf/child/all`);
     childrenData = await res.json();
     renderChildren();
 }
 
-/* -------------------------
-   Child 테이블 렌더링
-------------------------- */
+
+// Child 테이블 렌더링
 function renderChildren() {
     const searchInput = document.getElementById("searchInput");
     const regionFilter = document.getElementById("regionFilter");
     const tbody = document.getElementById("childTableBody");
+    const statusFilter = document.getElementById("statusFilter"); // 상태 필터 추가
 
     // HTML 요소가 없으면 실행 중단 (오류 방지)
-    if (!searchInput || !regionFilter || !tbody) return;
+    if (!searchInput || !regionFilter || !tbody || !statusFilter) return;
 
     const keyword = searchInput.value.trim();
     const regionValue = regionFilter.value;
+    const statusValue = statusFilter.value; // 필터 값 가져오기
 
     tbody.innerHTML = "";
 
@@ -56,6 +64,7 @@ function renderChildren() {
     childrenData
         .filter(c => (!keyword || c.name.includes(keyword) || c.address.includes(keyword)))
         .filter(c => (!regionValue || c.region_id == regionValue))
+        .filter(c => (!statusValue || c.status_code === statusValue)) // 상태 필터링 추가
         .forEach(c => {
 
             if (c.status_code === "NICE") nice++;
@@ -63,6 +72,27 @@ function renderChildren() {
             else pending++;
 
             const regionName = (regions.find(r => r.RegionID == c.region_id) || {}).RegionName || "(미지정)";
+            
+            // 배송 상태 뱃지 클래스
+            let deliveryBadgeClass = "bg-secondary"; // 기본값
+            if (c.delivery_status_code === "DELIVERED") {
+                deliveryBadgeClass = "badge-delivered";
+            } else if (c.delivery_status_code === "PENDING") {
+                deliveryBadgeClass = "badge-pending"; 
+            } else {
+                deliveryBadgeClass = "bg-secondary";
+            }
+            
+            // Wishlist 버튼 클래스
+            const wishlistButtonClass = "btn-main";
+            
+            let deleteButtonHtml = `
+                <button class="btn btn-danger btn-sm" onclick="deleteChild(${c.child_id})">삭제</button>
+            `;
+            if (c.delivery_status_code === "DELIVERED") {
+                // 배송 완료 시 삭제 버튼 대신 완료 텍스트 렌더링
+                deleteButtonHtml = `<span class="text-muted small">완료됨</span>`; 
+            }
 
             tbody.innerHTML += `
                 <tr>
@@ -81,13 +111,13 @@ function renderChildren() {
                     </td>
 
                     <td>
-                        <span class="badge bg-${c.delivery_status_code === "DELIVERED" ? "primary" : "secondary"}">
+                        <span class="badge ${deliveryBadgeClass}">
                             ${c.delivery_status_code}
                         </span>
                     </td>
 
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="openWishlistModal('${c.child_id}')">
+                        <button class="btn ${wishlistButtonClass} btn-sm" onclick="openWishlistModal('${c.child_id}')">
                             🎁 보기
                         </button>
                     </td>
@@ -99,7 +129,7 @@ function renderChildren() {
                     </td>
 
                     <td>
-                        <button class="btn btn-danger btn-sm" onclick="deleteChild(${c.child_id})">삭제</button>
+                        ${deleteButtonHtml}
                     </td>
                 </tr>
             `;
@@ -115,9 +145,9 @@ function renderChildren() {
     if(elPending) elPending.innerText = pending;
 }
 
-/* -------------------------
-   🎁 Wishlist 모달
-------------------------- */
+
+// Wishlist 모달
+
 async function openWishlistModal(childId) {
     const res = await fetch(`${BASE_URL}/list-elf/child/${childId}/wishlist`);
     const data = await res.json();
@@ -141,9 +171,8 @@ async function openWishlistModal(childId) {
 }
 
 
-/* -------------------------
-   📝 Note 모달
-------------------------- */
+
+// Note 모달
 function openNoteModal(childId) {
     currentEditChildId = childId;
 
@@ -155,42 +184,76 @@ function openNoteModal(childId) {
     if(modal) new bootstrap.Modal(modal).show();
 }
 
-/* -------------------------
-   Note 저장
-------------------------- */
+
+//Note 저장
 async function saveNote() {
     const input = document.getElementById("noteInput");
     const note = input ? input.value : "";
 
-    await fetch(`${BASE_URL}/list-elf/child/${currentEditChildId}`, {
+    const res = await fetch(`${BASE_URL}/list-elf/child/${currentEditChildId}`, {
         method: "PATCH",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ child_note: note })
     });
 
+    if (res.ok) {
+        Swal.fire({
+            icon: "success",
+            title: "저장 완료!",
+            text: "아이 설명(특이 사항)이 성공적으로 저장되었습니다.",
+            timer: 2000, // 2초 후 자동 닫힘
+            showConfirmButton: false
+        });
+    } else {
+        // 실패 시 SweetAlert2 표시
+        Swal.fire({
+            icon: "error",
+            title: "저장 실패",
+            text: "아이 설명 저장 중 오류가 발생했습니다.",
+        });
+    }
+
     loadChildren();
-    
     const modalEl = document.getElementById("noteModal");
     const modalInstance = bootstrap.Modal.getInstance(modalEl);
     if(modalInstance) modalInstance.hide();
 }
 
-/* -------------------------
-   Child 삭제
-------------------------- */
+
+// Child 삭제
+
 async function deleteChild(childId) {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    const child = childrenData.find(c => c.child_id === childId);
+    if (child && child.delivery_status_code === "DELIVERED") {
+        showToast("⚠️ 배송이 완료된 아이는 삭제할 수 없습니다.");
+        return;
+    }
 
-    await fetch(`${BASE_URL}/list-elf/child/${childId}`, {
-        method: "DELETE"
+    Swal.fire({
+        title: "정말 삭제하시겠습니까?",
+        text: "삭제된 아이 정보는 복구할 수 없습니다.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "삭제",
+        cancelButtonText: "취소"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            await fetch(`${BASE_URL}/list-elf/child/${childId}`, {
+                method: "DELETE"
+            });
+
+            await loadChildren();
+            
+            Swal.fire("삭제 완료!", `${child.name} 아이의 정보가 삭제되었습니다.`, "success");
+        }
     });
-
-    loadChildren();
 }
 
-/* -------------------------
-   상태 변경
-------------------------- */
+
+// 상태 변경
+
 async function updateStatus(childId, newStatus) {
     await fetch(`${BASE_URL}/list-elf/child/${childId}`, {
         method: "PATCH",
@@ -199,11 +262,11 @@ async function updateStatus(childId, newStatus) {
     });
 
     loadChildren();
+    
+    showToast(`아이 상태가 ${newStatus}로 변경되었습니다.`);
 }
 
-/* -------------------------
-   [추가] 사용자 정보 초기화
-------------------------- */
+
 function initUserInfo() {
     const raw = localStorage.getItem("currentUser");
     if (!raw) return;
@@ -224,9 +287,8 @@ function initUserInfo() {
     }
 }
 
-/* -------------------------
-   로그아웃
-------------------------- */
+// 로그아웃
+
 function initLogout() {
     const btn = document.getElementById("btn-logout");
     if (btn) {
@@ -247,26 +309,19 @@ function initLogout() {
     }
 }
 
-/* =========================================
-   [중요] DOMContentLoaded 이벤트 추가
-   HTML이 모두 로딩된 후에 JS가 실행되도록 감쌉니다.
-   ========================================= */
+
 document.addEventListener("DOMContentLoaded", async () => {
     
-    // 1. 로그인 체크 (auth.js가 먼저 로드되어 있어야 함)
+
     if (typeof requireRole === 'function') {
         currentUser = requireRole(["ListElf"]);
     } else {
         console.error("auth.js 로드 실패");
-        // 필요하다면 여기서 로그인 페이지로 튕겨낼 수 있습니다.
     }
 
-    // 2. 초기화 함수 실행
     initUserInfo(); 
     initLogout();   
     
     await loadRegions();
     await loadChildren();
 });
-
-// 기존의 중복된 리스너 제거 및 통합

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ListElf - 규칙 관리</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/list_elf.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/auth.js"></script>
+  <script src="./js/list_elf_rules.js"></script>
+</head>
+
+<body>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    <div id="scdmsToast" class="toast align-items-center border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="scdmsToastMessage">
+                </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+<header class="app-header navbar navbar-dark px-3 scdms-navbar">
+    <div class="d-flex align-items-center gap-2">
+        <span class="brand-icon">🎄</span>
+        <span class="navbar-brand mb-0 h1">SCDMS</span>
+    </div>
+
+    <h1 class="h5 mb-0 text-white position-absolute start-50 translate-middle-x page-title" style="font-weight: bold;">
+        아이들 명단 관리
+    </h1>
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="text-end lh-1">
+            <div id="header-user-name" class="text-white fw-bold small mb-1">
+                사용자
+            </div>
+            <span id="header-user-role" class="badge bg-light text-dark rounded-pill" style="font-size: 0.7rem;">
+                ListElf
+            </span>
+        </div>
+        <button type="button" id="btn-logout" class="btn btn-outline-light btn-sm">
+            로그아웃
+        </button>
+    </div>
+</header>
+
+<div class="scdms-tabs">
+  <div class="container px-4">
+    <ul class="nav py-3">
+      <li class="nav-item">
+        <a class="nav-link" href="/list_elf.html">아이 목록</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/list_elf_add_child.html">아이 등록</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="/list_elf_rules.html">규칙 관리</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<main class="page-container">
+    <header class="page-header">
+        <div>
+            <h1>📜 규칙 관리</h1>
+            <p class="page-subtitle">
+                아이를 착한/나쁜 아이로 분류할 때 참고하는 기준 문구를 관리합니다.
+            </p>
+        </div>
+        <div class="page-header-actions"></div>
+    </header>
+
+    <section class="scdms-card p-4 p-md-5 rules-card">
+        <!-- 새 규칙 만들기 -->
+        <div class="rule-section rule-section-create mb-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <div class="section-title mb-1">➕ 새 규칙 만들기</div>
+                    <p class="text-muted mb-0 small">
+                        제목과 상세 기준을 입력하고 규칙을 추가하세요.
+                    </p>
+                </div>
+                <span class="badge-required">* 필수 입력</span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">규칙 제목 *</label>
+                <input id="ruleTitle" class="form-control" placeholder="예: 편식 안함이" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">규칙 상세 기준 *</label>
+                <textarea id="ruleDescription" class="form-control" rows="3"
+                          placeholder="예: 최근 한 달간 야채를 엄청 많이 먹음"></textarea>
+            </div>
+
+            <div class="text-end">
+                <button class="btn btn-main" onclick="createRule()">+ 규칙 추가</button>
+            </div>
+        </div>
+
+        <!-- 활성 규칙 목록 -->
+        <div class="rule-section rule-section-list">
+            <div class="rules-list-header mb-2">
+                <div class="section-title mb-0">📖 착한 아이 규칙</div>
+                <span class="rules-pill">착한 아이 판정 기준</span>
+            </div>
+            <p class="text-muted mb-3 small">
+                현재 운영 중인 분류 기준들입니다. 상세보기를 클릭하면 내용을 자세히 볼 수 있어요.
+            </p>
+
+            <div id="rulesContainer"></div>
+        </div>
+    </section>
+</main>
+
+
+<div class="modal fade" id="ruleDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">규칙 상세보기</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <h5 id="detailTitle" class="fw-bold mb-2"></h5>
+        <p class="text-meta mb-3" id="detailMeta"></p>
+
+        <div class="mb-2 fw-semibold">상세 설명</div>
+        <pre id="detailDescription"
+             style="white-space: pre-wrap; font-family: inherit; font-size: 0.95rem;"></pre>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
+        <button class="btn btn-main" onclick="openEditModal()">수정하기</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ruleEditModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">규칙 수정</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">규칙 제목</label>
+          <input id="editTitle" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">규칙 상세 기준</label>
+          <textarea id="editDescription" class="form-control" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+        <button class="btn btn-main" onclick="saveRuleEdit()">저장</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

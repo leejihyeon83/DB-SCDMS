@@ -1,4 +1,3 @@
-// js/santa_api.js
 const API_BASE = "http://127.0.0.1:8000";
 
 // 전역 상태: 로그인한 산타 정보
@@ -8,7 +7,6 @@ const santaState = {
     role: null
 };
 
-// 1. 사용자 정보 초기화 및 헤더 UI 표시
 function initUserInfo() {
     const raw = localStorage.getItem("currentUser");
     if (!raw) return;
@@ -39,18 +37,19 @@ function initUserInfo() {
 function initLogout() {
   const btn = document.getElementById("btn-logout");
   if (btn) {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault(); // 기본 링크 동작 방지
+
       if (!confirm("정말 로그아웃 하시겠습니까?")) {
-        return;
+        return; 
       }
 
       localStorage.removeItem("currentUser");
-      window.location.href = "../index.html"; 
+      window.location.href = "/index.html"; 
     });
   }
 }
 
-// 3. API 요청 헬퍼 (Header에 x-staff-id 자동 추가)
 async function apiRequest(path, options = {}) {
     const headers = options.headers || {};
     
