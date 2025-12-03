@@ -39,10 +39,8 @@ def update_reindeer_status(
     reindeer.current_magic = payload.current_magic
     
     # 자동 READY 변경 로직 추가
-    # 둘 다 30 이상일 때만 READY, 그렇지 않으면 RESTING
-    if reindeer.current_stamina >= 30 and reindeer.current_magic >= 30:
-        reindeer.status = "READY"
-    else:
+    # 체력이나 마력이 30 미만이면 자동 RESTING
+    if reindeer.current_stamina < 30 or reindeer.current_magic < 30:
         reindeer.status = "RESTING"
 
     # 커밋 & 갱신
