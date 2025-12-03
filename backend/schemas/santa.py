@@ -55,6 +55,7 @@ class DeliveryGroupDetailResponse(BaseModel):
     reindeer_id: int
     status: str
     created_at: datetime
+    created_by_staff_id: int | None = None
     items: List[DeliveryGroupItemInGroup]
 
 

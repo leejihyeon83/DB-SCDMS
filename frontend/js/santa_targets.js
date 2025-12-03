@@ -107,9 +107,11 @@ function renderTable(children) {
         const regionName = regionsMap[child.region_id] || "-";
         const p1 = child.wishlist.find(w => w.priority === 1);
         const p2 = child.wishlist.find(w => w.priority === 2);
+        const p3 = child.wishlist.find(w => w.priority === 3);
 
         const p1Name = p1 ? (giftsMap[p1.gift_id] || `#${p1.gift_id}`) : "-";
         const p2Name = p2 ? (giftsMap[p2.gift_id] || `#${p2.gift_id}`) : "-";
+        const p3Name = p3 ? (giftsMap[p3.gift_id] || `#${p3.gift_id}`) : "-";
 
         const tr = document.createElement("tr");
         tr.onclick = () => openChildModal(child.child_id);
@@ -120,6 +122,7 @@ function renderTable(children) {
             <td>${child.address}</td>
             <td>${p1Name}</td>
             <td>${p2Name}</td>
+            <td>${p3Name}</td>
             <td>${makeBadgeHtml('status', child.status_code)}</td>
             <td>${makeBadgeHtml('delivery', child.delivery_status_code)}</td>
         `;

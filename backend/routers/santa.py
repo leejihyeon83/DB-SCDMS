@@ -210,6 +210,7 @@ def get_delivery_group_detail(
         reindeer_id=group.reindeer_id,
         status=group.status,
         created_at=group.created_at,
+        created_by_staff_id=group.created_by_staff_id,
         items=items,
     )
 

@@ -82,26 +82,45 @@ function renderSummaryCounts(successCount, failedCount) {
 // ============================
 // 실패 그룹 -> 실패 로그 변환
 // ============================
+// [수정 1] 실패 로그 변환 (재고 개수 표시 추가)
 function convertFailedGroupsToLogs() {
     const failedLogs = [];
 
     failedDetails.forEach(group => {
         const timestamp = group.updated_at || group.created_at || new Date().toISOString();
 
+        // 산타 ID 가져오기
+        const creatorId = group.created_by_staff_id; 
+
         group.items.forEach(item => {
+            const cName = childMap[item.child_id] || `아이 #${item.child_id}`;
+            
+            const giftInfo = giftMap[item.gift_id];
+            let gName = `선물 #${item.gift_id}`; 
+
+            if (giftInfo) {
+                if (giftInfo.stock <= 0) {
+                    gName = `재고 없음: ${giftInfo.name} (${giftInfo.stock}개)`;
+                } else {
+                    gName = `재고 부족: ${giftInfo.name} (현재 ${giftInfo.stock}개)`;
+                }
+            } else {
+                gName = "알 수 없는 선물";
+            }
+
             failedLogs.push({
                 log_id: `F-${group.group_id}-${item.child_id}`,
                 delivery_timestamp: timestamp,
-                child_name: item.child_name || "알 수 없음",
-                gift_name: item.gift_name || "선물 재고 부족",
-                status: "FAILED"
+                child_name: cName,
+                gift_name: gName,
+                status: "FAILED",
+                delivered_by_staff_id: creatorId 
             });
         });
     });
 
     return failedLogs;
 }
-
 // ============================
 // 성공/실패 통합 로그 렌더링
 // ============================
@@ -126,12 +145,12 @@ function renderAllLogs() {
 // ============================
 function renderLogsTable(logsToRender) {
     const tbody = document.getElementById("logsTableBody");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     if (!logsToRender.length) {
         const tr = document.createElement("tr");
-        tr.innerHTML =
-            `<td colspan="6" class="empty-text-cell">해당 조건에 해당하는 배송 로그가 없습니다.</td>`;
+        tr.innerHTML = `<td colspan="6" class="empty-text-cell">해당 조건에 해당하는 배송 로그가 없습니다.</td>`;
         tbody.appendChild(tr);
         return;
     }
@@ -143,16 +162,17 @@ function renderLogsTable(logsToRender) {
             : `<span class="badge badge-success">DELIVERED</span>`;
 
         let displayGift = log.gift_name;
-        if (displayGift && displayGift.includes("재고 없음")) {
+
+        if (displayGift && displayGift.includes("재고 부족")) {
             displayGift = `<span style="color: #dc2626; font-weight: bold;">${displayGift}</span>`;
         }
-        
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>#${log.log_id}</td>
             <td>${formatDateTime(log.delivery_timestamp)}</td>
             <td>${log.child_name}</td>
-            <td>${log.gift_name}</td>
+            <td>${displayGift}</td>
             <td>${badge}</td>
         `;
         tbody.appendChild(tr);
@@ -173,11 +193,19 @@ function renderPopularGifts(logsToRender) {
 
     const stats = new Map();
     logsToRender.forEach((log) => {
+        if (log.gift_name && (log.gift_name.includes("재고 부족") || log.gift_name.includes("알 수 없는"))) {
+            return;
+        }
         if (!stats.has(log.gift_id)) {
             stats.set(log.gift_id, { name: log.gift_name, count: 0 });
         }
         stats.get(log.gift_id).count++;
     });
+
+    if (stats.size === 0) {
+        list.innerHTML = `<li class="empty-text">집계된 인기 선물이 없습니다.</li>`;
+        return;
+    }
 
     const items = [...stats.values()]
         .sort((a, b) => b.count - a.count)
@@ -240,27 +268,43 @@ function renderMyLogs() {
     tbody.innerHTML = "";
 
     const myId = santaState.staffId;
-
     if (!myId) {
-         tbody.innerHTML = `<tr><td colspan="4" class="empty-text-cell">로그인 정보가 없습니다.</td></tr>`;
+         tbody.innerHTML = `<tr><td colspan="5" class="empty-text-cell">로그인 정보가 없습니다.</td></tr>`;
          return;
     }
 
-    const myLogs = logs.filter((log) => log.delivered_by_staff_id === myId);
+    // 1. 성공 로그 + 실패 로그 합치기
+    const successLogs = logs.map(l => ({ ...l, status: "SUCCESS" }));
+    const failedLogs = convertFailedGroupsToLogs();
+    const allLogs = [...successLogs, ...failedLogs].sort(
+        (a, b) => new Date(b.delivery_timestamp) - new Date(a.delivery_timestamp)
+    );
+
+    const myLogs = allLogs.filter((log) => log.delivered_by_staff_id === myId);
 
     if (!myLogs.length) {
-        tbody.innerHTML =
-            `<tr><td colspan="4" class="empty-text-cell">내 배송 기록이 없습니다.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-text-cell">내 배송 기록이 없습니다.</td></tr>`;
         return;
     }
 
     myLogs.forEach((log) => {
+        const isFailed = log.status === "FAILED";
+        const badge = isFailed
+            ? `<span class="badge badge-failed">FAILED</span>`
+            : `<span class="badge badge-success">DELIVERED</span>`;
+        
+        let displayGift = log.gift_name;
+        if (displayGift && displayGift.includes("재고 부족")) {
+            displayGift = `<span style="color: #dc2626; font-weight: bold;">${displayGift}</span>`;
+        }
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td>#${log.log_id}</td>
+            <td>${log.log_id}</td>
             <td>${formatDateTime(log.delivery_timestamp)}</td>
             <td>${log.child_name}</td>
-            <td>${log.gift_name}</td>
+            <td>${displayGift}</td>
+            <td>${badge}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -271,10 +315,16 @@ function renderMyLogs() {
 // ============================
 function applyStaffFilter() {
     const staffId = Number(document.getElementById("logStaffFilter").value);
-    let filtered = logs;
+    const successLogs = logs.map(l => ({ ...l, status: "SUCCESS" }));
+    const failedLogs = convertFailedGroupsToLogs();
+    const allLogs = [...successLogs, ...failedLogs].sort(
+        (a, b) => new Date(b.delivery_timestamp) - new Date(a.delivery_timestamp)
+    );
+
+    let filtered = allLogs;
 
     if (staffId) {
-        filtered = logs.filter((l) => l.delivered_by_staff_id === staffId);
+        filtered = allLogs.filter((l) => l.delivered_by_staff_id === staffId);
     }
 
     renderLogsTable(filtered);
@@ -386,28 +436,66 @@ function convertFailedGroupsToLogs() {
 
     failedDetails.forEach(group => {
         const timestamp = group.updated_at || group.created_at || new Date().toISOString();
+        const creatorId = group.created_by_staff_id;
+
+        // 1. 그룹 내에서 필요한 선물 개수 집계 (어떤 선물이 몇 개 필요한지)
+        const neededCounts = {}; // { giftId: 개수 }
+        const childrenNames = [];
 
         group.items.forEach(item => {
-            const cName = childMap[item.child_id] || `아이 #${item.child_id}`;
+            // 아이 이름 수집
+            const cName = childMap[item.child_id] || `아이#${item.child_id}`;
+            childrenNames.push(cName);
+
+            // 선물 개수 카운트
+            const gid = item.gift_id;
+            neededCounts[gid] = (neededCounts[gid] || 0) + 1;
+        });
+
+        // 2. 아이 이름 요약
+        let childSummary = "";
+        if (childrenNames.length <= 2) {
+            childSummary = childrenNames.join(", ");
+        } else {
+            childSummary = `${childrenNames[0]}, ${childrenNames[1]} 외 ${childrenNames.length - 2}명`;
+        }
+
+        // 3. 재고 부족 분석 
+        const shortages = []; // 부족한 선물 메시지들
+
+        for (const [gid, countNeeded] of Object.entries(neededCounts)) {
+            const giftInfo = giftMap[gid];
             
-            const giftInfo = giftMap[item.gift_id];
-            let gName = `선물 #${item.gift_id}`; 
-
             if (giftInfo) {
-                if (giftInfo.stock <= 0) {
-                    gName = `재고 없음 (${giftInfo.name})`;
-                } else {
-                    gName = giftInfo.name;
+                if (giftInfo.stock < countNeeded) {
+                    const missingCnt = countNeeded - giftInfo.stock;
+                    shortages.push(`${giftInfo.name}(${missingCnt}개 부족)`);
                 }
+            } else {
+                shortages.push(`알 수 없는 선물#${gid}`);
             }
+        }
 
-            failedLogs.push({
-                log_id: `F-${group.group_id}-${item.child_id}`,
-                delivery_timestamp: timestamp,
-                child_name: cName, 
-                gift_name: gName,  
-                status: "FAILED"
-            });
+        // 4. 선물 컬럼에 표시할 메시지 만들기
+        let giftDisplay = "";
+        
+        if (shortages.length > 0) {
+            // 부족한 게 있으면 빨갛게 표시
+            giftDisplay = `재고 부족: ${shortages.join(", ")}`;
+        } else {
+            // 재고는 있는데 다른 에러로 실패한 경우 (단순 선물 나열)
+            // (보통 여기에 걸릴 일은 거의 없지만 예외 처리)
+            const giftNames = Object.keys(neededCounts).map(gid => giftMap[gid]?.name || gid);
+            giftDisplay = giftNames.join(", ");
+        }
+
+        failedLogs.push({
+            log_id: `F-${group.group_id}`, 
+            delivery_timestamp: timestamp,
+            child_name: childSummary, 
+            gift_name: giftDisplay,   
+            status: "FAILED",
+            delivered_by_staff_id: creatorId
         });
     });
 
