@@ -328,8 +328,9 @@ function applyStaffFilter() {
     }
 
     renderLogsTable(filtered);
-    renderPopularGifts(filtered);
-    renderBestReindeers(filtered);
+
+    renderPopularGifts(allLogs);
+    renderBestReindeers(allLogs);
 }
 
 // ============================
