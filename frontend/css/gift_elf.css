@@ -1,144 +1,369 @@
-/* 전반적인 배경/폰트 */
+/* -----------------------------------------
+   GiftElf 전용 초록 테마 스타일
+------------------------------------------ */
+
+/* 전체 배경을 은은한 초록빛 */
 body {
-  background-color: #f3f7f4;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  background: linear-gradient(#eef6f1, #f7fbf8);
+  font-family: "SUIT Variable", sans-serif;
 }
 
 /* 헤더 */
 .app-header {
-  background: linear-gradient(90deg, #264d3b, #173529);
+  background: linear-gradient(90deg, #1c4b2c, #0e2a17);
+  border-bottom: 2px solid #164224;
 }
 
-/* 탭 패널 보이기/숨기기 */
-.tab-panel {
-  display: none;
-}
-.tab-panel.active {
-  display: block;
+/* 탭 버튼 초록 테마 */
+.tab-bar .nav-link {
+  color: #1c3b2c;
+  font-weight: 500;
+  background: #e6f2ea;
+  border-radius: 8px;
+  margin-right: 6px;
 }
 
-/* 재료 카드 */
-.material-card {
-  border-radius: 0.75rem;
+.tab-bar .nav-link.active {
+  background: #2e6944;
+  color: #fff;
+}
+
+/* 카드 공통 — 초록 테마 그림자 */
+.card, .material-card {
+  border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-  padding: 1rem 1.1rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
 }
 
-.material-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.material-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f0ff;
-  font-size: 1.1rem;
-}
-
-.material-name {
-  font-weight: 600;
-}
-
-.material-type {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
-
-.material-stock-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
-}
-
-.material-progress {
-  height: 6px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  overflow: hidden;
-  margin-bottom: 0.75rem;
-}
-
-.material-progress-fill {
-  width: 0%;
-  height: 100%;
-  background: #111827;
-}
-
-/* 선물 리스트 */
-.gift-item {
-  cursor: pointer;
-}
-.gift-item .gift-name {
-  font-weight: 600;
-}
-.gift-item .gift-recipe-text {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
+/* 선물 리스트 선택시 */
 .gift-item.selected {
-  background-color: #e0f2f1;
+  background-color: #d8f2e3 !important;
 }
 
-#production-log-panel .table-responsive {
-  max-height: 280px;
-  overflow-y: auto;
+/* 요약 카드 숫자 강조 */
+.summary-value {
+  color: #1c3b29;
 }
 
-/* 수요 분석 바 */
-.demand-bar {
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  overflow: hidden;
-}
+/* -----------------------------------------
+   상단 토스트 스타일
+------------------------------------------ */
 
-.demand-bar-fill {
-  height: 100%;
-  background: #111827;
-}
-
-/* 요약 카드 숫자 */
-.summary-card .summary-value {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-/* 토스트 */
 .toast-custom {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  max-width: 260px;
-  padding: 0.6rem 0.8rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  background: #111827;
-  color: #ffffff;
-  z-index: 1050;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2e6944;
+  color: #fff;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  min-width: 260px;
+  text-align: center;
 }
 
+/* 성공 / 오류 색상 */
 .toast-custom.toast-success {
-  background: #15803d;
+  background: #2e6944; /* 초록 */
 }
 .toast-custom.toast-error {
-  background: #b91c1c;
-}
-
-.toast-custom.show {
-  opacity: 1;
+  background: #b3312d; /* 붉은색 경고 */
 }
 
 .toast-custom.d-none {
-  display: none;
+  display: none !important;
+}
+
+/* -----------------------------------------
+   모달 스타일
+------------------------------------------ */
+
+.modal-content {
+  border-radius: 18px !important;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.modal-header {
+  border-bottom: none;
+  background: #edfbf1;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+/* 버튼 색상 — GiftElf 전용 */
+.btn-primary {
+  background: #2e6944 !important;
+  border-color: #2e6944 !important;
+}
+
+.btn-primary:hover {
+  background: #255a38 !important;
+}
+
+.btn-outline-secondary:hover {
+  background: #e8f7ee;
+}
+
+/* -----------------------------------------
+   재료 카드 스타일 (Materials Page용)
+------------------------------------------ */
+
+.material-card-green {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e7eee8;
+  transition: all 0.2s ease;
+}
+
+.material-card-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* (나머지 재료 카드 관련 스타일은 유지) */
+.material-top { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.8rem; }
+.material-icon-circle { width: 44px; height: 44px; background: #f0f8f4; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.6rem; border: 1px solid #dce8df; }
+.material-title-box { display: flex; flex-direction: column; }
+.material-title { font-size: 1rem; font-weight: 600; }
+.material-subtitle { color: #6b7280; font-size: 0.85rem; }
+.material-count-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem; color: #374151; }
+.material-progress-green { width: 100%; height: 8px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-bottom: 0.9rem; }
+.material-progress-fill-green { height: 100%; background: #1f4e33; border-radius: 10px; }
+.btn-green { background: #1f4e33 !important; color: #fff !important; font-weight: 500; border-radius: 12px; padding: 0.55rem 0.7rem; border: none; box-shadow: 0 4px 6px rgba(46, 105, 68, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1); }
+.btn-green:hover { background: #173c27 !important; }
+
+
+/* ------------------------------------------
+   로그 및 재고 테이블 스타일
+------------------------------------------ */
+
+.log-table-scroll-container {
+    max-height: 280px; 
+    overflow-y: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* 초록색 헤더 스타일 */
+.table-green-header th {
+  background-color: #e6f2ea !important; /* 연한 초록 배경 */
+  color: #1f4e33 !important;           /* 짙은 초록 글씨 */
+  font-weight: 700;
+  border-bottom: 2px solid #cce3d4;
+  padding: 12px 16px; 
+  white-space: nowrap;
+}
+
+/* 테이블 바디 셀 스타일 */
+.custom-table td {
+  padding: 12px 16px; 
+  color: #4b5563;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 테이블 좌우 여백 확보 */
+.custom-table th:first-child, .custom-table td:first-child { padding-left: 30px; }
+.custom-table th:last-child, .custom-table td:last-child { padding-right: 30px; }
+
+/* 재고 부족 경고 */
+.stock-warning-row {
+    background-color: #fff8e1 !important; /* 연한 노란색 배경 */
+}
+.stock-warning-row td:last-child {
+    font-weight: 700;
+    color: #b3312d; /* 붉은색 폰트 */
+}
+
+/* ------------------------------------------
+   제작 컨트롤 영역 (높이 및 여백 통일)
+------------------------------------------ */
+
+.gift-production-controls > * {
+  flex: 1 1 0 !important;
+}
+
+/* 1. 제작 시작 버튼 (둥글고 그림자 있게) */
+.btn-production {
+  flex: 1 !important;
+  background: #2e6944 !important;
+  color: #fff !important;
+  border: none;
+  border-radius: 50px;
+  height: 50px;
+  padding: 10px 0;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(46, 105, 68, 0.3), 
+              0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 0 !important;
+  transition: all 0.2s ease;
+}
+
+.btn-production:hover {
+  background: #255a38 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(46, 105, 68, 0.4);
+}
+
+.btn-production:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(46, 105, 68, 0.3);
+}
+
+
+/* 수량 조절 버튼 (+, -) */
+.btn-qty-cute {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e6f2ea;
+  color: #1f4e33;
+  border: 1px solid #cce3d4;
+  font-weight: 800;
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.btn-qty-cute:hover {
+  background-color: #2e6944;
+  color: #fff;
+  border-color: #2e6944;
+  transform: scale(1.1);
+}
+
+.btn-qty-cute:active {
+  transform: scale(0.95);
+}
+
+
+/* 3. 가운데 수량 입력칸 */
+.qty-input-cute {
+  width: 100px !important;
+  height: 50px;
+  border: none;
+  background-color: #f7fbf8;
+  border-bottom: 2px solid #2e6944;
+  border-radius: 0;
+  font-weight: 700;
+  color: #1f4e33;
+  text-align: center;
+  padding: 0; 
+  line-height: 50px; 
+}
+
+/* 입력칸 포커스 시 스타일 */
+.qty-input-cute:focus {
+  background-color: #fff;
+  border-bottom-color: #2e6944;
+  box-shadow: none;
+}
+
+/* input type number의 화살표 제거 */
+.qty-input-cute::-webkit-outer-spin-button,
+.qty-input-cute::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-input-cute {
+    -moz-appearance: textfield; /* Firefox 용 */
+}
+
+/* 수량 조절 묶음의 내부 간격 조절 */
+.qty-control-wrapper {
+  gap: 10px;
+  min-width: 0;
+}
+
+.gift-production-controls {
+  display: flex !important;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* -----------------------------------------
+   요약 카드 리뉴얼 (배경색 버전)
+------------------------------------------ */
+
+.summary-card {
+  border-radius: 12px;      /* 모서리 둥글게 */
+  border: 1px solid rgba(0,0,0,0.05); /* 아주 연한 테두리 */
+  box-shadow: none;         /* 그림자 제거 (깔끔한 플랫 스타일) */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+}
+
+.summary-card .card-body {
+  padding: 1.5rem 1.8rem;
+  text-align: left; /* 왼쪽 정렬 */
+}
+
+/* 색상별 배경 테마 (연한 파스텔톤) */
+
+/* 초록 배경 (총 수요) */
+.bg-soft-green {
+  background-color: #e6f4ea !important; /* 연한 초록 */
+  color: #1f4e33; /* 텍스트는 짙은 숲색(거의 검정 느낌) */
+}
+
+/* 노랑 배경 (재고) */
+.bg-soft-yellow {
+  background-color: #fff8e1 !important; /* 연한 노랑(크림색) */
+  color: #5d4037; /* 텍스트는 짙은 갈색 */
+}
+
+/* 빨강 배경 (부족량) */
+.bg-soft-red {
+  background-color: #fce8e6 !important; /* 연한 분홍 */
+  color: #b71c1c; /* 텍스트는 짙은 빨강 */
+}
+
+
+/* 내부 텍스트 스타일 */
+
+/* 라벨 (작은 글씨) */
+.summary-label {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.7; /* 약간 투명하게 */
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* 숫자 (큰 글씨 - 검은색 계열) */
+.summary-value-lg {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #212529; /* 완전 검은색에 가까운 진회색 */
+}
+
+/* 단위 (개) */
+.unit-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-left: 4px;
+  color: #495057; /* 숫자보다 약간 연한 색 */
 }
