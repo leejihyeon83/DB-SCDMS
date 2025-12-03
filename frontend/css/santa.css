@@ -283,32 +283,6 @@ body {
     background-color: #646464;
     color: #4b5563;
 }
-/* 로딩 */
-.loader-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(40, 7, 7, 0.26);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 90;
-}
-
-.loader {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    border: 5px solid #fff;
-    border-top-color: var(--santa-red);
-    border-right-color: var(--santa-gold);
-    animation: spin 0.9s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
 
 /* 에러 배너 */
 .error-banner {
