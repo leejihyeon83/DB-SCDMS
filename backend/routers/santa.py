@@ -41,8 +41,8 @@ def create_delivery_group(
     if not reindeer:
         raise HTTPException(status_code=404, detail="Reindeer not found")
 
-    # ready_reindeer_view 조건: status='READY', current_stamina >= 70
-    if not (reindeer.status == "READY" and reindeer.current_stamina >= 70):
+    # ready_reindeer_view 조건: status='READY', current_stamina >= 30
+    if not (reindeer.status == "READY" and reindeer.current_stamina >= 30):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Reindeer is not available for delivery",
@@ -254,7 +254,7 @@ def deliver_group(
         * Finished_Goods.stock_quantity - 1 (0 미만이면 실패)
         * delivery_log INSERT
     - 루돌프:
-        * status == 'READY' 이고 current_stamina >= 70, current_magic >= 10 이어야 함
+        * status == 'READY' 이고 current_stamina >= 30, current_magic >= 10 이어야 함
         * 성공 시 current_stamina -10, current_magic -10, status = 'ONDELIVERY'
     - 그룹:
         * 성공 시 status = 'DONE'
@@ -314,7 +314,7 @@ def deliver_group(
                     detail="Reindeer is not READY",
                 )
 
-            if reindeer.current_stamina < 70 or reindeer.current_magic < 10:
+            if reindeer.current_stamina < 30 or reindeer.current_magic < 10:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Reindeer stamina/magic is not enough for delivery",

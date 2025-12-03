@@ -37,6 +37,11 @@ def update_reindeer_status(
     reindeer.status = payload.status
     reindeer.current_stamina = payload.current_stamina
     reindeer.current_magic = payload.current_magic
+    
+    # 자동 READY 변경 로직 추가
+    # 체력이나 마력이 30 미만이면 자동 RESTING
+    if reindeer.current_stamina < 30 or reindeer.current_magic < 30:
+        reindeer.status = "RESTING"
 
     # 커밋 & 갱신
     db.commit()
