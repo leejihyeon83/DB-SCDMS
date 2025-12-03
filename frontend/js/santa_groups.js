@@ -19,7 +19,6 @@ function showToast(message, type = "info") {
 
     msgEl.textContent = message;
 
-    // 기존 클래스 초기화 (기본 디자인 유지 후 색상만 변경)
     toastEl.classList.remove("text-bg-danger", "text-bg-success", "text-bg-dark");
 
     // 타입별 색상 적용
@@ -88,10 +87,26 @@ function renderTargets(list) {
         subRow.className = "child-sub-row";
         subRow.textContent = formatChildSubtitle(t);
 
+        const giftRow = document.createElement("div");
+        giftRow.style.fontSize = "0.85rem";
+        giftRow.style.marginTop = "4px";
+        giftRow.style.color = "#d64840";
+
+        if (t.wishes && t.wishes.length > 0) {
+            const wishText = t.wishes
+                .slice(0, 3) 
+                .map((gift, index) => `${index + 1}순위 : ${gift}`) 
+                .join(" || "); 
+            giftRow.textContent = wishText;
+        } else {
+            giftRow.textContent = "🎁 등록된 소원 없음";
+            giftRow.style.color = "#999"; // 소원 없으면 회색
+        }
+
         info.appendChild(nameRow);
         info.appendChild(subRow);
+        info.appendChild(giftRow)
 
-        // 4. 조립
         label.appendChild(checkbox);
         label.appendChild(info);
 
@@ -308,15 +323,36 @@ async function fetchInitialData() {
 
         const [targetsRes, reindeerRes, groupsRes, regionsRes, giftRes] =
             await Promise.all([
-                apiGET("/santa/targets"),
+                apiGET("/santa/targets"),      
                 apiGET("/reindeer/available"),
                 apiGET("/santa/groups?status_filter=PENDING"),
                 apiGET("/regions/all"),
-                apiGET("/gift/"),
+                apiGET("/gift/"),            
             ]);
 
-        allTargets = targetsRes;
+        const targetsWithWishes = await Promise.all(
+            targetsRes.map(async (child) => {
+                try {
+                    const wishRes = await apiGET(`/list-elf/child/${child.child_id}/wishlist`);
+                    
+                    const wishList = wishRes.wishlist
+                        .sort((a, b) => a.priority - b.priority) 
+                        .map(w => w.gift_name); 
+
+                    return {
+                        ...child,
+                        wishes: wishList
+                    };
+                } catch (e) {
+                    console.warn(`아이(${child.child_id}) 소원 조회 실패`, e);
+                    return { ...child, wishes: [] };
+                }
+            })
+        );
+
+        allTargets = targetsWithWishes; 
         targets = [...allTargets];
+        
         reindeers = reindeerRes;
         pendingGroups = groupsRes;
         regions = regionsRes;
@@ -327,6 +363,7 @@ async function fetchInitialData() {
         renderReindeers();
         renderGroups();
         renderGiftStock();
+
     } catch (err) {
         console.error(err);
         showError("데이터를 불러오는 중 오류가 발생했습니다.");
@@ -335,14 +372,13 @@ async function fetchInitialData() {
     }
 }
 
-// santa_groups.js
-
 async function handleAddToQueue() {
     if (!santaState.staffId) {
         showError("로그인 정보가 없어 작업을 수행할 수 없습니다.");
         return;
     }
 
+    // 1. 선택된 아이들 및 기본 검증
     const checkboxes = document.querySelectorAll(".child-checkbox");
     const selectedIds = Array.from(checkboxes)
         .filter((cb) => cb.checked)
@@ -356,33 +392,26 @@ async function handleAddToQueue() {
     const reindeerSelect = document.getElementById("reindeerSelect");
     const reindeerId = Number(reindeerSelect.value);
     if (!reindeerId) {
-        showError("배송에 사용할 루돌프를 선택하세요.");
+        showError("배송 보낼 루돌프를 선택하세요.");
         return;
     }
 
-    // 지역 체크 등 기존 로직 유지
     const selectedTargets = allTargets.filter((t) =>
         selectedIds.includes(t.child_id)
     );
     const regionSet = new Set(selectedTargets.map((t) => t.region_id));
-
     if (regionSet.size > 1) {
         showError("같은 지역의 아이만 한 배송 그룹에 포함할 수 있습니다.");
         return;
     }
 
-    if (!selectedTargets.length) {
-        showError("선택된 아이 정보가 유효하지 않습니다.");
-        return;
-    }
-
-    // SweetAlert2 사용 
+    // 2. 그룹 생성 확인
     const result = await Swal.fire({
         title: '배송 그룹 생성',
         text: "선택한 아이들로 새 배송 그룹을 생성할까요?",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#d64840', // 산타 레드
+        confirmButtonColor: '#d64840',
         cancelButtonColor: '#999',
         confirmButtonText: '네, 생성할게요',
         cancelButtonText: '취소',
@@ -394,31 +423,90 @@ async function handleAddToQueue() {
     try {
         setLoading(true);
 
-        const assignments = await apiGET("/santa/assign-gifts");
-        const mapByChild = new Map(
-            assignments.map((a) => [a.child_id, a.gift_id])
+        // 1) 재고 Map 생성 (메모리상 계산용)
+        const stockMap = {};
+        gifts.forEach(g => stockMap[g.gift_id] = g.stock_quantity);
+
+        // 2) 아이들의 소원 목록 미리 준비 (API 호출 최소화)
+        const childrenWithWishes = await Promise.all(
+            selectedTargets.map(async (child) => {
+                try {
+                    // 상세 소원 목록 가져오기
+                    const res = await apiGET(`/list-elf/child/${child.child_id}/wishlist`);
+                    const wishes = res.wishlist.sort((a, b) => a.priority - b.priority);
+                    return { ...child, sortedWishes: wishes, assignedGiftId: null };
+                } catch (e) {
+                    console.warn(`소원 조회 실패: ${child.child_id}`);
+                    return { ...child, sortedWishes: [], assignedGiftId: null };
+                }
+            })
         );
 
-        const pairs = selectedIds
-            .map((cid) => ({
-                child_id: cid,
-                gift_id: mapByChild.get(cid),
-            }))
-            .filter((p) => p.gift_id != null);
+        let hasShortage = false;
+
+        // 3) 우선순위별(Rank) 라운드 로빈 실행 (1순위 -> 2순위 -> 3순위)
+        // rank 0 = 1순위, rank 1 = 2순위, rank 2 = 3순위
+        for (let rank = 0; rank < 3; rank++) {
+            
+            // 모든 아이를 돌면서 해당 순위(rank)의 소원을 확인
+            for (const child of childrenWithWishes) {
+                // 이미 선물을 받은 아이는 건너뜀
+                if (child.assignedGiftId) continue;
+
+                // 해당 순위의 소원이 있는지 확인
+                const wish = child.sortedWishes[rank]; 
+                if (!wish) continue; // 해당 순위 소원이 없으면 패스
+
+                // 재고 확인
+                const currentStock = stockMap[wish.gift_id] || 0;
+                if (currentStock > 0) {
+                    // 재고 있음 -> 배정!
+                    child.assignedGiftId = wish.gift_id;
+                    stockMap[wish.gift_id] -= 1; // 가상 차감
+                }
+            }
+        }
+
+        // 3순위까지 다 돌았는데도 못 받은 아이들
+        const pairs = [];
+        for (const child of childrenWithWishes) {
+            if (!child.assignedGiftId) {
+                // 재고 부족 당첨! -> 1순위 선물을 강제로 할당 (로그 기록용)
+                hasShortage = true;
+                if (child.sortedWishes.length > 0) {
+                    child.assignedGiftId = child.sortedWishes[0].gift_id;
+                } else {
+                    // 소원 자체가 아예 없는 아이... (예외 처리)
+                    console.warn(`아이 #${child.child_id}는 소원 데이터가 아예 없습니다.`);
+                    continue; // 배정 목록에서 제외
+                }
+            }
+
+            pairs.push({
+                child_id: child.child_id,
+                gift_id: child.assignedGiftId
+            });
+        }
 
         if (!pairs.length) {
-            showToast("선물 재고가 부족하여 그룹을 생성할 수 없습니다.", "warning");
+            showError("유효한 배송 데이터가 없어 그룹을 생성할 수 없습니다.");
             return;
         }
 
+        // ============================================================
+        // [API 전송]
+        // ============================================================
         const reindeerName = findReindeerName(reindeerId);
         const regionName = selectedTargets[0].region_name || "지역";
         const groupName = `배송 그룹 (${regionName} · ${reindeerName} · ${pairs.length}명)`;
 
-        const groupId = await apiPOST("/santa/groups", {
-            group_name: groupName,
-            reindeer_id: reindeerId,
-        });
+        const groupId = await apiPOST("/santa/groups", 
+            {
+                group_name: groupName,
+                reindeer_id: reindeerId,
+            },
+            { "x-staff-id": String(santaState.staffId) }
+        );
 
         for (const pair of pairs) {
             await apiPOST(`/santa/groups/${groupId}/items`, {
@@ -430,7 +518,13 @@ async function handleAddToQueue() {
         checkboxes.forEach((cb) => (cb.checked = false));
 
         await fetchInitialData();
-        showToast("배송 그룹이 생성되어 대기열에 추가되었습니다.", "success");
+
+        if (hasShortage) {
+            showToast("그룹 생성 완료!\n(일부 재고 부족으로 배송 실패 예상됨)", "warning");
+        } else {
+            showToast("배송 그룹이 성공적으로 생성되었습니다.", "success");
+        }
+
     } catch (err) {
         console.error(err);
         showError("배송 그룹 생성 중 오류가 발생했습니다.\n" + err);
@@ -439,10 +533,7 @@ async function handleAddToQueue() {
     }
 }
 
-// santa_groups.js
-
 async function handleDeliverGroup(groupId) {
-    // ▼▼▼ [수정된 부분] ▼▼▼
     const result = await Swal.fire({
         title: '!배송 시작!',
         text: "이 그룹의 선물 배송을 실제로 시작할까요?",
@@ -464,9 +555,12 @@ async function handleDeliverGroup(groupId) {
 
     try {
         setLoading(true);
-        const res = await apiPOST(`/santa/groups/${groupId}/deliver`);
+        const res = await apiPOST(
+            `/santa/groups/${groupId}/deliver`,
+            {}, 
+            { "x-staff-id": String(santaState.staffId) } 
+        );
         
-        // 성공 메시지도 SweetAlert로 예쁘게
         await Swal.fire({
             title: '배송 완료!',
             text: `총 ${res.delivered_count}개의 선물이 전달되었습니다.`,
@@ -477,7 +571,28 @@ async function handleDeliverGroup(groupId) {
         await fetchInitialData();
     } catch (err) {
         console.error(err);
-        showError("배송 실행 중 오류가 발생했습니다.\n" + err);
+        
+        let errorMsg = "알 수 없는 오류가 발생했습니다.";
+
+        if (err.detail) {
+            errorMsg = typeof err.detail === 'string' 
+                ? err.detail 
+                : JSON.stringify(err.detail);
+        } else if (err.message) {
+            errorMsg = err.message;
+        } else if (typeof err === 'string') {
+            errorMsg = err;
+        } else {
+            errorMsg = JSON.stringify(err);
+        }
+
+        Swal.fire({
+            title: '배송 실패',
+            text: errorMsg,
+            icon: 'error',
+            confirmButtonColor: '#d33'
+        });
+        
         await fetchInitialData();
     } finally {
         setLoading(false);
@@ -485,7 +600,6 @@ async function handleDeliverGroup(groupId) {
 }
 
 async function handleDeleteGroup(groupId) {
-    // ▼▼▼ [수정된 부분] ▼▼▼
     const result = await Swal.fire({
         title: '그룹 삭제',
         html: "정말로 이 배송 그룹을 삭제할까요?<br><small>(대기중 또는 실패한 그룹만 삭제됩니다)</small>",

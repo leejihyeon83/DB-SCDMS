@@ -2,6 +2,7 @@
 
 let allChildren = [];
 let regionsMap = {};
+let giftsMap = {};
 
 const loader = document.getElementById("loaderBackdrop");
 const errorBanner = document.getElementById("errorBanner");
@@ -18,7 +19,7 @@ function showError(msg) {
 window.addEventListener("DOMContentLoaded", async () => {
     try {
         showLoader();
-        await Promise.all([loadRegions(), loadChildren()]);
+        await Promise.all([loadRegions(),loadGifts(),loadChildren()]);
     } catch (e) {
         console.error(e);
         showError("데이터 불러오기 실패");
@@ -41,7 +42,19 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
-// 지역 목록 불러오기 (FastAPI: /regions/all)
+// 선물 목록 불러오기 (/gift/)
+async function loadGifts() {
+    try {
+        const data = await apiGET("/gift/"); 
+        data.forEach(g => {
+            giftsMap[g.gift_id] = g.gift_name;
+        });
+    } catch (e) {
+        console.warn("선물 목록 로드 실패:", e);
+    }
+}
+
+// 지역 목록 불러오기 (/regions/all)
 async function loadRegions() {
     const data = await apiGET("/regions/all");
     const select = document.getElementById("regionFilter");
@@ -94,18 +107,24 @@ function renderTable(children) {
         const regionName = regionsMap[child.region_id] || "-";
         const p1 = child.wishlist.find(w => w.priority === 1);
         const p2 = child.wishlist.find(w => w.priority === 2);
+        const p3 = child.wishlist.find(w => w.priority === 3);
+
+        const p1Name = p1 ? (giftsMap[p1.gift_id] || `#${p1.gift_id}`) : "-";
+        const p2Name = p2 ? (giftsMap[p2.gift_id] || `#${p2.gift_id}`) : "-";
+        const p3Name = p3 ? (giftsMap[p3.gift_id] || `#${p3.gift_id}`) : "-";
 
         const tr = document.createElement("tr");
         tr.onclick = () => openChildModal(child.child_id);
 
         tr.innerHTML = `
-            <td>${child.name}</td>
+            <td><strong>${child.name}</strong></td>
             <td>${regionName}</td>
             <td>${child.address}</td>
-            <td>${p1 ? "#" + p1.gift_id : "-"}</td>
-            <td>${p2 ? "#" + p2.gift_id : "-"}</td>
-            <td>${child.status_code}</td>
-            <td>${child.delivery_status_code}</td>
+            <td>${p1Name}</td>
+            <td>${p2Name}</td>
+            <td>${p3Name}</td>
+            <td>${makeBadgeHtml('status', child.status_code)}</td>
+            <td>${makeBadgeHtml('delivery', child.delivery_status_code)}</td>
         `;
 
         tbody.appendChild(tr);
@@ -160,10 +179,11 @@ function fillModal(detail) {
     detail.wishlist
         .sort((a, b) => a.priority - b.priority)
         .forEach(w => {
+            const giftName = w.gift_name || giftsMap[w.gift_id] || `#${w.gift_id}`;
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${w.priority}</td>
-                <td>#${w.gift_id}</td>
+                <td>${giftName}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -189,14 +209,13 @@ function makeBadgeHtml(type, value) {
     const text = value.toUpperCase(); // 대소문자 무시
     let className = "badge-pending";  // 기본값
 
-    // 1. 상태/판정 관련 (NICE, NAUGHTY, SUCCESS, FAILED)
     if (type === 'status') {
         if (text === 'NICE') className = "badge-nice";
         else if (text === 'NAUGHTY') className = "badge-naughty";
         else if (text === 'SUCCESS') className = "badge-success"; // 로그용
         else if (text === 'FAILED') className = "badge-failed";   // 로그용
     } 
-    // 2. 배송 관련 (PENDING, SCHEDULED, DELIVERED, DONE)
+
     else if (type === 'delivery') {
         if (text === 'PENDING') className = "badge-pending";
         else if (text === 'DELIVERED' || text === 'DONE') className = "badge-delivered";

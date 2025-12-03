@@ -246,91 +246,42 @@ body {
     font-size: 0.8rem;
 }
 
-/* 뱃지 */
+/* 뱃지 공통 스타일 */
 .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-status {
-    background: #ffe4f0;
-    color: #b30065;
-}
-
-.badge-delivery {
-    background: #73aed6;
-    color: #73aed6;
-}
-
-/* NICE*/
-.badge-nice {
-    background: #7ad692;
-    color: #7ad692;
-    border: 1px solid #9fdcb1;
-    font-weight: 700;
-}
-
-/* NAUGHTY */
-.badge-naughty {
-    background: #dc3232;
-    color: #dc3232;
-    border: 1px solid #f5b5c9;
-    font-weight: 700;
-}
-
-/* PENDING */
-.badge-pending {
-    background: #d2c267;
-    color: #d2c267;
-    border: 1px solid #f2d28c;
-    font-weight: 700;
-}
-
-/* DELIVERED */
-.badge-delivered {
-    background: #57bbfd;
-    color: #57bbfd;
-    border: 1px solid #a8d1f0;
-    font-weight: 700;
-}
-
-/* FAILED */
-.badge-failed {
-    background: #c62828;
-    color: #c62828;
-    border: 1px solid #f3b0b0;
-    font-weight: 700;
-}
-
-
-/* 로딩 */
-.loader-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(40, 7, 7, 0.26);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    z-index: 90;
+    padding: 5px 10px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    border: none;
 }
 
-.loader {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    border: 5px solid #fff;
-    border-top-color: var(--santa-red);
-    border-right-color: var(--santa-gold);
-    animation: spin 0.9s linear infinite;
+.badge-nice {
+    background-color: #8fd7b2;
+    color: #047857;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+.badge-naughty {
+    background-color: #ff9c9c;
+    color: #b91c1c;
+}
+
+.badge-pending {
+    background-color: #f8e184;
+    color: #b45309;
+}
+
+.badge-delivered, .badge-success {
+    background-color: #9fd9ff;
+    color: #0369a1;
+}
+
+.badge-failed {
+    background-color: #646464;
+    color: #4b5563;
 }
 
 /* 에러 배너 */
@@ -739,41 +690,6 @@ body {
     flex: 1;
 }
 
-/* 배지 스타일 확장 */
-
-.badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-/* 배송 완료 (SUCCESS — Green) */
-.badge-success {
-    background: #7ad692;         
-    color: #7ad692;   
-    border: 1px solid #9bd8ac;  
-    font-weight: 700;
-}
-
-/* 배송 실패 (FAILED — Red) */
-.badge-failed {
-    background: #ff7676;       
-    color: #ff7676;           
-    border: 1px solid #f5b5b5;   
-    font-weight: 700;
-}
-
-.badge-pending {
-    background: #ffee6e;        
-    color: #ffee6e;             
-    border: 1px solid #f0d49a;    
-    font-weight: 700;
-}
-
-
 /* 배송 로그 페이지 */
 
 .logs-summary-box {
@@ -807,7 +723,7 @@ body {
 }
 
 .filter-label {
-    font-weight: 600;
+    font-size: 1.4rem;
 }
 
 .filter-caption {
@@ -1107,4 +1023,14 @@ body {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+.santa-modal-footer {
+    display: flex;           
+    justify-content: flex-end;
+    margin-top: 16px;  
+}
+
+.santa-modal-footer .primary-btn {
+    box-shadow: none !important; 
 }
