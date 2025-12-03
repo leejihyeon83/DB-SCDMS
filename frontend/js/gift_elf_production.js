@@ -333,6 +333,7 @@ function initProduction() {
   const minusBtn = $("#btn-qty-minus");
   const plusBtn = $("#btn-qty-plus");
 
+  // 수량 감소
   minusBtn.onclick = () => {
     let current = Number(qtyInput.value);
     if (current > 1) { 
@@ -340,11 +341,13 @@ function initProduction() {
     }
   };
 
+  // 수량 증가
   plusBtn.onclick = () => {
     let current = Number(qtyInput.value);
     qtyInput.value = current + 1;
   };
   
+  // 직접 입력 시 유효성 검사
   qtyInput.onchange = () => {
       let val = Number(qtyInput.value);
       if (val < 1 || isNaN(val)) {
@@ -352,7 +355,8 @@ function initProduction() {
       }
   };
 
-  $("#btn-start-production").onclick = () => {
+  // 제작 버튼 클릭 이벤트
+  $("#btn-start-production").onclick = async () => {
     if (!state.selectedGiftId) {
       showToast("선물을 먼저 선택하세요", "error");
       return;
@@ -365,45 +369,91 @@ function initProduction() {
     }
     
     const g = state.gifts.find(x => x.gift_id === state.selectedGiftId);
-    state.pending = { giftId: g.gift_id, qty, giftName: g.gift_name };
-    $("#confirmMsg").textContent = `${g.gift_name}을(를) ${qty}개 제작할까요?`;
-    confirmModal.show();
-  };
 
-  $("#confirmYes").onclick = () => handleProduce();
+    const result = await Swal.fire({
+        title: '선물 제작 시작',
+        html: `
+            <span style="color:#2e6944; font-weight:bold;">${g.gift_name}</span>을(를) 
+            <b style="font-size: 1.2rem;">${qty}개</b> 제작할까요?
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#2e6944',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        background: '#f3faf5',
+        iconColor: '#2e6944',
+        reverseButtons: false
+    });
+
+    // 사용자가 '확인'을 눌렀을 때만 실행
+    if (result.isConfirmed) {
+        handleProduce(g.gift_id, qty);
+    }
+  };
 }
 
 /* ---------------- 제작 처리 ---------------- */
-async function handleProduce() {
-  const { giftId, qty, giftName } = state.pending;
+async function handleProduce(giftId, qty) {
+  try {
+    // 서버로 제작 요청 전송
+    const res = await fetch(API.productionCreate, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        gift_id: giftId,
+        produced_quantity: qty,
+        staff_id: state.staffId
+      })
+    });
 
-  const res = await fetch(API.productionCreate, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      gift_id: giftId,
-      produced_quantity: qty,
-      staff_id: state.staffId
-    })
-  });
+    const data = await res.json();
 
-  const data = await res.json();
-  confirmModal.hide();
-
-  if (!res.ok) {
-    let errorMessage = data.detail;
-    if (typeof errorMessage === 'object' && errorMessage.message) {
-        errorMessage = errorMessage.message;
-    } else if (typeof errorMessage !== 'string') {
-        errorMessage = "제작에 실패했습니다. (알 수 없는 오류)";
+    // 실패 시 (서버 오류 등)
+    if (!res.ok) {
+      let errorMessage = data.detail;
+      if (typeof errorMessage === 'object' && errorMessage.message) {
+          errorMessage = errorMessage.message;
+      } else if (typeof errorMessage !== 'string') {
+          errorMessage = "알 수 없는 오류 발생";
+      }
+      
+      // SweetAlert2로 에러 표시
+      Swal.fire({
+          icon: 'error',
+          title: '제작 실패',
+          text: errorMessage,
+          confirmButtonColor: '#b3312d',
+          background: '#fff5f5'
+      });
+      return;
     }
-    showToast(errorMessage, "error");
-    return;
-  }
 
-  showToast("제작 완료!", "success");
-  loadGifts();
-  loadLogs();
+    // 성공 시
+    Swal.fire({
+        icon: 'success',
+        title: '제작 완료!',
+        text: `${qty}개의 선물이 창고로 이동되었습니다.`,
+        confirmButtonColor: '#2e6944',
+        timer: 2000,
+        timerProgressBar: true
+    });
+
+    // 데이터 새로고침
+    loadGifts();
+    loadLogs();
+
+  } catch (e) {
+    console.error(e);
+    // 프론트엔드 네트워크 오류 등
+    Swal.fire({
+        icon: 'error',
+        title: '오류 발생',
+        text: '서버와 통신할 수 없습니다.',
+        confirmButtonColor: '#b3312d'
+    });
+  }
 }
 
 /* ---------------- 실행 ---------------- */
@@ -415,7 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initLogout();
   
   recipeModal = new bootstrap.Modal($("#recipeModal"));
-  confirmModal = new bootstrap.Modal($("#confirmModal"));
+  // confirmModal = new bootstrap.Modal($("#confirmModal"));
 
   // 요정 목록을 먼저 불러와 드롭다운을 채웁니다.
   loadAndRenderElfFilter();
