@@ -20,7 +20,11 @@ function showToast(message) {
 // Region 불러오기
 
 async function loadRegions() {
-    const res = await fetch(`${BASE_URL}/regions/all`);
+    const res = await fetch(`${BASE_URL}/regions/all`, {
+        headers: {
+            "x-staff-id": String(getStaffId())
+        }
+    });
     regions = await res.json();
 
     const filter = document.getElementById("regionFilter");
@@ -37,7 +41,11 @@ async function loadRegions() {
 // Child 목록 불러오기
 
 async function loadChildren() {
-    const res = await fetch(`${BASE_URL}/list-elf/child/all`);
+    const res = await fetch(`${BASE_URL}/list-elf/child/all`, {
+        headers: {
+            "x-staff-id": String(getStaffId())
+        }
+    });
     childrenData = await res.json();
     renderChildren();
 }
@@ -149,7 +157,11 @@ function renderChildren() {
 // Wishlist 모달
 
 async function openWishlistModal(childId) {
-    const res = await fetch(`${BASE_URL}/list-elf/child/${childId}/wishlist`);
+    const res = await fetch(`${BASE_URL}/list-elf/child/${childId}/wishlist`, {
+        headers: {
+            "x-staff-id": String(getStaffId())
+        }
+    });
     const data = await res.json();
 
     const tbody = document.getElementById("wishlistTableBody");
@@ -192,7 +204,10 @@ async function saveNote() {
 
     const res = await fetch(`${BASE_URL}/list-elf/child/${currentEditChildId}`, {
         method: "PATCH",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "x-staff-id": String(getStaffId())
+        },
         body: JSON.stringify({ child_note: note })
     });
 
@@ -241,7 +256,10 @@ async function deleteChild(childId) {
     }).then(async (result) => {
         if (result.isConfirmed) {
             await fetch(`${BASE_URL}/list-elf/child/${childId}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "x-staff-id": String(getStaffId())
+                }
             });
 
             await loadChildren();
@@ -257,7 +275,10 @@ async function deleteChild(childId) {
 async function updateStatus(childId, newStatus) {
     await fetch(`${BASE_URL}/list-elf/child/${childId}`, {
         method: "PATCH",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "x-staff-id": String(getStaffId())
+        },
         body: JSON.stringify({ status_code: newStatus })
     });
 

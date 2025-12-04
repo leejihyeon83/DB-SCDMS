@@ -111,9 +111,13 @@ GRANT SELECT ON TABLE delivery_status_code
 
 -- Child
 -- Santa : R, U
+-- GiftElf: R
 -- ListElf : C, R, U, D
 GRANT SELECT, UPDATE ON TABLE child
   TO role_santa;
+
+GRANT SELECT, UPDATE ON TABLE child
+  TO role_giftelf;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE child
   TO role_listelf;
@@ -219,3 +223,8 @@ GRANT INSERT, SELECT ON TABLE delivery_log
 
 GRANT SELECT ON TABLE delivery_log
   TO role_listelf, role_giftelf, role_keeper;
+
+GRANT role_giftelf TO postgres;
+GRANT role_listelf TO postgres;
+GRANT role_santa TO postgres;
+GRANT role_keeper TO postgres;

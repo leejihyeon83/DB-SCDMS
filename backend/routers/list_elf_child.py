@@ -113,7 +113,7 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_a
 
 # Child 수정 (PATCH)
 @router.patch("/{child_id}", response_model=ChildOut)
-def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_db)):
+def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_authorized_db)):
     '''
     Child 기본 정보 수정
     '''
@@ -166,7 +166,7 @@ def update_child(child_id: int, payload: ChildUpdate, db: Session = Depends(get_
 
 # Child 삭제 (DELETE)
 @router.delete("/{child_id}")
-def delete_child(child_id: int, db: Session = Depends(get_db)):
+def delete_child(child_id: int, db: Session = Depends(get_authorized_db)):
     '''
     Child 삭제
     - wishlist는 CASCADE로 자동 삭제됨
@@ -184,7 +184,7 @@ def delete_child(child_id: int, db: Session = Depends(get_db)):
 
 # Child 상세 조회 (Child + Wishlist)
 @router.get("/{child_id}/details", response_model=ChildDetailOut)
-def get_child_details(child_id: int, db: Session = Depends(get_db)):
+def get_child_details(child_id: int, db: Session = Depends(get_authorized_db)):
     '''
     Child + Wishlist 묶음 조회
     UI/UX 화면에서 '아이 상세 페이지'를 만들 때 필수
@@ -215,7 +215,7 @@ def get_child_details(child_id: int, db: Session = Depends(get_db)):
 
 # Wishlist 생성
 @router.post("/{child_id}/wishlist", response_model=WishlistItemOut)
-def add_wishlist(child_id: int, payload: WishlistCreate, db: Session = Depends(get_db)):
+def add_wishlist(child_id: int, payload: WishlistCreate, db: Session = Depends(get_authorized_db)):
     '''
     Child에 Wishlist 항목 추가
     '''
@@ -247,7 +247,7 @@ def add_wishlist(child_id: int, payload: WishlistCreate, db: Session = Depends(g
 
 # Wishlist 수정
 @router.patch("/wishlist/{wishlist_id}", response_model=WishlistItemOut)
-def update_wishlist(wishlist_id: int, payload: WishlistUpdate, db: Session = Depends(get_db)):
+def update_wishlist(wishlist_id: int, payload: WishlistUpdate, db: Session = Depends(get_authorized_db)):
     '''
     Wishlist 항목 단일 수정
     '''
@@ -283,7 +283,7 @@ def update_wishlist(wishlist_id: int, payload: WishlistUpdate, db: Session = Dep
 
 # Wishlist 삭제
 @router.delete("/wishlist/{wishlist_id}")
-def delete_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
+def delete_wishlist(wishlist_id: int, db: Session = Depends(get_authorized_db)):
     '''
     Wishlist 항목 단일 삭제
     '''
@@ -299,7 +299,7 @@ def delete_wishlist(wishlist_id: int, db: Session = Depends(get_db)):
 
 # Child 전체 조회 API
 @router.get("/all", response_model=list[ChildFullOut])
-def get_all_children(db: Session = Depends(get_db)):
+def get_all_children(db: Session = Depends(get_authorized_db)):
 
     children = (
         db.query(Child)
@@ -331,7 +331,7 @@ def get_all_children(db: Session = Depends(get_db)):
 
 #  ChildNote 단독 조회 API
 @router.get("/{child_id}/note", response_model=ChildNoteOut)
-def get_child_note(child_id: int, db: Session = Depends(get_db)):
+def get_child_note(child_id: int, db: Session = Depends(get_authorized_db)):
 
     child = db.query(Child).filter(Child.ChildID == child_id).first()
 
@@ -344,7 +344,7 @@ def get_child_note(child_id: int, db: Session = Depends(get_db)):
     )
 
 @router.get("/{child_id}/wishlist")
-def get_child_wishlist(child_id: int, db: Session = Depends(get_db)):
+def get_child_wishlist(child_id: int, db: Session = Depends(get_authorized_db)):
 
     # Child 존재 여부 확인
     child = db.query(Child).filter(Child.ChildID == child_id).first()

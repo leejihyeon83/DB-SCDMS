@@ -56,7 +56,11 @@ function initLogout() {
 
 
 async function loadGifts() {
-    const res = await fetch(`${BASE_URL}/gift/`);
+    const res = await fetch(`${BASE_URL}/gift/`, {
+        headers: {
+            "x-staff-id": String(currentUser.staff_id)
+        }
+    });
     gifts = await res.json();
 
     const hint = document.getElementById("wishlistHint");
@@ -72,7 +76,11 @@ async function loadGifts() {
 }
 
 async function loadRegions() {
-    const res = await fetch(`${BASE_URL}/regions/all`);
+    const res = await fetch(`${BASE_URL}/regions/all`, {
+        headers: {
+            "x-staff-id": String(currentUser.staff_id)
+        }
+    });
     const regions = await res.json();
 
     const select = document.getElementById("region");
@@ -278,7 +286,10 @@ async function submitChild() {
 
     const res = await fetch(`${BASE_URL}/list-elf/child/create`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            "x-staff-id": String(currentUser.staff_id)
+        },
         body: JSON.stringify(body),
     });
 

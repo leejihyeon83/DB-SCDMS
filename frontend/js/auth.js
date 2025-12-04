@@ -34,5 +34,5 @@ function requireRole(allowedRoles) {
 // 로그아웃
 function logout() {
   localStorage.removeItem("currentUser");
-  window.location.href = "index.html";
+  window.location.href = "/";
 }

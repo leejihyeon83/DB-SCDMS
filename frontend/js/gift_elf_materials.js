@@ -34,6 +34,26 @@ async function fetchJson(url, options = {}) {
     headers["Content-Type"] = "application/json";
   }
 
+  if (!headers["x-staff-id"]) {
+    let staffId = state.staffId;
+
+    if (staffId == null) {
+      const raw = localStorage.getItem("currentUser");
+      if (raw) {
+        try {
+          const user = JSON.parse(raw);
+          staffId = user.staff_id;
+        } catch (e) {
+          console.warn("currentUser 파싱 실패:", e);
+        }
+      }
+    }
+
+    if (staffId != null) {
+      headers["x-staff-id"] = String(staffId);
+    }
+  }
+
   const res = await fetch(url, { ...options, headers });
   const data = await res.json().catch(() => null);
 

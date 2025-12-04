@@ -505,7 +505,6 @@ async function handleAddToQueue() {
                 group_name: groupName,
                 reindeer_id: reindeerId,
             },
-            { "x-staff-id": String(santaState.staffId) }
         );
 
         for (const pair of pairs) {
