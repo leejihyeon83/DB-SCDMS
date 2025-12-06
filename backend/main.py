@@ -41,9 +41,9 @@ app.include_router(gift.router)
 app.include_router(production.router)
 app.include_router(reindeer.router)
 app.include_router(list_elf_child.router)
-app.include_router(child_status_code.router)     # 아이 상태 코드 라우터
-app.include_router(delivery_status_code.router)  # 배송 상태 코드 라우터
-app.include_router(list_elf_stats.router) # Gift Demand 통계 라우터 등록
+app.include_router(child_status_code.router)
+app.include_router(delivery_status_code.router)
+app.include_router(list_elf_stats.router)
 app.include_router(santa.router)
 app.include_router(delivery_log.router)
 app.include_router(staff.router)

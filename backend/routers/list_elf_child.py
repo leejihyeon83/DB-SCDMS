@@ -1,15 +1,3 @@
-'''
-아이(Child) + Wishlist를 한 번에 생성하는 API
-- Child INSERT
-- Wishlist 여러 개 INSERT
-- 중간에 실패하면 전부 롤백 (트랜잭션 처리)
-- Child 수정 (PATCH)
-- Child 삭제 (DELETE)
-- Child 상세 조회 (Child + Wishlist)
-- Wishlist 생성
-- Wishlist 수정
-- Wishlist 삭제
-'''
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -67,13 +55,13 @@ def create_child_with_wishlist(payload: ChildCreate, db: Session = Depends(get_a
         )
 
         db.add(child)
-        db.flush()  # ChildID 확보 (commit 전이지만 FK에 사용 가능)
+        db.flush()
 
         # Wishlist 여러 개 INSERT
         wishlist_rows = []
         for item in payload.wishlist:
             w = Wishlist(
-                ChildID=child.ChildID,   # 방금 생성한 Child와 연결
+                ChildID=child.ChildID,
                 GiftID=item.gift_id,
                 Priority=item.priority,
             )

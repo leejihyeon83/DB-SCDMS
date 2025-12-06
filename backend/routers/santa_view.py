@@ -1,14 +1,3 @@
-'''
-Santa View API
---------------
-Santa가 보는 '배송 대상 아이' 전용 조회 API.
-
-조건:
-- StatusCode == "NICE"
-- DeliveryStatusCode != "DELIVERED"
-- (선택) region_id로 지역 필터링
-'''
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -126,7 +115,7 @@ def assign_gifts(
     - 재고 없으면 child 제외
     """
 
-    # 1) 배송 대상 Child 조회
+    # 배송 대상 Child 조회
     query = (
         db.query(Child)
         .filter(func.upper(Child.StatusCode) == "NICE")
@@ -140,7 +129,7 @@ def assign_gifts(
 
     result = []
 
-    # 2) 각 Child의 wishlist에서 선물 선택
+    # 각 Child의 wishlist에서 선물 선택
     for child in children:
         wishlist_items = (
             db.query(Wishlist)
@@ -151,7 +140,7 @@ def assign_gifts(
 
         selected_gift_id = None
 
-        # 3) wishlist에서 첫 번째 재고 있는 gift 찾기
+        # wishlist에서 첫 번째 재고 있는 gift 찾기
         for w in wishlist_items:
             stock = (
                 db.query(FinishedGoods.stock_quantity)
@@ -159,12 +148,12 @@ def assign_gifts(
                 .scalar()
             )
 
-            # 재고 있는 gift 발견 → 바로 선택
+            # 재고 있는 gift 발견 -> 바로 선택
             if stock and stock > 0:
                 selected_gift_id = w.GiftID
                 break
 
-        # 4) 재고가 있는 선물이 있는 경우만 결과에 추가
+        # 재고가 있는 선물이 있는 경우만 결과에 추가
         if selected_gift_id is not None:
             result.append({
                 "child_id": child.ChildID,

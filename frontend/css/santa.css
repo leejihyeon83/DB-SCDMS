@@ -46,9 +46,9 @@ body {
     gap: 6px;
 }
 
-/* 2단: 탭 네비게이션 */
+/* 탭 네비게이션 */
 .santa-tabs {
-    background: #fff5f3;                   /* 연한 배경 */
+    background: #fff5f3;
     padding: 10px 24px 12px;
     display: flex;
     gap: 24px;
@@ -66,11 +66,11 @@ body {
     transition: background 0.15s, color 0.15s;
 }
 
-/* 선택(active)된 탭 버튼 */
+/* 선택된 탭 버튼 */
 .tab-item.active {
-    background: var(--santa-red);        /* 빨간색 배경 */
-    color: #ffffff;                      /* 글자는 하얀색 */
-    box-shadow: none;                    /* 그림자 제거 */
+    background: var(--santa-red);
+    color: #ffffff;
+    box-shadow: none;
 }
 
 /* 메인 컨테이너 */
@@ -411,7 +411,7 @@ body {
     }
 }
 
-/* ------- 지역 카드 그리드 ------- */
+/* 지역 카드 그리드 */
 .region-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -462,10 +462,7 @@ body {
     cursor: not-allowed;
 }
 
-/* ===========================
-   배송 실행 / 배송 기록 공통
-   =========================== */
-
+/* 배송 실행 / 배송 기록 공통 */
 .delivery-layout {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -618,7 +615,6 @@ body {
 }
 
 /* 배송 대기열 */
-
 .group-list {
     margin-top: 4px;
     display: flex;
@@ -695,7 +691,6 @@ body {
 }
 
 /* 배송 로그 페이지 */
-
 .logs-summary-box {
     margin-top: 16px;
 }
@@ -811,7 +806,6 @@ body {
 }
 
 /* 선물 재고 */
-
 .gift-stock-section {
     margin-top: 18px;
     padding-top: 12px;
@@ -843,12 +837,7 @@ body {
     margin-bottom: 8px;
 }
 
-/* -------------------------------------------------
-   배송 대상 페이지 헤더 / 필터 레이아웃 강제 복구
-   (다른 페이지에는 영향 X)
-   ------------------------------------------------- */
-
-/* 제목 + 필터를 좌우로 배치 */
+/* 배송 대상 페이지 헤더 / 필터 레이아웃 강제 복구 */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -856,7 +845,6 @@ body {
     gap: 24px;
 }
 
-/* 왼쪽 제목 영역은 줄어들지 않게 */
 .page-header > div:first-child {
     flex-shrink: 0;
 }
@@ -864,19 +852,19 @@ body {
 /* 오른쪽 필터 박스: 한 줄 기준으로 가로 정렬 */
 .page-header .filter-box {
     display: flex;
-    flex-wrap: nowrap;          /* 넓으면 한 줄, 좁으면 그때만 줄바꿈 */
+    flex-wrap: nowrap;
     gap: 8px;
     justify-content: flex-end;
 }
 
-/* 검색창, 셀렉트 박스 폭 고정 (가로로 쭉) */
+/* 검색창, 셀렉트 박스 폭 고정 */
 .page-header .filter-box .search-input {
     width: 220px;
     flex: 0 0 auto;
 }
 
 .page-header .filter-box .filter-select {
-    width: auto !important;     /* 어디서 width:100% 줘도 여기서 무조건 덮어씀 */
+    width: auto !important;
     flex: 0 0 auto;
 }
 
@@ -894,7 +882,7 @@ body {
     background: #c9302c;
 }
 
-/* Toast 컨테이너 위치 수정: 화면 중앙 상단 고정 */
+/* Toast 컨테이너 위치 화면 중앙 상단 고정 */
 .toast-container {
     top: 20px !important;
     left: 50% !important;
@@ -904,9 +892,9 @@ body {
 
 /* Toast 본체 디자인 */
 .toast {
-    background-color: rgba(43, 26, 25, 0.95) !important; /* 진한 갈색 배경 */
+    background-color: rgba(43, 26, 25, 0.95) !important;
     color: #fff !important;
-    border-radius: 50px !important; /* 둥근 알약 모양 */
+    border-radius: 50px !important;
     padding: 4px 10px !important;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
     font-weight: 500;
@@ -915,7 +903,7 @@ body {
     justify-content: center;
 }
 
-/* 닫기 버튼 숨기기 (자동으로 사라지므로 깔끔하게 제거) */
+/* 닫기 버튼 숨기기 */
 .toast .btn-close {
     display: none;
 }
@@ -928,23 +916,20 @@ body {
     word-break: keep-all;
 }
 
-/* 에러일 경우 (빨간색) */
+/* 에러일 경우 */
 .text-bg-danger {
-    background-color: #d64840 !important; /* 산타 레드 */
+    background-color: #d64840 !important;
     border: 2px solid #fff;
 }
 
-/* 성공일 경우 (초록색) */
+/* 성공일 경우 */
 .text-bg-success {
     background-color: #4CAF50 !important;
     border: 2px solid #fff;
 }
 
-/* =========================================
-   커스텀 체크박스 & 리스트 아이템 스타일링
-   ========================================= */
-
-/* 1. 리스트 아이템 (카드) 기본 스타일 */
+/* 커스텀 체크박스 & 리스트 아이템 스타일링 */
+/* 리스트 아이템 (카드) 기본 스타일 */
 .child-item {
     display: flex;
     align-items: center;
@@ -967,17 +952,16 @@ body {
     border-color: #f2c2b8;
 }
 
-/* 2. 체크되었을 때 (카드 전체 스타일 변경) */
-/* :has() 선택자는 최신 브라우저에서 작동합니다. */
+/* 체크되었을 때 */
 .child-item:has(.child-checkbox:checked) {
-    background: #ffebe6; /* 아주 연한 빨간 배경 */
-    border-color: var(--santa-red); /* 진한 빨간 테두리 */
-    box-shadow: 0 0 0 1px var(--santa-red); /* 테두리 강조 */
+    background: #ffebe6;
+    border-color: var(--santa-red);
+    box-shadow: 0 0 0 1px var(--santa-red);
 }
 
-/* 3. 체크박스 인풋 숨기기 & 커스텀 디자인 */
+/* 체크박스 인풋 숨기기 */
 .child-checkbox {
-    appearance: none; /* 기본 스타일 제거 */
+    appearance: none;
     width: 24px;
     height: 24px;
     border: 2px solid #e0c0b8;
@@ -985,7 +969,7 @@ body {
     background-color: #fff;
     cursor: pointer;
     position: relative;
-    flex-shrink: 0; /* 크기 줄어듦 방지 */
+    flex-shrink: 0;
     transition: all 0.2s ease;
 }
 
@@ -995,7 +979,7 @@ body {
     border-color: var(--santa-red);
 }
 
-/* 체크 표시 (가상 요소로 V자 만들기) */
+/* 체크 표시 */
 .child-checkbox:checked::after {
     content: '';
     position: absolute;

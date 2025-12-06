@@ -70,5 +70,5 @@ def get_authorized_db(
         yield db  # 권한이 설정된 세션을 라우터에 전달
         
     finally:
-        # 세션이 반환될 때 역할 초기화 (Connection Pooling을 위해 필수)
+        # 세션이 반환될 때 역할 초기화
         db.execute(text("RESET ROLE"))

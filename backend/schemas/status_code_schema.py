@@ -1,10 +1,4 @@
-"""
-StatusCode용 Pydantic 스키마
-- ChildStatusCode / DeliveryStatusCode 공통으로 사용
-"""
-
 from pydantic import BaseModel, ConfigDict
-
 
 class StatusCodeBase(BaseModel):
     # API 입출력에서 쓸 필드 이름 (소문자)
@@ -40,7 +34,6 @@ class StatusCodeOut(StatusCodeBase):
 
     @classmethod
     def from_orm(cls, obj):
-        # SQLAlchemy 모델에서 실제 컬럼 이름은 대문자일 것임: Code / Description
         code_value = getattr(obj, "Code", None)
         if code_value is None:
             # 혹시 다른 이름을 쓸 수도 있으니 방어 코드

@@ -1,15 +1,3 @@
-'''
-Region Model
-------------
-아이(Child)가 속한 지역 정보를 관리하는 테이블
-
-예시 Seed:
-1: South Korea
-2: North America
-3: Europe
-등...
-'''
-
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 

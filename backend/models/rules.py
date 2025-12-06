@@ -1,9 +1,3 @@
-'''
-Rules 모델
-- Child.StatusCode를 수동으로 판단할 때 참고하는 '심사 기준 문구' 저장 테이블
-- 자동 분류 x, 운영 참고용
-'''
-
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -29,7 +23,7 @@ class Rule(Base):
         nullable=False,
     )
 
-    # 마지막으로 누가 수정했는지 (없을 수도 있음)
+    # 마지막으로 누가 수정했는지
     UpdatedBy_StaffID = Column(
         Integer,
         ForeignKey("staff.StaffID"),
@@ -45,6 +39,6 @@ class Rule(Base):
         nullable=False,
     )
 
-    # 관계 설정 (옵션: 필요하면 사용)
+    # 관계 설정
     created_by = relationship("Staff", foreign_keys=[CreatedBy_StaffID], lazy="joined")
     updated_by = relationship("Staff", foreign_keys=[UpdatedBy_StaffID], lazy="joined")

@@ -1,13 +1,3 @@
-'''
-통계 API (List Elf)
--------------------
-1) /gift-demand/summary
-    ->선물별 총 수요량 + 우선순위별(p1/p2/p3) 분포 요약 API
-
-2) /gift-demand/by-priority
-    → Priority = 1/2/3 각각의 Top3 인기 선물 반환 API
-'''
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
@@ -33,7 +23,6 @@ def get_gift_demand_summary(db: Session = Depends(get_authorized_db)):
     GiftID별 총 수요량 + Priority별 수요량(p1/p2/p3)을 집계하는 Summary API.
     '''
 
-    # CASE WHEN Priority == X THEN 1 ELSE 0 END
     priority_1 = func.sum(case((Wishlist.Priority == 1, 1), else_=0)).label("p1")
     priority_2 = func.sum(case((Wishlist.Priority == 2, 1), else_=0)).label("p2")
     priority_3 = func.sum(case((Wishlist.Priority == 3, 1), else_=0)).label("p3")
@@ -68,7 +57,6 @@ def get_gift_demand_summary(db: Session = Depends(get_authorized_db)):
 
 
 # Priority별 Top3 API (/gift-demand/by-priority)
-
 def get_top3_for_priority(db: Session, priority: int):
     '''
     특정 Priority(1/2/3)에 대해 Top3 선물을 반환하는 내부 함수.

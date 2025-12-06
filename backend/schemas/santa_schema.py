@@ -1,10 +1,3 @@
-'''
-Santa View용 Pydantic 스키마
-
-- SantaTargetOut: 배송 대상 아이 리스트용 (기본 정보만)
-- SantaTargetDetailOut: 아이 1명 상세 + wishlist + child_note
-'''
-
 from typing import List, Optional
 from pydantic import BaseModel
 from pydantic import ConfigDict

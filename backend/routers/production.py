@@ -20,10 +20,7 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
     - Production_Log / Production_Usage 기록을 한 트랜잭션으로 처리
     """
 
-    # ============================
     # 사전 검증: 트랜잭션을 시작하기 전에 요청이 유효한지 미리 확인
-    # ============================
-
     # 선물 존재 여부
     gift = (
         db.query(FinishedGoods)
@@ -92,9 +89,7 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
             },
         )
 
-    # ==================================
     # 트랜잭션 구간
-    # ==================================
     with transactional_session(db):
         # Raw_Materials 재고 차감
         for bom in boms:
@@ -116,7 +111,7 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
             produced_by_staff_id=data.staff_id,
         )
         db.add(log)
-        db.flush()  # job_id 확보
+        db.flush()
 
         # Production_Usage INSERT
         for bom in boms:
@@ -130,7 +125,6 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
 
         # 여기서 예외가 없으면 contextmanager가 db.commit()
         # 예외가 발생하면 db.rollback() 후 예외 재전파
-
         db.refresh(log)
         db.refresh(gift)
 

@@ -1,9 +1,3 @@
-'''
-Staff 관련 API
-- 간단한 Staff 생성 및 조회용
-- 추후 로그인 기능(JWT 등)을 붙일 수 있는 기반 -> 이긴 하나 사용x 예정
-'''
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -33,7 +27,7 @@ def create_staff(payload: StaffCreate, db: Session = Depends(get_authorized_db))
 
     staff = Staff(
         Username=payload.username,
-        Password=payload.password,  # 단순 문자열, 추후 해싱 확장 가능
+        Password=payload.password,  # 단순 문자열
         Name=payload.name,
         Role=payload.role,
     )

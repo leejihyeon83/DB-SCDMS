@@ -3,10 +3,7 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict
 
-
-# ============================
 # 생성용 스키마
-# ============================
 class DeliveryGroupCreate(BaseModel):
     group_name: str
     reindeer_id: int
@@ -17,9 +14,7 @@ class DeliveryGroupItemCreate(BaseModel):
     gift_id: int
 
 
-# ============================
 # 응답용 스키마
-# ============================
 class DeliveryGroupListItemResponse(BaseModel):
     """
     배송 준비 그룹 목록에서 사용할 요약 정보
@@ -59,7 +54,7 @@ class DeliveryGroupDetailResponse(BaseModel):
     items: List[DeliveryGroupItemInGroup]
 
 
-# 나중에 배송 로그 조회 API 만들고 싶으면 사용
+# 배송 로그 조회 API
 class DeliveryLogResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

@@ -1,15 +1,3 @@
-"""
-DeliveryStatusCode Router
--------------------------
-- 배송 상태 코드 관리용 API
-
-기능:
-1) 배송 상태 코드 목록 조회 (GET /delivery-status-codes/)
-2) 배송 상태 코드 생성 (POST /delivery-status-codes/)
-3) 배송 상태 코드 설명 수정 (PATCH /delivery-status-codes/{code})
-4) 배송 상태 코드 삭제 (DELETE /delivery-status-codes/{code})
-"""
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -26,10 +14,7 @@ router = APIRouter(
     tags=["Delivery Status Codes"],
 )
 
-
-# ------------------------------------------------------
-# 1) 전체 목록 조회
-# ------------------------------------------------------
+# 전체 목록 조회
 @router.get("/", response_model=list[StatusCodeOut])
 def list_codes(db: Session = Depends(get_authorized_db)):
     """
@@ -40,9 +25,7 @@ def list_codes(db: Session = Depends(get_authorized_db)):
     return [StatusCodeOut.from_orm(r) for r in rows]
 
 
-# ------------------------------------------------------
-# 2) 상태 코드 생성
-# ------------------------------------------------------
+# 상태 코드 생성
 @router.post("/", response_model=StatusCodeOut, status_code=status.HTTP_201_CREATED)
 def create_code(payload: StatusCodeCreate, db: Session = Depends(get_authorized_db)):
     """
@@ -59,7 +42,7 @@ def create_code(payload: StatusCodeCreate, db: Session = Depends(get_authorized_
     if existing:
         raise HTTPException(status.HTTP_409_CONFLICT, detail="Code already exists")
 
-    # 실제 DB 컬럼 이름: Code / Description (대문자!!)
+    # 실제 DB 컬럼 이름: Code / Description (대문자)
     new_row = DeliveryStatusCode(
         Code=payload.code,
         Description=payload.description,
@@ -72,9 +55,7 @@ def create_code(payload: StatusCodeCreate, db: Session = Depends(get_authorized_
     return StatusCodeOut.from_orm(new_row)
 
 
-# ------------------------------------------------------
-# 3) 상태 코드 설명 수정 (description만)
-# ------------------------------------------------------
+# 상태 코드 설명 수정 (description만)
 @router.patch("/{code}", response_model=StatusCodeOut)
 def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_authorized_db)):
     """
@@ -99,9 +80,7 @@ def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_
     return StatusCodeOut.from_orm(row)
 
 
-# ------------------------------------------------------
-# 4) 상태 코드 삭제
-# ------------------------------------------------------
+# 상태 코드 삭제
 @router.delete("/{code}")
 def delete_code(code: str, db: Session = Depends(get_authorized_db)):
     """
