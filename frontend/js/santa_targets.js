@@ -1,5 +1,3 @@
-// 배송 대상 페이지 JS
-
 let allChildren = [];
 let regionsMap = {};
 let giftsMap = {};
@@ -42,7 +40,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
-// 선물 목록 불러오기 (/gift/)
+// 선물 목록 불러오기
 async function loadGifts() {
     try {
         const data = await apiGET("/gift/"); 
@@ -54,7 +52,7 @@ async function loadGifts() {
     }
 }
 
-// 지역 목록 불러오기 (/regions/all)
+// 지역 목록 불러오기 
 async function loadRegions() {
     const data = await apiGET("/regions/all");
     const select = document.getElementById("regionFilter");
@@ -68,7 +66,7 @@ async function loadRegions() {
     });
 }
 
-// 전체 아이 불러오기 (FastAPI: /list-elf/child/all)
+// 전체 아이 불러오기 
 async function loadChildren() {
     allChildren = await apiGET("/list-elf/child/all");
     renderFiltered();
@@ -193,7 +191,7 @@ function getStatusBadgeClass(code) {
     code = code.toUpperCase();
     if (code === "NICE") return "badge-nice";
     if (code === "NAUGHTY") return "badge-naughty";
-    return "badge-pending";   // PENDING 등
+    return "badge-pending";  
 }
 
 function getDeliveryBadgeClass(code) {
@@ -206,14 +204,14 @@ function getDeliveryBadgeClass(code) {
 function makeBadgeHtml(type, value) {
     if (!value) return "-";
     
-    const text = value.toUpperCase(); // 대소문자 무시
-    let className = "badge-pending";  // 기본값
+    const text = value.toUpperCase(); 
+    let className = "badge-pending"; 
 
     if (type === 'status') {
         if (text === 'NICE') className = "badge-nice";
         else if (text === 'NAUGHTY') className = "badge-naughty";
-        else if (text === 'SUCCESS') className = "badge-success"; // 로그용
-        else if (text === 'FAILED') className = "badge-failed";   // 로그용
+        else if (text === 'SUCCESS') className = "badge-success"; 
+        else if (text === 'FAILED') className = "badge-failed";   
     } 
 
     else if (type === 'delivery') {

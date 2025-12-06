@@ -18,7 +18,6 @@ function showToast(message, type = "info") {
   setTimeout(() => toast.classList.add("d-none"), 2500);
 }
 
-/* ---------------- 사용자 정보 ---------------- */
 function initUserInfo() {
   const raw = localStorage.getItem("currentUser");
   if (!raw) return;
@@ -28,7 +27,6 @@ function initUserInfo() {
   $("#header-user-role").textContent = u.role;
 }
 
-/* ---------------- 로그아웃 (경고창 추가) ---------------- */
 function initLogout() {
   const btn = $("#btn-logout");
   if (btn) {
@@ -41,7 +39,6 @@ function initLogout() {
   }
 }
 
-/* ---------------- 데이터 로드 ---------------- */
 async function loadGifts() {
   try {
       const raw = localStorage.getItem("currentUser");
@@ -83,7 +80,6 @@ async function loadDemand() {
         const stock = g.stock_quantity || 0;
         const diff = stock - req; // 양수면 여유, 음수면 부족
         
-        // 충족률 계산 (요청이 0이면 100% 충족으로 간주)
         let rate = 100;
         if (req > 0) {
             rate = Math.round((stock / req) * 100);
@@ -105,20 +101,16 @@ async function loadDemand() {
   }
 }
 
-/* ---------------- 렌더링 ---------------- */
 function render() {
-  // 1. 요약 카드 업데이트
   const totalDemand = state.rows.reduce((s, r) => s + r.req, 0);
   const totalStock = state.rows.reduce((s, r) => s + r.stock, 0);
   
-  // 부족량은 diff가 음수인 것들의 합 (절댓값)
   const totalShortage = state.rows.reduce((s, r) => s + (r.diff < 0 ? Math.abs(r.diff) : 0), 0);
 
   $("#summary-demand-count").textContent = totalDemand;
   $("#summary-stock-count").textContent = totalStock;
   $("#summary-shortage-count").textContent = totalShortage;
 
-  // 2. 테이블 업데이트
   const body = $("#demand-table tbody");
   body.innerHTML = "";
 
@@ -127,19 +119,18 @@ function render() {
       return;
   }
 
-  // 부족한 것(충족률 낮은 순)부터 정렬해서 보여주기
+  // 부족한 것부터 정렬해서 보여주기
   state.rows.sort((a, b) => a.rate - b.rate);
 
   state.rows.forEach(r => {
     // 진행바 너비 제한 (최대 100%)
     const barWidth = Math.min(r.rate, 100);
     
-    // 색상 결정: 충족률 100% 이상은 초록, 미만은 노랑/빨강
+    // 충족률 100% 이상은 초록, 미만은 노랑/빨강
     let barColorClass = "bg-success";
     if (r.rate < 50) barColorClass = "bg-danger";
     else if (r.rate < 100) barColorClass = "bg-warning";
     
-    // 부족량 텍스트 스타일: 부족할 때만 빨간색
     const diffDisplay = r.diff < 0 
         ? `<span class="text-danger fw-bold">${r.diff}</span>` 
         : `<span class="text-success">+${r.diff}</span>`;

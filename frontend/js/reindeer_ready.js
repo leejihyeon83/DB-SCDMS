@@ -4,7 +4,6 @@ const API_AVAILABLE = `${API_BASE}/reindeer/available`;
 function $(sel) { return document.querySelector(sel); }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Auth Init
     const raw = localStorage.getItem("currentUser");
     if(raw) $("#header-user-name").textContent = `${JSON.parse(raw).name} 님`;
     

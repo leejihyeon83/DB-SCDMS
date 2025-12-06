@@ -23,7 +23,7 @@ function hideError() {
 
 // 로그인 정보 저장
 function saveLoginInfo(user) {
-  // 비밀번호는 저장 X
+  // 비밀번호 저장x
   localStorage.setItem("currentUser", JSON.stringify(user));
 
   if (user && user.staff_id != null) {
@@ -51,7 +51,7 @@ function redirectByRole(role) {
   }
 }
 
-// 메인: 로그인 처리
+// 로그인 처리
 async function handleLogin(event) {
   event.preventDefault();
   hideError();

@@ -48,7 +48,7 @@ function initLogout() {
             } else {
                 localStorage.removeItem("currentUser");
                 localStorage.removeItem("token"); // 토큰 삭제도 포함
-                window.location.href = "../index.html"; // 경로 수정 (상위 폴더로)
+                window.location.href = "../index.html"; 
             }
         });
     }
@@ -103,14 +103,14 @@ function addWishlistItem() {
     
     // 최대 항목 수 제한 (1, 2, 3위까지만)
     if (currentCount >= MAX_WISHLIST_COUNT) {
-        showToast(`⚠️ 위시리스트는 최대 ${MAX_WISHLIST_COUNT}개(1, 2, 3위)까지만 추가할 수 있어요!`);
+        showToast(`위시리스트는 최대 ${MAX_WISHLIST_COUNT}개(1, 2, 3위)까지만 추가할 수 있어요!`);
         return;
     }
 
     const priority = currentCount + 1;
 
     const row = document.createElement("div");
-    row.className = "wishlist-item d-flex align-items-center mb-2"; // CSS flex 사용
+    row.className = "wishlist-item d-flex align-items-center mb-2";
 
     const priorityLabel = document.createElement("label");
     priorityLabel.className = "form-label me-3 fw-bold";
@@ -119,9 +119,9 @@ function addWishlistItem() {
     
     const giftSelect = document.createElement("select");
     giftSelect.className = "form-select gift-id me-2";
-    giftSelect.style.flex = "1"; // Select가 공간을 채우도록 함
+    giftSelect.style.flex = "1"; 
 
-    // 기본 '선택 안 함' 옵션
+    // 기본 - 선택 안 함
     const defaultOpt = document.createElement("option");
     defaultOpt.value = "";
     defaultOpt.textContent = "--- 선물 선택 안 함 ---";

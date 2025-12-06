@@ -10,7 +10,7 @@ const state = {
   staffId: null,
 };
 
-/* -------------------- 공통 util -------------------- */
+// 공통 util
 function $(sel, parent = document) {
   return parent.querySelector(sel);
 }
@@ -64,7 +64,7 @@ async function fetchJson(url, options = {}) {
   return data;
 }
 
-/* -------------------- 사용자 정보 -------------------- */
+// 사용자 정보
 function initUserInfo() {
   const raw = localStorage.getItem("currentUser");
   if (!raw) return;
@@ -85,7 +85,7 @@ function initUserInfo() {
   }
 }
 
-/* -------------------- 로그아웃 -------------------- */
+// 로그아웃
 function initLogout() {
   const btn = $("#btn-logout");
   if (!btn) return;
@@ -98,7 +98,7 @@ function initLogout() {
   });
 }
 
-/* -------------------- 재료 불러오기 -------------------- */
+// 재료 불러오기
 async function loadMaterials() {
   try {
     const data = await fetchJson(API.materials);
@@ -170,7 +170,7 @@ state.materials.forEach((m) => {
   });
 }
 
-/* -------------------- 재료 채굴 -------------------- */
+// 재료 채굴
 async function onClickMine(materialId) {
   try {
     await fetchJson(API.mineMaterial, {
@@ -185,7 +185,7 @@ async function onClickMine(materialId) {
   }
 }
 
-/* -------------------- 실행 -------------------- */
+// 실행
 document.addEventListener("DOMContentLoaded", () => {
   initUserInfo();
   initLogout();

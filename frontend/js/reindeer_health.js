@@ -21,7 +21,7 @@ function showToast(message, type = "info") {
   toast.classList.remove("d-none");
 }
 
-/* 초기화 */
+// 초기화
 document.addEventListener("DOMContentLoaded", () => {
   const raw = localStorage.getItem("currentUser");
   if(raw) $("#header-user-name").textContent = `${JSON.parse(raw).name} 님`;
@@ -51,7 +51,7 @@ async function loadReindeers() {
     reindeers = await res.json();
     
     const select = $("#health-reindeer-select");
-    // "전체 보기" 옵션 추가
+    // 전체 보기 옵션 추가
     select.innerHTML = `<option value="" disabled selected>루돌프를 선택하세요</option>`;
     select.innerHTML += `<option value="all">[전체 보기] 모든 루돌프</option>`;
     
@@ -77,9 +77,9 @@ async function handleSelectChange(value) {
     }
 }
 
-// 1. 단일 루돌프 로그 조회
+// 단일 루돌프 로그 조회
 async function loadSingleLogs(reindeerId) {
-  updateTableHeader(false); // 헤더 원복 (이름 컬럼 제거)
+  updateTableHeader(false); // 이름 컬럼 제거
   const tbody = $("#health-log-tbody");
   tbody.innerHTML = `<tr><td colspan="2" class="text-center py-5">로딩 중...</td></tr>`;
 
@@ -96,9 +96,9 @@ async function loadSingleLogs(reindeerId) {
   }
 }
 
-// 2. 전체 루돌프 로그 조회 (병렬 호출 후 병합)
+// 전체 루돌프 로그 조회 (병렬 호출 후 병합)
 async function loadAllLogs() {
-    updateTableHeader(true); // 헤더 변경 (이름 컬럼 추가)
+    updateTableHeader(true); // 헤더 변경(이름 컬럼 추가)
     const tbody = $("#health-log-tbody");
     tbody.innerHTML = `<tr><td colspan="3" class="text-center py-5">전체 기록을 불러오는 중...</td></tr>`;
 
@@ -115,7 +115,6 @@ async function loadAllLogs() {
         );
 
         const results = await Promise.all(promises);
-        // 배열 평탄화 (flat) 후 날짜 내림차순 정렬
         const allLogs = results.flat().sort((a, b) => new Date(b.log_timestamp) - new Date(a.log_timestamp));
 
         renderLogs(allLogs, true);
@@ -125,7 +124,7 @@ async function loadAllLogs() {
     }
 }
 
-// 로그 렌더링 (isAllView: 전체보기 모드인지 여부)
+// isAllView: 전체보기 모드인지 여부 확인
 function renderLogs(logs, isAllView) {
     const tbody = $("#health-log-tbody");
     tbody.innerHTML = "";
@@ -144,7 +143,6 @@ function renderLogs(logs, isAllView) {
         let rowHtml = "";
         
         if (isAllView) {
-            // 전체 보기일 때: [이름] [날짜] [내용]
             rowHtml = `
                 <tr>
                     <td class="ps-4 fw-bold text-brown" style="width: 20%">${log.reindeer_name}</td>
@@ -153,7 +151,6 @@ function renderLogs(logs, isAllView) {
                 </tr>
             `;
         } else {
-            // 단일 보기일 때: [날짜] [내용]
             rowHtml = `
                 <tr>
                     <td class="ps-4 text-secondary small fw-bold" style="width: 30%">${date}</td>

@@ -1,8 +1,4 @@
-/* -----------------------------------------
-   GiftElf 전용 초록 테마 스타일
------------------------------------------- */
-
-/* 전체 배경을 은은한 초록빛 */
+/* 전체 배경*/
 body {
   background: linear-gradient(#eef6f1, #f7fbf8);
   font-family: "SUIT Variable", sans-serif;
@@ -28,7 +24,7 @@ body {
   color: #fff;
 }
 
-/* 카드 공통 — 초록 테마 그림자 */
+/* 카드 공통*/
 .card, .material-card {
   border-radius: 12px;
   background: #ffffff;
@@ -45,9 +41,7 @@ body {
   color: #1c3b29;
 }
 
-/* -----------------------------------------
-   상단 토스트 스타일
------------------------------------------- */
+/*상단 토스트 스타일*/
 
 .toast-custom {
   position: fixed;
@@ -67,19 +61,17 @@ body {
 
 /* 성공 / 오류 색상 */
 .toast-custom.toast-success {
-  background: #2e6944; /* 초록 */
+  background: #2e6944;
 }
 .toast-custom.toast-error {
-  background: #b3312d; /* 붉은색 경고 */
+  background: #b3312d; 
 }
 
 .toast-custom.d-none {
   display: none !important;
 }
 
-/* -----------------------------------------
-   모달 스타일
------------------------------------------- */
+/*모달 스타일*/
 
 .modal-content {
   border-radius: 18px !important;
@@ -96,7 +88,7 @@ body {
   border-top: none;
 }
 
-/* 버튼 색상 — GiftElf 전용 */
+/* 버튼 색상 */
 .btn-primary {
   background: #2e6944 !important;
   border-color: #2e6944 !important;
@@ -110,9 +102,7 @@ body {
   background: #e8f7ee;
 }
 
-/* -----------------------------------------
-   재료 카드 스타일 (Materials Page용)
------------------------------------------- */
+/* 재료 카드 스타일*/
 
 .material-card-green {
   background: #ffffff;
@@ -128,7 +118,6 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* (나머지 재료 카드 관련 스타일은 유지) */
 .material-top { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.8rem; }
 .material-icon-circle { width: 44px; height: 44px; background: #f0f8f4; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.6rem; border: 1px solid #dce8df; }
 .material-title-box { display: flex; flex-direction: column; }
@@ -141,9 +130,7 @@ body {
 .btn-green:hover { background: #173c27 !important; }
 
 
-/* ------------------------------------------
-   로그 및 재고 테이블 스타일
------------------------------------------- */
+/*로그 및 재고 테이블 스타일*/
 
 .log-table-scroll-container {
     max-height: 280px; 
@@ -158,8 +145,8 @@ body {
 
 /* 초록색 헤더 스타일 */
 .table-green-header th {
-  background-color: #e6f2ea !important; /* 연한 초록 배경 */
-  color: #1f4e33 !important;           /* 짙은 초록 글씨 */
+  background-color: #e6f2ea !important;
+  color: #1f4e33 !important;          
   font-weight: 700;
   border-bottom: 2px solid #cce3d4;
   padding: 12px 16px; 
@@ -179,22 +166,20 @@ body {
 
 /* 재고 부족 경고 */
 .stock-warning-row {
-    background-color: #fff8e1 !important; /* 연한 노란색 배경 */
+    background-color: #fff8e1 !important; 
 }
 .stock-warning-row td:last-child {
     font-weight: 700;
-    color: #b3312d; /* 붉은색 폰트 */
+    color: #b3312d; 
 }
 
-/* ------------------------------------------
-   제작 컨트롤 영역 (높이 및 여백 통일)
------------------------------------------- */
+/*제작 컨트롤 영역*/
 
 .gift-production-controls > * {
   flex: 1 1 0 !important;
 }
 
-/* 1. 제작 시작 버튼 (둥글고 그림자 있게) */
+/*제작 시작 버튼 */
 .btn-production {
   flex: 1 !important;
   background: #2e6944 !important;
@@ -223,7 +208,7 @@ body {
 }
 
 
-/* 수량 조절 버튼 (+, -) */
+/* 수량 조절 버튼 */
 .btn-qty-cute {
   width: 50px;
   height: 50px;
@@ -253,7 +238,7 @@ body {
 }
 
 
-/* 3. 가운데 수량 입력칸 */
+/*가운데 수량 입력칸 */
 .qty-input-cute {
   width: 100px !important;
   height: 50px;
@@ -281,9 +266,6 @@ body {
   -webkit-appearance: none;
   margin: 0;
 }
-.qty-input-cute {
-    -moz-appearance: textfield; /* Firefox 용 */
-}
 
 /* 수량 조절 묶음의 내부 간격 조절 */
 .qty-control-wrapper {
@@ -298,14 +280,12 @@ body {
   padding-right: 0;
 }
 
-/* -----------------------------------------
-   요약 카드 리뉴얼 (배경색 버전)
------------------------------------------- */
+/*요약 카드 리뉴얼*/
 
 .summary-card {
-  border-radius: 12px;      /* 모서리 둥글게 */
-  border: 1px solid rgba(0,0,0,0.05); /* 아주 연한 테두리 */
-  box-shadow: none;         /* 그림자 제거 (깔끔한 플랫 스타일) */
+  border-radius: 12px;    
+  border: 1px solid rgba(0,0,0,0.05); 
+  box-shadow: none;   
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
               0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s;
@@ -320,50 +300,47 @@ body {
   text-align: left; /* 왼쪽 정렬 */
 }
 
-/* 색상별 배경 테마 (연한 파스텔톤) */
+/* 색상별 배경 테마*/
 
 /* 초록 배경 (총 수요) */
 .bg-soft-green {
-  background-color: #e6f4ea !important; /* 연한 초록 */
-  color: #1f4e33; /* 텍스트는 짙은 숲색(거의 검정 느낌) */
+  background-color: #e6f4ea !important; 
+  color: #1f4e33; 
 }
 
 /* 노랑 배경 (재고) */
 .bg-soft-yellow {
-  background-color: #fff8e1 !important; /* 연한 노랑(크림색) */
-  color: #5d4037; /* 텍스트는 짙은 갈색 */
+  background-color: #fff8e1 !important; 
+  color: #5d4037; 
 }
 
 /* 빨강 배경 (부족량) */
 .bg-soft-red {
-  background-color: #fce8e6 !important; /* 연한 분홍 */
-  color: #b71c1c; /* 텍스트는 짙은 빨강 */
+  background-color: #fce8e6 !important;
+  color: #b71c1c; 
 }
 
-
-/* 내부 텍스트 스타일 */
-
-/* 라벨 (작은 글씨) */
+/* 라벨 */
 .summary-label {
   font-size: 1rem;
   font-weight: 600;
-  opacity: 0.7; /* 약간 투명하게 */
+  opacity: 0.7; 
   margin-bottom: 0.5rem;
   display: block;
 }
 
-/* 숫자 (큰 글씨 - 검은색 계열) */
+/* 숫자*/
 .summary-value-lg {
   font-size: 1.5rem;
   font-weight: 800;
   line-height: 1.2;
-  color: #212529; /* 완전 검은색에 가까운 진회색 */
+  color: #212529;
 }
 
-/* 단위 (개) */
+/* 단위*/
 .unit-text {
   font-size: 1.5rem;
   font-weight: 600;
   margin-left: 4px;
-  color: #495057; /* 숫자보다 약간 연한 색 */
+  color: #495057; 
 }

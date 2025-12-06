@@ -1,6 +1,4 @@
-/* =========================================
-   전역 변수 및 설정
-   ========================================= */
+// 전역 변수 및 설정
 const BASE_URL = "http://127.0.0.1:8000";
 
 let rules = [];
@@ -67,7 +65,7 @@ function getStaffId() {
     }
 }
 
-/* 규칙 생성 */
+// 규칙 생성 
 async function createRule() {
     const titleInput = document.getElementById("ruleTitle");
     const descInput = document.getElementById("ruleDescription");
@@ -230,9 +228,7 @@ function openRuleDetail(ruleId) {
     }
 }
 
-/* 상세보기에서 수정 모달 열기
-// ... (openEditModal 함수 내용 변경 없음)
--------------------------------- */
+// 상세보기에서 수정 모달 열기
 function openEditModal() {
     const rule = rules.find(r => r.rule_id === currentRuleId);
     if (!rule) return;
@@ -254,7 +250,7 @@ function openEditModal() {
     }
 }
 
-/* 규칙 수정 저장 */
+// 규칙 수정 저장 
 async function saveRuleEdit() {
     const titleInput = document.getElementById("editTitle");
     const descInput = document.getElementById("editDescription");
@@ -310,7 +306,7 @@ async function saveRuleEdit() {
     }
 }
 
-/* 🗑 규칙 삭제 */
+// 규칙 삭제 
 async function deleteRule(ruleId) {
     Swal.fire({
         title: "규칙을 삭제하시겠습니까?",

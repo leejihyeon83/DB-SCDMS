@@ -1,6 +1,4 @@
-// ============================
 // 전역 변수
-// ============================
 const loader = document.getElementById("loaderBackdrop");
 const errorBanner = document.getElementById("errorBanner");
 
@@ -107,9 +105,8 @@ function convertFailedGroupsToLogs() {
 
     return failedLogs;
 }
-// ============================
-// 성공/실패 통합 로그 렌더링
-// ============================
+
+
 function renderAllLogs() {
     const successLogs = logs.map(l => ({
         ...l,
@@ -126,9 +123,7 @@ function renderAllLogs() {
 }
 
 
-// ============================
 // SUCCESS / FAILED 구분 렌더링
-// ============================
 function renderLogsTable(logsToRender) {
     const tbody = document.getElementById("logsTableBody");
     if (!tbody) return;
@@ -165,9 +160,7 @@ function renderLogsTable(logsToRender) {
     });
 }
 
-// ============================
 // 인기 선물
-// ============================
 function renderPopularGifts(logsToRender) {
     const list = document.getElementById("popularGiftsList");
     list.innerHTML = "";
@@ -206,9 +199,7 @@ function renderPopularGifts(logsToRender) {
     });
 }
 
-// ============================
 // 루돌프 순위
-// ============================
 function renderBestReindeers(logsToRender) {
     const list = document.getElementById("bestReindeerList");
     list.innerHTML = "";
@@ -246,9 +237,7 @@ function renderBestReindeers(logsToRender) {
     });
 }
 
-// ============================
 // 내 배송 기록
-// ============================
 function renderMyLogs() {
     const tbody = document.getElementById("myLogsTableBody");
     tbody.innerHTML = "";
@@ -259,7 +248,6 @@ function renderMyLogs() {
          return;
     }
 
-    // 1. 성공 로그 + 실패 로그 합치기
     const successLogs = logs.map(l => ({ ...l, status: "SUCCESS" }));
     const failedLogs = convertFailedGroupsToLogs();
     const allLogs = [...successLogs, ...failedLogs].sort(
@@ -296,9 +284,7 @@ function renderMyLogs() {
     });
 }
 
-// ============================
 // 산타 필터
-// ============================
 function applyStaffFilter() {
     const staffId = Number(document.getElementById("logStaffFilter").value);
     const successLogs = logs.map(l => ({ ...l, status: "SUCCESS" }));
@@ -319,14 +305,11 @@ function applyStaffFilter() {
     renderBestReindeers(allLogs);
 }
 
-// ============================
-// 메인 로더
-// ============================
 async function loadLogsPage() {
     try {
         setLoading(true);
 
-        // 1) 모든 기본 데이터 불러오기
+        // 모든 기본 데이터 불러오기
         const [
             logsRes,
             doneGroupsRes,
@@ -356,7 +339,7 @@ async function loadLogsPage() {
             reindeers.map((r) => [r.reindeer_id, r.name])
         );
 
-        // 2) 그룹 상세 가져오기
+        // 그룹 상세 가져오기
         const doneDetailPromises = doneGroups.map((g) =>
             apiGET(`/santa/groups/${g.group_id}`)
         );
@@ -372,7 +355,7 @@ async function loadLogsPage() {
         doneDetails = doneDet;
         failedDetails = failedDet;
 
-        // child → reindeer_id 매핑
+        // child -> reindeer_id 매핑
         childToReindeer = new Map();
 
         allChildrenRes.forEach(c => {
@@ -425,8 +408,8 @@ function convertFailedGroupsToLogs() {
         const timestamp = group.updated_at || group.created_at || new Date().toISOString();
         const creatorId = group.created_by_staff_id;
 
-        // 1. 그룹 내에서 필요한 선물 개수 집계 (어떤 선물이 몇 개 필요한지)
-        const neededCounts = {}; // { giftId: 개수 }
+        // 그룹 내에서 필요한 선물 개수 카운트
+        const neededCounts = {}; // giftId: 개수
         const childrenNames = [];
 
         group.items.forEach(item => {
@@ -439,7 +422,7 @@ function convertFailedGroupsToLogs() {
             neededCounts[gid] = (neededCounts[gid] || 0) + 1;
         });
 
-        // 2. 아이 이름 요약
+        // 아이 이름 요약
         let childSummary = "";
         if (childrenNames.length <= 2) {
             childSummary = childrenNames.join(", ");
@@ -447,7 +430,7 @@ function convertFailedGroupsToLogs() {
             childSummary = `${childrenNames[0]}, ${childrenNames[1]} 외 ${childrenNames.length - 2}명`;
         }
 
-        // 3. 재고 부족 분석 
+        // 재고 부족 분석 
         const shortages = []; // 부족한 선물 메시지들
 
         for (const [gid, countNeeded] of Object.entries(neededCounts)) {
@@ -463,15 +446,14 @@ function convertFailedGroupsToLogs() {
             }
         }
 
-        // 4. 선물 컬럼에 표시할 메시지 만들기
+        // 선물 컬럼에 표시할 메시지 만들기
         let giftDisplay = "";
         
         if (shortages.length > 0) {
             // 부족한 게 있으면 빨갛게 표시
             giftDisplay = `재고 부족: ${shortages.join(", ")}`;
         } else {
-            // 재고는 있는데 다른 에러로 실패한 경우 (단순 선물 나열)
-            // (보통 여기에 걸릴 일은 거의 없지만 예외 처리)
+            // 재고는 있는데 다른 에러로 실패한 경우
             const giftNames = Object.keys(neededCounts).map(gid => giftMap[gid]?.name || gid);
             giftDisplay = giftNames.join(", ");
         }
@@ -515,9 +497,7 @@ function populateStaffFilter() {
     });
 }
 
-// ============================
 // DOM 이벤트
-// ============================
 document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("logStaffFilter")

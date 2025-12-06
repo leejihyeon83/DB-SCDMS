@@ -5,8 +5,7 @@ let currentEditChildId = null;
 let currentUser = null; 
 
 
-// 토스트 메시지 표시 유틸리티
-
+// 토스트 메시지 표시
 function showToast(message) {
     const toastEl = document.getElementById('scdmsToast');
     const toastBody = document.getElementById('scdmsToastMessage');
@@ -18,7 +17,6 @@ function showToast(message) {
 }
 
 // Region 불러오기
-
 async function loadRegions() {
     const res = await fetch(`${BASE_URL}/regions/all`, {
         headers: {
@@ -28,7 +26,7 @@ async function loadRegions() {
     regions = await res.json();
 
     const filter = document.getElementById("regionFilter");
-    // 요소가 있을 때만 실행 (안전장치)
+    // 요소가 있을 때만 실행
     if (filter) {
         filter.innerHTML = '<option value="">전체 지역</option>';
         regions.forEach(r => {
@@ -39,7 +37,6 @@ async function loadRegions() {
 
 
 // Child 목록 불러오기
-
 async function loadChildren() {
     const res = await fetch(`${BASE_URL}/list-elf/child/all`, {
         headers: {
@@ -52,21 +49,19 @@ async function loadChildren() {
 
 
 // Child 테이블 렌더링
-// list_elf.js 파일의 renderChildren 함수를 이걸로 덮어쓰세요!
-
 function renderChildren() {
     const searchInput = document.getElementById("searchInput");
     const regionFilter = document.getElementById("regionFilter");
     const tbody = document.getElementById("childTableBody");
     const statusFilter = document.getElementById("statusFilter");
-    const deliveryFilter = document.getElementById("deliveryFilter"); // 새로 추가된 필터
+    const deliveryFilter = document.getElementById("deliveryFilter"); 
 
     if (!searchInput || !regionFilter || !tbody || !statusFilter) return;
 
     const keyword = searchInput.value.trim();
     const regionValue = regionFilter.value;
     const statusValue = statusFilter.value;
-    const deliveryValue = deliveryFilter ? deliveryFilter.value : ""; // 배송 필터 값
+    const deliveryValue = deliveryFilter ? deliveryFilter.value : "";
 
     tbody.innerHTML = "";
 
@@ -94,20 +89,19 @@ function renderChildren() {
             // 배송 완료 여부 확인
             const isDelivered = (c.delivery_status_code === "DELIVERED");
 
-            // 1. 배송 완료 상태 뱃지
+            // 배송 완료 상태 뱃지
             let deliveryBadgeClass = "bg-secondary";
             if (isDelivered) deliveryBadgeClass = "badge-delivered";
             else if (c.delivery_status_code === "PENDING") deliveryBadgeClass = "badge-pending"; 
             
-            // 2. 상태 변경 셀렉트 박스 처리 (완료되면 disabled)
+            // 상태 변경 선택 박스 처리 (완료되면 disabled)
             const statusDisabled = isDelivered ? "disabled" : "";
             
-            // 3. 삭제 버튼 처리 (완료되면 '완료됨' 텍스트 / 아니면 쓰레기통 아이콘)
+            // 삭제 버튼(완료되면 '완료됨' 텍스트 / 아니면 쓰레기통 아이콘)
             let actionHtml;
             if (isDelivered) {
                 actionHtml = `<span class="text-muted small fw-bold">완료됨</span>`; 
             } else {
-                // 쓰레기통 아이콘 적용
                 actionHtml = `
                     <button class="btn btn-outline-danger btn-sm" onclick="deleteChild(${c.child_id})" title="삭제">
                         🗑
@@ -168,7 +162,6 @@ function renderChildren() {
 
 
 // Wishlist 모달
-
 async function openWishlistModal(childId) {
     const res = await fetch(`${BASE_URL}/list-elf/child/${childId}/wishlist`, {
         headers: {
@@ -249,7 +242,6 @@ async function saveNote() {
 
 
 // Child 삭제
-
 async function deleteChild(childId) {
     const child = childrenData.find(c => c.child_id === childId);
     if (child && child.delivery_status_code === "DELIVERED") {
@@ -284,7 +276,6 @@ async function deleteChild(childId) {
 
 
 // 상태 변경
-
 async function updateStatus(childId, newStatus) {
     await fetch(`${BASE_URL}/list-elf/child/${childId}`, {
         method: "PATCH",
@@ -322,7 +313,6 @@ function initUserInfo() {
 }
 
 // 로그아웃
-
 function initLogout() {
     const btn = document.getElementById("btn-logout");
     if (btn) {
@@ -345,7 +335,6 @@ function initLogout() {
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    
 
     if (typeof requireRole === 'function') {
         currentUser = requireRole(["ListElf"]);

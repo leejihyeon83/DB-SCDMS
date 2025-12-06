@@ -8,7 +8,7 @@ const API = {
 let reindeers = [];
 let editModal;
 
-/* ---------------- 유틸리티 ---------------- */
+// 유틸리티
 function $(sel) { return document.querySelector(sel); }
 
 function showToast(message, type = "info") {
@@ -61,7 +61,7 @@ function getStaffId() {
 }
 
 
-/* ---------------- 메인 로직 ---------------- */
+// 메인 로직
 document.addEventListener("DOMContentLoaded", () => {
   initUserInfo();
   initLogout();
@@ -94,7 +94,7 @@ function renderCards() {
     const col = document.createElement("div");
     col.className = "col-md-6 col-lg-4";
 
-    // 상태별 배지 텍스트 및 클래스 설정 (이미지 3 참고)
+    // 상태별 배지 텍스트 및 클래스 설정
     let badgeClass = "status-READY";
     let badgeText = "준비 완료";
 

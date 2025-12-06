@@ -83,7 +83,7 @@
       </section>
     </div>
 
-    <!-- 하단 1: 내 생산로그 (전체 너비) -->
+    <!-- 내 생산로그 -->
     <section class="mb-4">
       <div class="card p-4">
         <h2 class="h6 mb-3">내 생산로그</h2>
@@ -105,7 +105,7 @@
       </div>
     </section>
 
-    <!-- 하단 2: 전체 생산로그 (전체 너비 + 필터) -->
+    <!-- 전체 생산로그 (전체 너비 + 필터) -->
     <section class="mb-5">
       <div class="card p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -116,7 +116,7 @@
             <label for="elf-filter" class="small fw-bold text-muted">요정별 보기</label>
             <select id="elf-filter" class="form-select form-select-sm w-auto border-success text-success fw-bold" style="min-width: 140px;">
               <option value="all">전체 요정</option>
-              <!-- JS에서 동적으로 채워짐 -->
+              <!-- js에서 동적으로 채워짐 -->
             </select>
           </div>
         </div>
@@ -140,23 +140,6 @@
     </section>
   </main>
 
-  <!-- 제작 확인 모달 -->
-  <!-- <div class="modal fade" id="confirmModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content text-center p-3">
-        <div class="modal-body">
-          <h5 class="mb-3">선물 제작을 시작할까요?</h5>
-          <p id="confirmMsg" class="text-muted small"></p>
-
-          <div class="d-flex justify-content-center gap-2 mt-4">
-            <button id="confirmYes" class="btn btn-primary px-3">확인</button>
-            <button class="btn btn-secondary px-3" data-bs-dismiss="modal">취소</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
   <div id="toast" class="toast-custom d-none"></div>
 
   <!-- 레시피 모달 -->
@@ -168,7 +151,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body" id="recipeModalBody">
-        <!-- JS로 내용 채워짐 -->
+        <!-- js로 내용 채워짐 -->
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>

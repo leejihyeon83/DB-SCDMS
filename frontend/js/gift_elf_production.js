@@ -30,7 +30,7 @@ function showToast(message, type = "info") {
   setTimeout(() => toast.classList.add("d-none"), 2500);
 }
 
-/* ---------------- 사용자 정보 ---------------- */
+// 사용자 정보
 function initUserInfo() {
   const raw = localStorage.getItem("currentUser");
   if (!raw) return;
@@ -42,7 +42,7 @@ function initUserInfo() {
   $("#header-user-role").textContent = u.role;
 }
 
-/* ---------------- 로그아웃 ---------------- */
+// 로그아웃
 function initLogout() {
   $("#btn-logout").onclick = () => {
     if (confirm("정말 로그아웃 하시겠습니까?")) {
@@ -52,7 +52,7 @@ function initLogout() {
   };
 }
 
-/* ---------------- 요정 필터 목록 동적 로드 ---------------- */
+// 요정 필터 목록 동적 로드
 async function loadAndRenderElfFilter() {
   try {
     const res = await fetch(API.staff, {
@@ -86,7 +86,7 @@ async function loadAndRenderElfFilter() {
   }
 }
 
-/* ---------------- 선물 목록 불러오기 ---------------- */
+// 선물 목록 불러오기
 async function loadGifts() {
   try {
     // 1. 선물 목록과 수요량을 병렬로 동시에 불러옵니다
@@ -124,7 +124,7 @@ async function loadGifts() {
   }
 }
 
-/* ---------------- 선물 목록 렌더링 ---------------- */
+// 선물 목록 렌더링
 function renderGiftList() {
   const list = $("#gift-list");
   if (!list) return;
@@ -172,7 +172,7 @@ function renderGiftList() {
   }
 }
 
-/* ---------------- 선물 선택 ---------------- */
+// 선물 선택
 function selectGift(id) {
   state.selectedGiftId = id;
   $all(".gift-item").forEach(li => {
@@ -180,7 +180,7 @@ function selectGift(id) {
   });
 }
 
-/* ---------------- 재고 렌더링 ---------------- */
+// 재고 렌더링
 function renderStock() {
   const body = $("#gift-stock-table tbody");
   body.innerHTML = "";
@@ -205,7 +205,7 @@ function renderStock() {
   });
 }
 
-/* ---------------- 생산 로그 렌더링 헬퍼 함수 ---------------- */
+// 생산 로그 렌더링 헬퍼 함수
 function createLogRow(log) {
     // 선물 이름 찾기
     const gift = state.gifts.find(g => g.gift_id === log.gift_id);
@@ -236,7 +236,7 @@ function createLogRow(log) {
 }
 
 
-/* ---------------- 생산 로그 (전체 및 내 로그) ---------------- */
+// 생산 로그 (전체 및 내 로그)
 async function loadLogs() {
   try {
     const res = await fetch(API.productionLogs, {
@@ -300,7 +300,7 @@ function renderAllLogs() {
   });
 }
 
-/* ---------------- 레시피 보기 ---------------- */
+// 레시피 보기
 async function onClickShowRecipe(giftId, giftName) {
   try {
     const res = await fetch(API.giftRecipe(giftId), {
@@ -352,7 +352,7 @@ async function onClickShowRecipe(giftId, giftName) {
   }
 }
 
-/* ---------------- 제작 시작 및 수량 조절 ---------------- */
+// 제작 시작 및 수량 조절
 function initProduction() {
   const qtyInput = $("#produce-quantity");
   const minusBtn = $("#btn-qty-minus");
@@ -419,7 +419,7 @@ function initProduction() {
   };
 }
 
-/* ---------------- 제작 처리 ---------------- */
+// 제작 처리
 async function handleProduce(giftId, qty) {
   try {
     // 서버로 제작 요청 전송
@@ -484,7 +484,7 @@ async function handleProduce(giftId, qty) {
   }
 }
 
-/* ---------------- 실행 ---------------- */
+// 실행
 let recipeModal;
 let confirmModal;
 

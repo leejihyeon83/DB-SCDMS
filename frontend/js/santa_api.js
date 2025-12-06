@@ -1,6 +1,6 @@
 const API_BASE = "http://127.0.0.1:8000";
 
-// 전역 상태: 로그인한 산타 정보
+// 로그인한 산타 정보
 const santaState = {
     staffId: null,
     username: null,
@@ -21,7 +21,6 @@ function initUserInfo() {
             santaState.role = user.role;
         }
 
-        // UI 업데이트 (헤더 영역)
         const nameEl = document.getElementById("header-user-name");
         const roleEl = document.getElementById("header-user-role");
 
@@ -38,7 +37,7 @@ function initLogout() {
   const btn = document.getElementById("btn-logout");
   if (btn) {
     btn.addEventListener("click", (e) => {
-      e.preventDefault(); // 기본 링크 동작 방지
+      e.preventDefault();
 
       if (!confirm("정말 로그아웃 하시겠습니까?")) {
         return; 
@@ -53,7 +52,6 @@ function initLogout() {
 async function apiRequest(path, options = {}) {
     const headers = options.headers || {};
     
-    // Content-Type 설정
     if (options.body && !headers["Content-Type"]) {
         headers["Content-Type"] = "application/json";
     }
@@ -65,7 +63,7 @@ async function apiRequest(path, options = {}) {
 
     const res = await fetch(API_BASE + path, { ...options, headers });
     
-    // 204 No Content 처리
+    // 204 처리
     if (res.status === 204) return true;
 
     const text = await res.text();

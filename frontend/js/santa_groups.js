@@ -1,5 +1,5 @@
 let allTargets = [];    // 모든 배송 대상 아이
-let targets = [];       // 현재 필터(지역)에 맞는 아이
+let targets = [];       // 현재 지역에 맞는 아이
 let regions = [];
 let reindeers = [];
 let pendingGroups = [];
@@ -30,9 +30,6 @@ function showToast(message, type = "info") {
         toastEl.classList.add("text-bg-dark");
     }
 
-    // Bootstrap Toast 인스턴스 생성 및 표시
-    // { delay: 3000 } -> 3초 뒤 자동 사라짐
-    // 기존 인스턴스가 있다면 재사용하는 것이 좋으나, 간편 구현을 위해 새로 생성
     const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
     bsToast.show();
 }
@@ -55,7 +52,7 @@ function renderTargets(list) {
     container.innerHTML = "";
 
     if (!source.length) {
-        const empty = document.createElement("div"); // p -> div로 변경하여 스타일링 용이하게
+        const empty = document.createElement("div");
         empty.className = "empty-text";
         empty.style.padding = "20px";
         empty.style.textAlign = "center";
@@ -65,17 +62,16 @@ function renderTargets(list) {
     }
 
     source.forEach((t) => {
-        // 1. 전체를 감싸는 Label (클릭 시 체크박스 동작)
         const label = document.createElement("label");
-        label.className = "child-item"; // CSS에서 스타일링한 클래스
+        label.className = "child-item";
 
-        // 2. 체크박스
+        // 체크박스
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.value = String(t.child_id);
-        checkbox.className = "child-checkbox"; // CSS에서 커스텀한 클래스
+        checkbox.className = "child-checkbox"; 
 
-        // 3. 정보 영역
+        // 정보 영역
         const info = document.createElement("div");
         info.className = "child-info";
 
@@ -378,7 +374,7 @@ async function handleAddToQueue() {
         return;
     }
 
-    // 1. 선택된 아이들 및 기본 검증
+    // 선택된 아이들 및 기본 검증
     const checkboxes = document.querySelectorAll(".child-checkbox");
     const selectedIds = Array.from(checkboxes)
         .filter((cb) => cb.checked)
@@ -405,7 +401,7 @@ async function handleAddToQueue() {
         return;
     }
 
-    // 2. 그룹 생성 확인
+    // 그룹 생성 확인
     const result = await Swal.fire({
         title: '배송 그룹 생성',
         text: "선택한 아이들로 새 배송 그룹을 생성할까요?",
@@ -423,11 +419,9 @@ async function handleAddToQueue() {
     try {
         setLoading(true);
 
-        // 1) 재고 Map 생성 (메모리상 계산용)
         const stockMap = {};
         gifts.forEach(g => stockMap[g.gift_id] = g.stock_quantity);
 
-        // 2) 아이들의 소원 목록 미리 준비 (API 호출 최소화)
         const childrenWithWishes = await Promise.all(
             selectedTargets.map(async (child) => {
                 try {
@@ -444,23 +438,22 @@ async function handleAddToQueue() {
 
         let hasShortage = false;
 
-        // 3) 우선순위별(Rank) 라운드 로빈 실행 (1순위 -> 2순위 -> 3순위)
-        // rank 0 = 1순위, rank 1 = 2순위, rank 2 = 3순위
+        // 1순위 -> 2순위 -> 3순위
         for (let rank = 0; rank < 3; rank++) {
             
-            // 모든 아이를 돌면서 해당 순위(rank)의 소원을 확인
+            // 모든 아이를 돌면서 소원 확인
             for (const child of childrenWithWishes) {
                 // 이미 선물을 받은 아이는 건너뜀
                 if (child.assignedGiftId) continue;
 
                 // 해당 순위의 소원이 있는지 확인
                 const wish = child.sortedWishes[rank]; 
-                if (!wish) continue; // 해당 순위 소원이 없으면 패스
+                if (!wish) continue; // 해당 순위 소원 없으면 패스
 
                 // 재고 확인
                 const currentStock = stockMap[wish.gift_id] || 0;
                 if (currentStock > 0) {
-                    // 재고 있음 -> 배정!
+                    // 재고 있음 -> 배정
                     child.assignedGiftId = wish.gift_id;
                     stockMap[wish.gift_id] -= 1; // 가상 차감
                 }
@@ -471,12 +464,12 @@ async function handleAddToQueue() {
         const pairs = [];
         for (const child of childrenWithWishes) {
             if (!child.assignedGiftId) {
-                // 재고 부족 당첨! -> 1순위 선물을 강제로 할당 (로그 기록용)
+                // 재고 부족 -> 1순위 선물 강제로 할당 (로그 기록용)
                 hasShortage = true;
                 if (child.sortedWishes.length > 0) {
                     child.assignedGiftId = child.sortedWishes[0].gift_id;
                 } else {
-                    // 소원 자체가 아예 없는 아이... (예외 처리)
+                    // 소원없은 -> 예외 처리
                     console.warn(`아이 #${child.child_id}는 소원 데이터가 아예 없습니다.`);
                     continue; // 배정 목록에서 제외
                 }
@@ -493,9 +486,7 @@ async function handleAddToQueue() {
             return;
         }
 
-        // ============================================================
-        // [API 전송]
-        // ============================================================
+        // API 전송
         const reindeerName = findReindeerName(reindeerId);
         const regionName = selectedTargets[0].region_name || "지역";
         const groupName = `배송 그룹 (${regionName} · ${reindeerName} · ${pairs.length}명)`;
@@ -604,7 +595,7 @@ async function handleDeleteGroup(groupId) {
         html: "정말로 이 배송 그룹을 삭제할까요?<br><small>(대기중 또는 실패한 그룹만 삭제됩니다)</small>",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33', // 삭제는 강렬한 빨강
+        confirmButtonColor: '#d33',
         cancelButtonColor: '#999',
         confirmButtonText: '네, 삭제합니다',
         cancelButtonText: '취소',

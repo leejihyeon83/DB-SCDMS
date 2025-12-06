@@ -11,8 +11,7 @@ function getCurrentUser() {
   }
 }
 
-// 특정 Role만 허용하는 간단한 가드
-// 사용 예: const user = requireRole(["ListElf"]);
+// 특정 Role만 허용
 function requireRole(allowedRoles) {
   const user = getCurrentUser();
 
@@ -31,7 +30,6 @@ function requireRole(allowedRoles) {
   return user;
 }
 
-// auth.js 파일 맨 아래에 추가
 function getStaffId() {
   const user = getCurrentUser(); 
   return user ? user.staff_id : null; 
