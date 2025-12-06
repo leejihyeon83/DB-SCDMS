@@ -42,7 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadReindeers() {
   try {
-    const res = await fetch(API.list);
+    const res = await fetch(API.list, {
+      headers: {
+        "x-staff-id": String(getStaffId())
+      }
+    });
+
     reindeers = await res.json();
     
     const select = $("#health-reindeer-select");
@@ -79,7 +84,11 @@ async function loadSingleLogs(reindeerId) {
   tbody.innerHTML = `<tr><td colspan="2" class="text-center py-5">로딩 중...</td></tr>`;
 
   try {
-    const res = await fetch(API.getLogs(reindeerId));
+    const res = await fetch(API.getLogs(reindeerId), {
+      headers: {
+        "x-staff-id": String(getStaffId())
+      }
+    });
     const logs = await res.json();
     renderLogs(logs, false);
   } catch (err) {
@@ -96,7 +105,11 @@ async function loadAllLogs() {
     try {
         // 모든 루돌프의 로그를 동시에 요청
         const promises = reindeers.map(r => 
-            fetch(API.getLogs(r.reindeer_id))
+            fetch(API.getLogs(r.reindeer_id), {
+              headers: {
+                "x-staff-id": String(getStaffId())
+              }
+            })
             .then(res => res.json())
             .then(logs => logs.map(log => ({...log, reindeer_name: r.name}))) // 로그에 이름 추가
         );
@@ -180,7 +193,10 @@ async function submitLog() {
   try {
     const res = await fetch(API.logHealth, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-staff-id": String(getStaffId())
+      },
       body: JSON.stringify({ reindeer_id: id, notes: note })
     });
     

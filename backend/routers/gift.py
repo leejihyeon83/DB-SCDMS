@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.gift import RawMaterial, FinishedGoods, GiftBOM
 from backend.schemas.gift import MaterialResponse, MaterialUpdate, Gift, ProduceRequest, GiftRecipeItem
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/gift", tags=["Gift"])
 # 현재 Raw_Materials 목록과 재고 수량 전체 조회
 # GET /gift/materials
 @router.get("/materials", response_model=list[MaterialResponse])
-def get_all_materials(db: Session = Depends(get_db)):
+def get_all_materials(db: Session = Depends(get_authorized_db)):
     materials = (
         db.query(RawMaterial)
         .order_by(RawMaterial.material_id.asc())
@@ -22,7 +22,7 @@ def get_all_materials(db: Session = Depends(get_db)):
 # 원자재 채굴
 # POST /gift/materials/mine
 @router.post("/materials/mine")
-def mine_material(data: MaterialUpdate, db: Session = Depends(get_db)):
+def mine_material(data: MaterialUpdate, db: Session = Depends(get_authorized_db)):
     material = db.query(RawMaterial).filter_by(material_id=data.material_id).first()
 
     if not material:
@@ -59,7 +59,7 @@ def mine_material(data: MaterialUpdate, db: Session = Depends(get_db)):
 # 전체 선물 재고 조회
 # GET /gift/
 @router.get("/", response_model=List[Gift])
-def get_all_gifts(db: Session = Depends(get_db)):
+def get_all_gifts(db: Session = Depends(get_authorized_db)):
     goods = (
         db.query(FinishedGoods)
         .order_by(FinishedGoods.gift_id.asc())
@@ -70,7 +70,7 @@ def get_all_gifts(db: Session = Depends(get_db)):
 # 선물 생산하여 재고 증가시키기 (레시피 + 재료 재고 체크 + 부족한 재료 반환)
 # POST /gift/produce
 @router.post("/produce")
-def produce_item(data: ProduceRequest, db: Session = Depends(get_db)):
+def produce_item(data: ProduceRequest, db: Session = Depends(get_authorized_db)):
     """
     Gift_BOM 레시피를 사용해 선물 생산을 처리하는 간단 API
 
@@ -165,7 +165,7 @@ def produce_item(data: ProduceRequest, db: Session = Depends(get_db)):
 # 선물 레시피 반환
 # GET /gift/{gift_id}/recipe
 @router.get("/{gift_id}/recipe", response_model=List[GiftRecipeItem])
-def get_gift_recipe(gift_id: int, db: Session = Depends(get_db)):
+def get_gift_recipe(gift_id: int, db: Session = Depends(get_authorized_db)):
     # GiftBOM + RawMaterial 조인해서 가져오기
     rows = (
         db.query(GiftBOM, RawMaterial)

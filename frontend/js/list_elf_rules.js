@@ -1,5 +1,3 @@
-// list_elf_rules.js
-
 /* =========================================
    전역 변수 및 설정
    ========================================= */
@@ -99,7 +97,10 @@ async function createRule() {
     try {
         const res = await fetch(`${BASE_URL}/list-elf/rules/create`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "x-staff-id": String(getStaffId())
+            },
             body: JSON.stringify(body)
         });
 
@@ -122,7 +123,11 @@ async function createRule() {
 
 async function loadRules() {
     try {
-        const res = await fetch(`${BASE_URL}/list-elf/rules/all`);
+        const res = await fetch(`${BASE_URL}/list-elf/rules/all`, {
+            headers: {
+                "x-staff-id": String(getStaffId())
+            }
+        });
         rules = await res.json();
         renderRules();
     } catch (e) {
@@ -148,7 +153,7 @@ function renderRules() {
     }
 
     const table = document.createElement("table");
-    table.className = "table align-middle mb-0";
+    table.className = "table align-middle mb-0 listElf-table";
 
     const thead = document.createElement("thead");
     thead.innerHTML = `
@@ -279,7 +284,10 @@ async function saveRuleEdit() {
     try {
         const res = await fetch(`${BASE_URL}/list-elf/rules/update/${currentRuleId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "x-staff-id": String(getStaffId())
+            },
             body: JSON.stringify(body)
         });
 
@@ -317,7 +325,11 @@ async function deleteRule(ruleId) {
         if (result.isConfirmed) {
             try {
                 const res = await fetch(`${BASE_URL}/list-elf/rules/${ruleId}`, {
-                    method: "DELETE"
+                    method: "DELETE",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "x-staff-id": String(getStaffId())
+                    },
                 });
 
                 if (!res.ok) {

@@ -18,11 +18,26 @@ document.addEventListener("DOMContentLoaded", () => {
     loadReadyList();
 });
 
+function getStaffId() {
+    const raw = localStorage.getItem("currentUser");
+    if (!raw) return "";
+    try {
+        const user = JSON.parse(raw);
+        return user.staff_id ?? "";
+    } catch {
+        return "";
+    }
+}
+
 async function loadReadyList() {
     const tbody = $("#ready-reindeer-tbody");
     
     try {
-        const res = await fetch(API_AVAILABLE);
+        const res = await fetch(API_AVAILABLE, {
+            headers: {
+                "x-staff-id": String(getStaffId())
+            }
+        });
         if(!res.ok) throw new Error("Load failed");
         
         const list = await res.json();

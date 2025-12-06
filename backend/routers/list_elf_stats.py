@@ -12,7 +12,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.models.child import Child, Wishlist
 from backend.models.gift import FinishedGoods
 from backend.schemas.stat_schema import (
@@ -26,7 +26,7 @@ router = APIRouter(
 
 # Gift Summary API 
 @router.get("/gift-demand/summary", response_model=list[GiftDemandOut])
-def get_gift_demand_summary(db: Session = Depends(get_db)):
+def get_gift_demand_summary(db: Session = Depends(get_authorized_db)):
     '''
     기존 /gift-demand API에서 이름 변경된 버전.
     Nice + Not Delivered 아이들 기준으로
@@ -101,7 +101,7 @@ def get_top3_for_priority(db: Session, priority: int):
 
 
 @router.get("/gift-demand/by-priority", response_model=PriorityGroupOut)
-def get_gift_top3_by_priority(db: Session = Depends(get_db)):
+def get_gift_top3_by_priority(db: Session = Depends(get_authorized_db)):
     '''
     Priority = 1/2/3 각각에서 가장 많이 선택된 Top3 선물을 묶어서 반환.
     (예: 가장 많이 1순위로 선택된 선물 Top3 등)

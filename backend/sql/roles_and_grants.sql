@@ -37,16 +37,32 @@ BEGIN
         CREATE ROLE santa1 LOGIN PASSWORD '1234' IN ROLE role_santa;
     END IF;
 
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'santa2') THEN
+        CREATE ROLE santa2 LOGIN PASSWORD '1234' IN ROLE role_santa;
+    END IF;
+
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'listelf1') THEN
         CREATE ROLE listelf1 LOGIN PASSWORD '1234' IN ROLE role_listelf;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'listelf2') THEN
+        CREATE ROLE listelf2 LOGIN PASSWORD '1234' IN ROLE role_listelf;
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'giftelf1') THEN
         CREATE ROLE giftelf1 LOGIN PASSWORD '1234' IN ROLE role_giftelf;
     END IF;
 
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'giftelf2') THEN
+        CREATE ROLE giftelf2 LOGIN PASSWORD '1234' IN ROLE role_giftelf;
+    END IF;
+
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'keeper1') THEN
         CREATE ROLE keeper1 LOGIN PASSWORD '1234' IN ROLE role_keeper;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'keeper2') THEN
+        CREATE ROLE keeper2 LOGIN PASSWORD '1234' IN ROLE role_keeper;
     END IF;
 END $$;
 
@@ -95,9 +111,13 @@ GRANT SELECT ON TABLE delivery_status_code
 
 -- Child
 -- Santa : R, U
+-- GiftElf: R
 -- ListElf : C, R, U, D
 GRANT SELECT, UPDATE ON TABLE child
   TO role_santa;
+
+GRANT SELECT, UPDATE ON TABLE child
+  TO role_giftelf;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE child
   TO role_listelf;
@@ -203,3 +223,8 @@ GRANT INSERT, SELECT ON TABLE delivery_log
 
 GRANT SELECT ON TABLE delivery_log
   TO role_listelf, role_giftelf, role_keeper;
+
+GRANT role_giftelf TO postgres;
+GRANT role_listelf TO postgres;
+GRANT role_santa TO postgres;
+GRANT role_keeper TO postgres;

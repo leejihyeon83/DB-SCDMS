@@ -9,7 +9,7 @@ Child Status Code Router
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 
 from backend.models.child_status_code import ChildStatusCode
 from backend.schemas.status_code_schema import StatusCodeCreate, StatusCodeUpdate, StatusCodeOut
@@ -21,14 +21,14 @@ router = APIRouter(prefix="/child-status-codes", tags=["Child Status Code"])
 
 # 모든 상태 목록 조회
 @router.get("/", response_model=list[StatusCodeOut])
-def get_codes(db: Session = Depends(get_db)):
+def get_codes(db: Session = Depends(get_authorized_db)):
     codes = db.query(ChildStatusCode).all()
     return [StatusCodeOut(code=c.Code, description=c.Description) for c in codes]
 
 
 # 새로운 상태 코드 생성
 @router.post("/", response_model=StatusCodeOut)
-def create_code(payload: StatusCodeCreate, db: Session = Depends(get_db)):
+def create_code(payload: StatusCodeCreate, db: Session = Depends(get_authorized_db)):
     exists = db.query(ChildStatusCode).filter(ChildStatusCode.Code == payload.code).first()
     if exists:
         raise HTTPException(409, "Code already exists")
@@ -42,7 +42,7 @@ def create_code(payload: StatusCodeCreate, db: Session = Depends(get_db)):
 
 # description 수정
 @router.patch("/{code}", response_model=StatusCodeOut)
-def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_db)):
+def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_authorized_db)):
     row = db.query(ChildStatusCode).filter(ChildStatusCode.Code == code).first()
     if not row:
         raise HTTPException(404, "Not found")
@@ -55,7 +55,7 @@ def update_code(code: str, payload: StatusCodeUpdate, db: Session = Depends(get_
 
 # Child가 참조 중이면 삭제 불가
 @router.delete("/{code}")
-def delete_code(code: str, db: Session = Depends(get_db)):
+def delete_code(code: str, db: Session = Depends(get_authorized_db)):
 
     # Child.StatusCode에서 참조 중인지 체크
     ref = db.query(func.count(Child.ChildID)).filter(Child.StatusCode == code).scalar()

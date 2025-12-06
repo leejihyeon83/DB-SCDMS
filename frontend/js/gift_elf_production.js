@@ -55,7 +55,12 @@ function initLogout() {
 /* ---------------- 요정 필터 목록 동적 로드 ---------------- */
 async function loadAndRenderElfFilter() {
   try {
-    const res = await fetch(API.staff);
+    const res = await fetch(API.staff, {
+      headers: {
+          "x-staff-id": String(state.staffId),
+        },
+    });
+
     if (!res.ok) throw new Error("직원 목록 로드 실패");
     
     const allStaff = await res.json();
@@ -86,8 +91,16 @@ async function loadGifts() {
   try {
     // 1. 선물 목록과 수요량을 병렬로 동시에 불러옵니다
     const [resGifts, resDemand] = await Promise.all([
-      fetch(API.gifts),
-      fetch(API.giftDemand)
+      fetch(API.gifts, {
+        headers: {
+          "x-staff-id": String(state.staffId),
+        },
+      }),
+      fetch(API.giftDemand, {
+        headers: {
+          "x-staff-id": String(state.staffId),
+        },
+      })
     ]);
 
     state.gifts = await resGifts.json();
@@ -226,7 +239,11 @@ function createLogRow(log) {
 /* ---------------- 생산 로그 (전체 및 내 로그) ---------------- */
 async function loadLogs() {
   try {
-    const res = await fetch(API.productionLogs);
+    const res = await fetch(API.productionLogs, {
+      headers: {
+          "x-staff-id": String(state.staffId),
+        },
+    });
     if (!res.ok) throw new Error("로그 로드 실패");
     state.logs = await res.json();
     
@@ -286,7 +303,11 @@ function renderAllLogs() {
 /* ---------------- 레시피 보기 ---------------- */
 async function onClickShowRecipe(giftId, giftName) {
   try {
-    const res = await fetch(API.giftRecipe(giftId));
+    const res = await fetch(API.giftRecipe(giftId), {
+      headers: {
+          "x-staff-id": String(state.staffId),
+        },
+    });
     const data = await res.json();
 
     const bodyEl = $("#recipeModalBody");
@@ -314,7 +335,11 @@ async function onClickShowRecipe(giftId, giftName) {
 
     recipeModal.show();
   } catch (err) {
-    const res = await fetch(API.giftRecipe(giftId));
+    const res = await fetch(API.giftRecipe(giftId), {
+      headers: {
+          "x-staff-id": String(state.staffId),
+        },
+    });
     if (res.status === 404) {
       const bodyEl = $("#recipeModalBody");
       const titleEl = $("#recipeModalLabel");
@@ -400,7 +425,10 @@ async function handleProduce(giftId, qty) {
     // 서버로 제작 요청 전송
     const res = await fetch(API.productionCreate, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-staff-id": String(state.staffId)
+      },
       body: JSON.stringify({
         gift_id: giftId,
         produced_quantity: qty,

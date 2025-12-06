@@ -49,6 +49,18 @@ function initLogout() {
     };
 }
 
+function getStaffId() {
+  const raw = localStorage.getItem("currentUser");
+  if (!raw) return "";
+  try {
+    const user = JSON.parse(raw);
+    return user.staff_id ?? "";
+  } catch {
+    return "";
+  }
+}
+
+
 /* ---------------- 메인 로직 ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
   initUserInfo();
@@ -64,7 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadReindeers() {
   try {
-    reindeers = await fetchJson(API.list);
+    reindeers = await fetchJson(API.list, {
+      headers: { "x-staff-id": String(getStaffId()) }
+    });
     renderCards();
   } catch (err) {
     console.error(err);
@@ -147,6 +161,7 @@ async function giveItem(r, type) {
   try {
     await fetchJson(API.updateStatus, {
       method: "POST",
+      headers: { "x-staff-id": String(getStaffId()) },
       body: JSON.stringify({
         reindeer_id: r.reindeer_id,
         status: newStatus,
@@ -183,6 +198,7 @@ async function submitEdit() {
   try {
     await fetchJson(API.updateStatus, {
       method: "POST",
+      headers: { "x-staff-id": String(getStaffId()) },
       body: JSON.stringify({
         reindeer_id: id,
         status: status,

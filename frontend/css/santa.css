@@ -200,9 +200,20 @@ body {
     color: var(--text-muted);
 }
 
-/* 테이블 */
 .table-wrapper {
-    overflow-x: auto;
+    max-height: 500px;   
+    overflow: auto;          
+    border-bottom: 1px solid #f0ddd7;
+    background: #fff;        
+}
+
+.santa-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    
+    background: #ffece4; 
+    box-shadow: 0 2px 5px rgba(120, 40, 20, 0.08); 
 }
 
 .santa-table {
@@ -889,7 +900,6 @@ body {
     left: 50% !important;
     transform: translateX(-50%) !important;
     right: auto !important;
-    p-3: 0 !important; /* bootstrap class override */
 }
 
 /* Toast 본체 디자인 */
@@ -1026,4 +1036,8 @@ body {
 
 .santa-modal-footer .primary-btn {
     box-shadow: none !important; 
+}
+
+.page-header h1 {
+    font-weight: bold; 
 }

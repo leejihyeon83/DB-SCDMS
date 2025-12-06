@@ -15,16 +15,16 @@
 </head>
 
 <body>
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+<div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
     <div id="scdmsToast" class="toast align-items-center border-0" role="alert">
         <div class="d-flex">
             <div class="toast-body" id="scdmsToastMessage">
-                <!-- JS에서 메시지 채움 -->
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
         </div>
     </div>
 </div>
+
 <header class="app-header navbar navbar-dark px-3 scdms-navbar">
     <div class="d-flex align-items-center gap-2">
         <span class="brand-icon">🎄</span>
@@ -66,54 +66,47 @@
     </div>
 </div>
 
-<!-- 메인 컨텐트: santa.html 구조에 맞춰 재구성 -->
 <main class="page-container">
-    <!-- 페이지 헤더 + 필터 + 새 아이 등록 버튼 -->
     <header class="page-header">
         <div>
-            <h1>👧 아이들 목록</h1>
+            <h1>아이들 목록</h1>
             <p class="page-subtitle">
-                노스폴 시스템에 등록된 모든 아이들을 확인하고 관리해요.
+                노스폴 시스템에 등록된 모든 아이들을 확인하고 관리합니다.
             </p>
         </div>
 
-        <div class="page-header-actions d-flex flex-column align-items-end gap-2">
-            <div class="filter-box">
-                <!-- 검색어 입력 시 자동 필터 -->
-                <input
-                    id="searchInput"
-                    class="search-input"
-                    placeholder="이름 또는 주소 검색…"
-                    oninput="renderChildren()"
-                />
+        <div class="filter-box">
+            <input
+                id="searchInput"
+                class="search-input"
+                placeholder="🔍 이름 또는 주소 검색"
+                oninput="renderChildren()"/>
 
-                <select
-                    id="regionFilter"
-                    class="filter-select"
-                    onchange="renderChildren()"
-                >
+            <div class="filter-group">
+                <select id="regionFilter" class="filter-select" onchange="renderChildren()">
                     <option value="">전체 지역</option>
                 </select>
-
-                <select
-                    id="statusFilter"
-                    class="filter-select"
-                    onchange="renderChildren()"
-                >
+                <div style="width:1px; height:20px; background:#e5e7eb; margin:auto 0;"></div>
+                <select id="statusFilter" class="filter-select" onchange="renderChildren()">
                     <option value="">상태 전체</option>
                     <option value="NICE">NICE</option>
                     <option value="NAUGHTY">NAUGHTY</option>
                     <option value="PENDING">PENDING</option>
                 </select>
-
-                <a href="/list_elf_add_child.html" class="btn btn-main">
-                    + 새 아이 등록
-                </a>
+                <div style="width:1px; height:20px; background:#e5e7eb; margin:auto 0;"></div>
+                <select id="deliveryFilter" class="filter-select" onchange="renderChildren()">
+                    <option value="">배송 전체</option>
+                    <option value="DELIVERED">배송 완료</option>
+                    <option value="NOT_DELIVERED">미배송</option>
+                </select>
             </div>
+
+            <a href="/list_elf_add_child.html" class="btn btn-main ms-2" style="border-radius: 999px; padding: 6px 18px;">
+                + 새 아이 등록
+            </a>
         </div>
     </header>
 
-    <!-- 요약 카드 영역: santa의 summary-box 구조에 맞춤 -->
     <section class="summary-box">
         <article class="summary-card summary-nice">
             <span class="label">착한 아이들</span>
@@ -131,25 +124,24 @@
         </article>
     </section>
 
-    <!-- 테이블 섹션: santa의 table-section / table-header-row 구조 참고 -->
     <section class="table-section">
         <div class="table-header-row">
-            <h2>📋 아이들 목록</h2>
+            <h2>등록 현황</h2>
         </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 listElf-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>이름</th>
+                        <th width="5%">ID</th>
+                        <th width="10%">이름</th>
                         <th>주소</th>
-                        <th>지역</th>
-                        <th>상태</th>
-                        <th>배송 상태</th>
-                        <th>Wishlist</th>
-                        <th>추가 사항</th>
-                        <th>작업</th>
+                        <th width="10%">지역</th>
+                        <th width="10%">상태</th>
+                        <th width="10%">배송</th>
+                        <th width="8%">Wishlist</th>
+                        <th width="8%">Note</th>
+                        <th width="8%">관리</th>
                     </tr>
                 </thead>
                 <tbody id="childTableBody"></tbody>
@@ -158,45 +150,47 @@
     </section>
 </main>
 
-<!-- Wishlist 상세보기 모달 (그대로 유지) -->
 <div class="modal fade" id="wishlistModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Wishlist 상세보기</h5>
+            <div class="modal-header" style="background: var(--scdms-gold-bg); border-bottom: 1px solid #E8D9A8;">
+                <h5 class="modal-title fw-bold">🎁 Wishlist 상세보기</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body">
-                <table class="table table-bordered">
-                    <thead class="table-light">
+            <div class="modal-body p-4">
+                <table class="listElf-table">
+                    <thead>
                         <tr>
-                            <th>우선순위</th>
-                            <th>Gift ID</th>
+                            <th style="width: 15%">우선순위</th>
+                            <th style="width: 20%">Gift ID</th>
                             <th>선물 이름</th>
                         </tr>
                     </thead>
                     <tbody id="wishlistTableBody"></tbody>
                 </table>
             </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
 
         </div>
     </div>
 </div>
 
-<!-- 아이 설명 수정 모달 (그대로 유지) -->
 <div class="modal fade" id="noteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">추가 사항 수정</h5>
+            <div class="modal-header" style="background: var(--scdms-gold-bg); border-bottom: 1px solid #E8D9A8;">
+                <h5 class="modal-title fw-bold">📝 추가 사항 수정</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-                <textarea id="noteInput" class="form-control" rows="6"></textarea>
+                <textarea id="noteInput" class="form-control" rows="6" placeholder="아이의 특이사항을 기록해주세요."></textarea>
             </div>
 
             <div class="modal-footer">
@@ -207,7 +201,6 @@
         </div>
     </div>
 </div>
-
 
 </body>
 </html>

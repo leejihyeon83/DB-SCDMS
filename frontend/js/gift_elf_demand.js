@@ -44,7 +44,15 @@ function initLogout() {
 /* ---------------- 데이터 로드 ---------------- */
 async function loadGifts() {
   try {
-      const res = await fetch(API.gifts);
+      const raw = localStorage.getItem("currentUser");
+      const staffId = raw ? JSON.parse(raw).staff_id : "";
+
+      const res = await fetch(API.gifts, {
+        headers: {
+          "x-staff-id": String(staffId),
+        },
+      });
+
       if(!res.ok) throw new Error("선물 목록 로드 실패");
       state.gifts = await res.json();
   } catch(e) {
@@ -55,7 +63,15 @@ async function loadGifts() {
 
 async function loadDemand() {
   try {
-      const res = await fetch(API.demand);
+      const raw = localStorage.getItem("currentUser");
+      const staffId = raw ? JSON.parse(raw).staff_id : "";
+
+      const res = await fetch(API.demand, {
+        headers: {
+          "x-staff-id": String(staffId),
+        },
+      });
+      
       if(!res.ok) throw new Error("수요 데이터 로드 실패");
       const summary = await res.json();
 

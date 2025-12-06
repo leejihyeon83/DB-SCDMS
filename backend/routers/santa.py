@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from backend.database import get_db
+from backend.database import get_db, get_authorized_db
 from backend.utils.transactions import transactional_session
 from backend.models.delivery_log import DeliveryLog
 from backend.models.delivery_group import DeliveryGroup, DeliveryGroupItem
@@ -25,7 +25,7 @@ router = APIRouter(prefix="/santa", tags=["Santa"])
 @router.post("/groups", response_model=int, status_code=201)
 def create_delivery_group(
     payload: DeliveryGroupCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
     x_staff_id: str | None = Header(default=None, alias="x-staff-id")
 ):
     
@@ -66,7 +66,7 @@ def create_delivery_group(
 def add_item_to_group(
     group_id: int,
     payload: DeliveryGroupItemCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     # 그룹 확인
     group = db.query(DeliveryGroup).filter(DeliveryGroup.group_id == group_id).first()
@@ -140,7 +140,7 @@ def add_item_to_group(
 @router.get("/groups", response_model=list[DeliveryGroupListItemResponse])
 def list_delivery_groups(
     status_filter: str = "PENDING",
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     # status_filter 기본값 'PENDING'
     q = (
@@ -184,7 +184,7 @@ def list_delivery_groups(
 @router.get("/groups/{group_id}", response_model=DeliveryGroupDetailResponse)
 def get_delivery_group_detail(
     group_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     group = (
         db.query(DeliveryGroup)
@@ -219,7 +219,7 @@ def get_delivery_group_detail(
 @router.delete("/groups/{group_id}", status_code=204)
 def delete_delivery_group(
     group_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
 ):
     group = (
         db.query(DeliveryGroup)
@@ -242,7 +242,7 @@ def delete_delivery_group(
 @router.post("/groups/{group_id}/deliver")
 def deliver_group(
     group_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_authorized_db),
     x_staff_id: str | None = Header(default=None, alias="x-staff-id")
 ):
     """

@@ -1,7 +1,10 @@
-// ===========================
-// 설정: 백엔드 API 기본 URL
-// ===========================
-const API_BASE_URL = "http://127.0.0.1:8000"; // FastAPI 서버 주소에 맞게 수정
+import { setStaffId } from "./apiClient.js";
+
+const API_BASE_URL = "http://127.0.0.1:8000";
+
+if (location.search.includes("username") || location.search.includes("password")) {
+    history.replaceState({}, "", "index.html");
+}
 
 // 에러 메시지 표시/숨기기
 function showError(message) {
@@ -22,6 +25,10 @@ function hideError() {
 function saveLoginInfo(user) {
   // 비밀번호는 저장 X
   localStorage.setItem("currentUser", JSON.stringify(user));
+
+  if (user && user.staff_id != null) {
+    setStaffId(user.staff_id);
+  }
 }
 
 // Role별 대시보드 분기
@@ -100,7 +107,7 @@ async function handleLogin(event) {
   }
 }
 
-// 이미 로그인 되어 있으면 자동 분기 (선택 기능)
+// 이미 로그인 되어 있으면 자동 분기
 function tryAutoRedirect() {
   const raw = localStorage.getItem("currentUser");
   if (!raw) return;
