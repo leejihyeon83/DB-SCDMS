@@ -1,9 +1,3 @@
-'''
-Staff 모델
-- SCDMS 시스템을 사용하는 내부 사용자(운영자) 계정 정보
-- Username + Password + Role 기반의 단순 인증/권한 구조
-'''
-
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -19,13 +13,13 @@ class Staff(Base):
     # 로그인용 ID (중복 불가)
     Username = Column(String, unique=True, nullable=False)
 
-    # 간단 비밀번호 (해싱은 추후 확장 가능)
+    # 간단 비밀번호 (해싱은 추후 확장)
     Password = Column(String, nullable=False)
 
     # 화면에 표시할 이름
     Name = Column(String, nullable=False)
 
-    # 역할: ListElf / Santa / GiftElf / Keeper 등
+    # 역할: ListElf / Santa / GiftElf / Keeper
     Role = Column(String, nullable=False)
     
     production_logs = relationship("ProductionLog", back_populates="staff")

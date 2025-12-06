@@ -1,12 +1,3 @@
-'''
-Child Status Code Router
--------------------------
-아이의 판정/행동 상태 목록을 관리하는 라우터.
-
-- ChildStatusCode 테이블의 CRUD 제공
-- Child의 StatusCode가 참조 중이면 DELETE 불가
-'''
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from backend.database import get_db, get_authorized_db

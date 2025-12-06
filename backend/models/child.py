@@ -1,16 +1,3 @@
-'''
-Child & Wishlist Model
-------------------------
-Child
- - 아이 기본 정보
- - 아이 상태(StatusCode)와 배송상태(DeliveryStatusCode)는 각각 다른 테이블을 FK로 참조
- - ChildNote는 아이 개별 행동/설명/메모
-
-Wishlist
- - Child 1 : Wishlist N
- - Child 삭제 시 Wishlist도 같이 삭제되도록 CASCADE 처리
-'''
-
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from backend.database import Base
@@ -31,7 +18,7 @@ class Child(Base):
         nullable=False,
     )
 
-    # 아이의 '행동/판정' 상태 → ChildStatusCode 테이블 참조
+    # 아이의 '행동/판정' 상태 -> ChildStatusCode 테이블 참조
     StatusCode = Column(
         String,
         ForeignKey("child_status_code.Code"),
@@ -39,7 +26,7 @@ class Child(Base):
         default="PENDING"
     )
 
-    # 아이의 '배송 상태' → DeliveryStatusCode 테이블 참조
+    # 아이의 '배송 상태' -> DeliveryStatusCode 테이블 참조
     DeliveryStatusCode = Column(
         String,
         ForeignKey("delivery_status_code.Code"),

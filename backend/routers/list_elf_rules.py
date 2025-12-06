@@ -1,9 +1,3 @@
-'''
-ListElf용 Rules 관리 API
-- Rule CRUD (생성/조회/수정/삭제)
-- 생성자/수정자 StaffID 기록
-'''
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -64,7 +58,7 @@ def update_rule(rule_id: int, payload: RuleUpdate, db: Session = Depends(get_aut
 
     data = payload.dict(exclude_unset=True)
 
-    # updated_by_staff_id가 있다면, 실제 Staff인지 검증
+    # updated_by_staff_id가 있다면 실제 Staff인지 검증
     if "updated_by_staff_id" in data and data["updated_by_staff_id"] is not None:
         staff = (
             db.query(Staff)

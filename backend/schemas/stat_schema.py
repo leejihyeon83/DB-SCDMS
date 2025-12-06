@@ -1,17 +1,7 @@
-'''
-Gift Demand 결과를 반환하기 위한 Pydantic 스키마 정의 파일.
-
-- GiftDemandOut: 전체 요약(summary) API에서 사용
-- PriorityTop3: priority별 Top3에서 사용
-- PriorityGroupOut: priority1/priority2/priority3 묶음 반환
-'''
-
 from pydantic import BaseModel, ConfigDict
 from typing import List
 
-# ==============================
-# 1) 기존 summary용 스키마 유지
-# ==============================
+# 기존 summary용 스키마 유지
 class GiftDemandOut(BaseModel):
     '''
     선물(GiftID)별 총 수요량 Summary 응답 스키마.
@@ -30,9 +20,7 @@ class GiftDemandOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ==============================
-# 2) priority별 Top3용 스키마
-# ==============================
+# priority별 Top3용 스키마
 class PriorityTop3(BaseModel):
     '''
     우선순위(Priority)별 Top3 항목.

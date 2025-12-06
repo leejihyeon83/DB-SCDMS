@@ -278,7 +278,7 @@ def seed_child():
             ChildNote=child_data["child_note"],
         )
         db.add(child)
-        db.flush()  # ChildID 확보
+        db.flush()
 
         # Wishlist 생성
         for w in child_data["wishlist"]:

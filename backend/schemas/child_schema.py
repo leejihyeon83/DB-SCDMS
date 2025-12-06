@@ -1,18 +1,3 @@
-'''
-클라이언트가 보내는 JSON 형식을 검증하는 스키마
-
-(주요 기능)
-WishlistItem            - ChildCreate 입력용 단일 wishlist 아이템
-ChildCreate             - Child + Wishlist 여러 개를 한 번에 생성할 때 사용
-ChildUpdate             - Child 정보 수정 (PATCH)
-WishlistCreate/Update   - wishlist 개별 CRUD
-WishlistItemOut         - 서버가 반환하는 wishlist 아이템
-ChildOut                - 생성/수정 응답 구조
-ChildDetailOut          - 단일 Child 상세 조회용
-ChildFullOut            - 전체 Child 리스트 조회용
-ChildNoteOut            - child_note만 반환하는 스키마
-'''
-
 from typing import List
 from pydantic import BaseModel, Field, validator
 

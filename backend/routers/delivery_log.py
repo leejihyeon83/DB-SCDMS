@@ -53,7 +53,6 @@ def list_delivery_logs(
 
     rows = query.all()
 
-    # row는 namedtuple 비슷한 형태라 속성으로 접근 가능
     return [
         DeliveryLogListItemResponse(
             log_id=row.log_id,

@@ -4,7 +4,6 @@ from pydantic import BaseModel, field_validator
 # 공통 필드 (조회/응답용)
 class ReindeerBase(BaseModel):
     name: str
-    # team_name: str | None = None
     current_stamina: int = 100
     current_magic: int = 100
     status: str = "READY"  # READY / RESTING / ONDELIVERY

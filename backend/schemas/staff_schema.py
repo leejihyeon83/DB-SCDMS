@@ -1,9 +1,3 @@
-'''
-Staff 관련 Pydantic 스키마
-- StaffCreate: 운영자 계정 생성용 입력
-- StaffOut: API 응답용
-'''
-
 from typing import Optional
 from pydantic import BaseModel, Field
 from pydantic import ConfigDict

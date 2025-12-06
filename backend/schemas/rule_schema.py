@@ -1,10 +1,3 @@
-'''
-Rules 관련 Pydantic 스키마
-- RuleCreate: 규칙 생성
-- RuleUpdate: 규칙 수정
-- RuleOut: 규칙 조회용 응답
-'''
-
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, Field

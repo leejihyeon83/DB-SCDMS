@@ -1,4 +1,3 @@
-# backend/routers/santa.py
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -235,7 +234,7 @@ def delete_delivery_group(
             detail="Only pending or failed groups can be deleted",
         )
 
-    db.delete(group)  # items도 같이 삭제
+    db.delete(group)
     db.commit()
     return
 
@@ -279,9 +278,7 @@ def deliver_group(
         )
 
     try:
-        # ============================
         # 트랜잭션 시작
-        # ============================
         with transactional_session(db) as tx:
             # 그룹과 연관된 아이/선물 목록
             items = (
@@ -344,9 +341,7 @@ def deliver_group(
 
             delivered_count = 0
 
-            # ============================
             # 각 아이/선물에 대해 배송 처리
-            # ============================
             for item in items:
                 # Child / Gift 조회
                 child = (
@@ -399,16 +394,12 @@ def deliver_group(
 
                 delivered_count += 1
 
-            # ============================
             # 루돌프 상태/스탯 변경
-            # ============================
             reindeer.current_stamina -= 10
             reindeer.current_magic -= 10
             reindeer.status = "ONDELIVERY"
 
-            # ============================
             # 그룹 상태 DONE 으로
-            # ============================
             group.status = "DONE"
 
         # with 블록을 예외 없이 빠져나오면 COMMIT 완료
