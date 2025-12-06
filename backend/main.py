@@ -8,7 +8,7 @@ from backend.utils.seed import (seed_raw_materials, seed_finished_goods,
                                 seed_staff,seed_child,seed_regions)
                      
 from backend.models import (gift, child, reindeer, delivery_log, delivery_group, region)
-
+from backend.utils.permissions import apply_permissions
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,6 +23,9 @@ async def lifespan(app: FastAPI):
     seed_delivery_status_codes()
     seed_staff() 
     seed_child() 
+
+    apply_permissions(engine)
+    
     yield 
     print("Shutting down...")
 

@@ -31,6 +31,12 @@ function requireRole(allowedRoles) {
   return user;
 }
 
+// auth.js 파일 맨 아래에 추가
+function getStaffId() {
+  const user = getCurrentUser(); 
+  return user ? user.staff_id : null; 
+}
+
 // 로그아웃
 function logout() {
   localStorage.removeItem("currentUser");
