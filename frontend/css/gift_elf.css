@@ -1,0 +1,346 @@
+/* 전체 배경*/
+body {
+  background: linear-gradient(#eef6f1, #f7fbf8);
+  font-family: "SUIT Variable", sans-serif;
+}
+
+/* 헤더 */
+.app-header {
+  background: linear-gradient(90deg, #1c4b2c, #0e2a17);
+  border-bottom: 2px solid #164224;
+}
+
+/* 탭 버튼 초록 테마 */
+.tab-bar .nav-link {
+  color: #1c3b2c;
+  font-weight: 500;
+  background: #e6f2ea;
+  border-radius: 8px;
+  margin-right: 6px;
+}
+
+.tab-bar .nav-link.active {
+  background: #2e6944;
+  color: #fff;
+}
+
+/* 카드 공통*/
+.card, .material-card {
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* 선물 리스트 선택시 */
+.gift-item.selected {
+  background-color: #d8f2e3 !important;
+}
+
+/* 요약 카드 숫자 강조 */
+.summary-value {
+  color: #1c3b29;
+}
+
+/*상단 토스트 스타일*/
+
+.toast-custom {
+  position: fixed;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2e6944;
+  color: #fff;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  min-width: 260px;
+  text-align: center;
+}
+
+/* 성공 / 오류 색상 */
+.toast-custom.toast-success {
+  background: #2e6944;
+}
+.toast-custom.toast-error {
+  background: #b3312d; 
+}
+
+.toast-custom.d-none {
+  display: none !important;
+}
+
+/*모달 스타일*/
+
+.modal-content {
+  border-radius: 18px !important;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.modal-header {
+  border-bottom: none;
+  background: #edfbf1;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+/* 버튼 색상 */
+.btn-primary {
+  background: #2e6944 !important;
+  border-color: #2e6944 !important;
+}
+
+.btn-primary:hover {
+  background: #255a38 !important;
+}
+
+.btn-outline-secondary:hover {
+  background: #e8f7ee;
+}
+
+/* 재료 카드 스타일*/
+
+.material-card-green {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e7eee8;
+  transition: all 0.2s ease;
+}
+
+.material-card-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.material-top { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.8rem; }
+.material-icon-circle { width: 44px; height: 44px; background: #f0f8f4; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.6rem; border: 1px solid #dce8df; }
+.material-title-box { display: flex; flex-direction: column; }
+.material-title { font-size: 1rem; font-weight: 600; }
+.material-subtitle { color: #6b7280; font-size: 0.85rem; }
+.material-count-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem; color: #374151; }
+.material-progress-green { width: 100%; height: 8px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-bottom: 0.9rem; }
+.material-progress-fill-green { height: 100%; background: #1f4e33; border-radius: 10px; }
+.btn-green { background: #1f4e33 !important; color: #fff !important; font-weight: 500; border-radius: 12px; padding: 0.55rem 0.7rem; border: none; box-shadow: 0 4px 6px rgba(46, 105, 68, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1); }
+.btn-green:hover { background: #173c27 !important; }
+
+
+/*로그 및 재고 테이블 스타일*/
+
+.log-table-scroll-container {
+    max-height: 280px; 
+    overflow-y: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* 초록색 헤더 스타일 */
+.table-green-header th {
+  background-color: #e6f2ea !important;
+  color: #1f4e33 !important;          
+  font-weight: 700;
+  border-bottom: 2px solid #cce3d4;
+  padding: 12px 16px; 
+  white-space: nowrap;
+}
+
+/* 테이블 바디 셀 스타일 */
+.custom-table td {
+  padding: 12px 16px; 
+  color: #4b5563;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 테이블 좌우 여백 확보 */
+.custom-table th:first-child, .custom-table td:first-child { padding-left: 30px; }
+.custom-table th:last-child, .custom-table td:last-child { padding-right: 30px; }
+
+/* 재고 부족 경고 */
+.stock-warning-row {
+    background-color: #fff8e1 !important; 
+}
+.stock-warning-row td:last-child {
+    font-weight: 700;
+    color: #b3312d; 
+}
+
+/*제작 컨트롤 영역*/
+
+.gift-production-controls > * {
+  flex: 1 1 0 !important;
+}
+
+/*제작 시작 버튼 */
+.btn-production {
+  flex: 1 !important;
+  background: #2e6944 !important;
+  color: #fff !important;
+  border: none;
+  border-radius: 50px;
+  height: 50px;
+  padding: 10px 0;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(46, 105, 68, 0.3), 
+              0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 0 !important;
+  transition: all 0.2s ease;
+}
+
+.btn-production:hover {
+  background: #255a38 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(46, 105, 68, 0.4);
+}
+
+.btn-production:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(46, 105, 68, 0.3);
+}
+
+
+/* 수량 조절 버튼 */
+.btn-qty-cute {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e6f2ea;
+  color: #1f4e33;
+  border: 1px solid #cce3d4;
+  font-weight: 800;
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.btn-qty-cute:hover {
+  background-color: #2e6944;
+  color: #fff;
+  border-color: #2e6944;
+  transform: scale(1.1);
+}
+
+.btn-qty-cute:active {
+  transform: scale(0.95);
+}
+
+
+/*가운데 수량 입력칸 */
+.qty-input-cute {
+  width: 100px !important;
+  height: 50px;
+  border: none;
+  background-color: #f7fbf8;
+  border-bottom: 2px solid #2e6944;
+  border-radius: 0;
+  font-weight: 700;
+  color: #1f4e33;
+  text-align: center;
+  padding: 0; 
+  line-height: 50px; 
+}
+
+/* 입력칸 포커스 시 스타일 */
+.qty-input-cute:focus {
+  background-color: #fff;
+  border-bottom-color: #2e6944;
+  box-shadow: none;
+}
+
+/* input type number의 화살표 제거 */
+.qty-input-cute::-webkit-outer-spin-button,
+.qty-input-cute::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 수량 조절 묶음의 내부 간격 조절 */
+.qty-control-wrapper {
+  gap: 10px;
+  min-width: 0;
+}
+
+.gift-production-controls {
+  display: flex !important;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/*요약 카드 리뉴얼*/
+
+.summary-card {
+  border-radius: 12px;    
+  border: 1px solid rgba(0,0,0,0.05); 
+  box-shadow: none;   
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+}
+
+.summary-card .card-body {
+  padding: 1.5rem 1.8rem;
+  text-align: left; /* 왼쪽 정렬 */
+}
+
+/* 색상별 배경 테마*/
+
+/* 초록 배경 (총 수요) */
+.bg-soft-green {
+  background-color: #e6f4ea !important; 
+  color: #1f4e33; 
+}
+
+/* 노랑 배경 (재고) */
+.bg-soft-yellow {
+  background-color: #fff8e1 !important; 
+  color: #5d4037; 
+}
+
+/* 빨강 배경 (부족량) */
+.bg-soft-red {
+  background-color: #fce8e6 !important;
+  color: #b71c1c; 
+}
+
+/* 라벨 */
+.summary-label {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.7; 
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* 숫자*/
+.summary-value-lg {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #212529;
+}
+
+/* 단위*/
+.unit-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-left: 4px;
+  color: #495057; 
+}

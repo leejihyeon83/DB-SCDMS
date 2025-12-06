@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>SCDMS - 비행 준비 (Ready)</title>
+  <script src="./js/auth.js"></script>
+  <script> const currentUser = requireRole(["Keeper"]); </script>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="./css/reindeer.css"/>
+</head>
+
+<body>
+  <header class="app-header navbar navbar-dark px-3">
+    <div class="d-flex align-items-center gap-2">
+      <span class="logo-icon">🦌</span>
+      <span class="navbar-brand mb-0 h1">SCDMS</span>
+    </div>
+    <h1 class="h5 mb-0 text-white position-absolute start-50 translate-middle-x page-title" style="font-weight: bold;">
+      Reindeer Keeper Page
+    </h1>
+    <div class="d-flex align-items-center gap-3">
+        <div class="text-end lh-1">
+          <div id="header-user-name" class="text-white fw-bold small mb-1">관리자</div>
+          <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem;">Keeper</span>
+        </div>
+        <button id="btn-logout" class="btn btn-outline-light btn-sm">로그아웃</button>
+    </div>
+  </header>
+
+  <main class="container my-4">
+    <ul class="nav nav-pills mb-4 tab-bar">
+      <li class="nav-item"><a class="nav-link" href="reindeer_status.html">루돌프 상태</a></li>
+      <li class="nav-item"><a class="nav-link" href="reindeer_health.html">건강 기록</a></li>
+      <li class="nav-item"><a class="nav-link active" href="reindeer_ready.html">비행 준비 완료</a></li>
+    </ul>
+
+    <div class="ready-header-box mb-4 shadow-sm">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span style="font-size: 1.5rem;">🎄</span>
+        <h2 class="h5 mb-0 text-success fw-bold">오늘의 비행 가능 명단</h2>
+      </div>
+      <p class="text-muted small mb-0 ps-1">
+        아래 목록은 <strong>체력 30 이상</strong>이며 상태가 <strong>READY</strong>인 루돌프들입니다.<br>
+        산타가 배송 그룹을 생성할 때 이 명단이 사용됩니다.
+      </p>
+    </div>
+
+    <div class="card shadow-sm border-0 custom-card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-brown-header sticky-top">
+              <tr>
+                <th class="ps-4 py-3" style="width: 25%">루돌프 이름</th>
+                <th class="py-3" style="width: 25%">체력 (Stamina)</th>
+                <th class="py-3" style="width: 25%">마력 (Magic)</th>
+                <th class="pe-4 py-3 text-end" style="width: 25%">현재 상태</th>
+              </tr>
+            </thead>
+            <tbody id="ready-reindeer-tbody">
+              <tr>
+                <td colspan="4" class="text-center py-5 text-muted">
+                  데이터 확인 중...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <div id="toast" class="toast-custom d-none"></div>
+  <script src="./js/reindeer_ready.js"></script>
+</body>
+</html>

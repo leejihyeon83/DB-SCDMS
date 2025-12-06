@@ -1,0 +1,291 @@
+/* 전반적인 배경/폰트 */
+body {
+  background-color: #fdfbf7;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* 헤더: 갈색 계열 */
+.app-header {
+  background: linear-gradient(90deg, #8B4513, #5D4037);
+}
+
+/* 네비게이션 탭 커스텀 */
+.nav-pills .nav-link {
+  color: #5d4037;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+.nav-pills .nav-link.active {
+  background-color: #8B4513;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 탭 바 간격 및 스타일 */
+.tab-bar {
+  gap: 10px;
+  padding: 10px;
+}
+
+/* 루돌프 카드 스타일 */
+.reindeer-card {
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.reindeer-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reindeer-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #3e2723;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 상태 뱃지 */
+.status-badge {
+  padding: 0.4em 0.8em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.status-READY {
+  background-color: #e6f4ea;
+  color: #1e7e34;
+  border: 1px solid #c3e6cb;
+}
+.status-RESTING {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.status-ONDELIVERY {
+  background-color: #cce5ff;
+  color: #004085;
+  border: 1px solid #b8daff;
+}
+
+/* 프로그레스 바 영역 */
+.stat-row {
+  margin-bottom: 1.2rem;
+}
+.stat-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+/* 바의 배경 (회색 부분) */
+.progress-custom {
+  height: 10px;
+  border-radius: 10px;
+  background-color: #e9ecef;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05)
+}
+
+/* 체력 바 (빨강) */
+.progress-bar-stamina {
+  height: 100%; 
+  background-color: #c92a2a;
+  border-radius: 10px;
+  transition: width 0.4s ease-in-out;
+}
+
+/* 마력 바 (파랑) */
+.progress-bar-magic {
+  height: 100%;
+  background-color: #1c7ed6;
+  border-radius: 10px;
+  transition: width 0.4s ease-in-out;
+}
+
+/* 카드 하단 액션 버튼들 */
+.card-actions {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.btn-action {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.6rem 0;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.btn-outline-brown {
+  color: #8B4513;
+  border-color: #8B4513;
+}
+.btn-outline-brown:hover {
+  background-color: #8B4513;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(139, 69, 19, 0.3);
+}
+
+/* 비행 준비 완료 섹션 스타일 */
+.ready-header-box {
+  background-color: #f1f8e9;
+  border: 1px solid #dcedc8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 건강 기록 페이지 전용 스타일 */
+/* 커스텀 카드 스타일 */
+.custom-card {
+  border-radius: 20px;
+  border: 1px solid #efebe9;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(93, 64, 55, 0.05);
+  height: 100%;
+  overflow: hidden; 
+}
+
+.custom-card-header {
+  background-color: #fff;
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  border-bottom: none;
+}
+
+.custom-card-body {
+  padding: 1.5rem;
+}
+
+/* 기록 저장하기 버튼 */
+.btn-save-record {
+  background-color: #8B4513;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 0;
+  font-weight: 700;
+  box-shadow: 0 4px 6px rgba(139, 69, 19, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-save-record:hover {
+  background-color: #70380f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(139, 69, 19, 0.35);
+  color: #fff;
+}
+
+.btn-save-record:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(139, 69, 19, 0.25);
+}
+
+/* 테이블 전체 레이아웃 고정 */
+.table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-brown-header th {
+  background-color: #f7f1e3 !important;
+  color: #5d4037 !important;
+  border-bottom: 2px solid #e0d0c0;
+  font-weight: 700;
+  padding: 1rem;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #fffaf0;
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.form-control-soft {
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  padding: 0.8rem;
+  background-color: #fafafa;
+}
+.form-control-soft:focus {
+  background-color: #fff;
+  border-color: #8B4513;
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+/* 토스트 메시지 스타일 */
+.toast-custom {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translate(-50%, -150%); 
+  min-width: 320px;
+  max-width: 80vw;
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #fff;
+  background: rgba(51, 51, 51, 0.95);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+}
+
+/* 토스트가 보일 때 */
+.toast-custom.show {
+  transform: translate(-50%, 0); 
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 성공 메시지 */
+.toast-custom.toast-success {
+  background: rgba(46, 125, 50, 0.95); 
+}
+
+/* 에러/경고 메시지 */
+.toast-custom.toast-error {
+  background: rgba(183, 53, 48, 0.95); /* Santa Red */
+}
+
+/* 숨김 처리 유틸리티 */
+.toast-custom.d-none {
+  display: none !important;
+}
