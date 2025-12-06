@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <title>Santa Dashboard - 배송 대상</title>
-
+    <script src="js/auth.js"></script>
+    <script> const currentUser = requireRole(["Santa"]); </script>
+    
     <link rel="stylesheet" href="./css/santa.css" />
-    <script src="./js/auth.js"></script>
-    <script>
-        const currentUser = requireRole(["Santa"]);
-    </script>
     <script defer src="./js/santa_api.js"></script>
     <script defer src="./js/santa_targets.js"></script>
     <link 
