@@ -260,6 +260,54 @@ def seed_child():
                 {"gift_id": 5, "priority": 1},
             ],
         },
+        {
+            "name": "David",
+            "address": "404 Rudolph Way",
+            "region_id": 1,
+            "status_code": "PENDING",
+            "delivery_status_code": "PENDING",
+            "child_note": "엄마 말을 너무 많이 안 들음",
+            "wishlist": [
+                {"gift_id": 2, "priority": 1},
+            ],
+        },
+        {
+            "name": "Eve",
+            "address": "505 Candy Lane",
+            "region_id": 2,
+            "status_code": "NICE",
+            "delivery_status_code": "PENDING", 
+            "child_note": "편식을 엄청 많이 함",
+            "wishlist": [
+                {"gift_id": 3, "priority": 1},
+                {"gift_id": 4, "priority": 2},
+                {"gift_id": 1, "priority": 3},
+            ],
+        },
+        {
+            "name": "Grace",
+            "address": "707 Coal Mine",
+            "region_id": 4, 
+            "status_code": "NAUGHTY",
+            "delivery_status_code": "PENDING",
+            "child_note": "거짓말을 자주 함",
+            "wishlist": [
+                {"gift_id": 1, "priority": 1},
+                {"gift_id": 5, "priority": 2},
+                {"gift_id": 4, "priority": 3},
+            ],
+        },
+        {
+            "name": "Ivan",
+            "address": "909 Frozen River",
+            "region_id": 2,
+            "status_code": "PENDING",
+            "delivery_status_code": "PENDING",
+            "child_note": "말수가 적음",
+            "wishlist": [
+                {"gift_id": 3, "priority": 1},
+            ],
+        },
     ]
 
     for child_data in dummy_children:
