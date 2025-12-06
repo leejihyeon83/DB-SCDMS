@@ -111,7 +111,7 @@ def get_reindeer_health_logs(
 # 비행 가능 루돌프 조회 API
 @router.get("/available", response_model=list[ReindeerResponse])
 def get_available_reindeer(
-    magic_threshold: int = 50,
+    magic_threshold: int = 30,
     db: Session = Depends(get_authorized_db),
 ):
     """
