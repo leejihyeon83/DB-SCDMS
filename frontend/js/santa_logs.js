@@ -16,9 +16,7 @@ let staffList = [];
 
 let childMap = {};
 let giftMap = {};
-// ============================
-// 공통 유틸
-// ============================
+
 function setLoading(isLoading) {
     if (!loader) return;
     loader.classList.toggle("hidden", !isLoading);
@@ -30,10 +28,8 @@ function showToast(message, type = "info") {
 
     msgEl.textContent = message;
 
-    // 기존 클래스 초기화 (기본 디자인 유지 후 색상만 변경)
     toastEl.classList.remove("text-bg-danger", "text-bg-success", "text-bg-dark");
 
-    // 타입별 색상 적용
     if (type === "error") {
         toastEl.classList.add("text-bg-danger");
     } else if (type === "success") {
@@ -42,9 +38,6 @@ function showToast(message, type = "info") {
         toastEl.classList.add("text-bg-dark");
     }
 
-    // Bootstrap Toast 인스턴스 생성 및 표시
-    // { delay: 3000 } -> 3초 뒤 자동 사라짐
-    // 기존 인스턴스가 있다면 재사용하는 것이 좋으나, 간편 구현을 위해 새로 생성
     const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
     bsToast.show();
 }
@@ -71,18 +64,11 @@ function statusBadgeSuccess() {
     return span;
 }
 
-// ============================
-// 요약 카드 (성공/실패)
-// ============================
 function renderSummaryCounts(successCount, failedCount) {
     document.getElementById("successCount").textContent = `${successCount} 건`;
     document.getElementById("failedCount").textContent = `${failedCount} 건`;
 }
 
-// ============================
-// 실패 그룹 -> 실패 로그 변환
-// ============================
-// [수정 1] 실패 로그 변환 (재고 개수 표시 추가)
 function convertFailedGroupsToLogs() {
     const failedLogs = [];
 
