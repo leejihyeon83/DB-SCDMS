@@ -153,7 +153,7 @@ function renderRules() {
     }
 
     const table = document.createElement("table");
-    table.className = "table align-middle mb-0";
+    table.className = "table align-middle mb-0 listElf-table";
 
     const thead = document.createElement("thead");
     thead.innerHTML = `

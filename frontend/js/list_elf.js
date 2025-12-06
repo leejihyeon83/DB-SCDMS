@@ -52,18 +52,21 @@ async function loadChildren() {
 
 
 // Child 테이블 렌더링
+// list_elf.js 파일의 renderChildren 함수를 이걸로 덮어쓰세요!
+
 function renderChildren() {
     const searchInput = document.getElementById("searchInput");
     const regionFilter = document.getElementById("regionFilter");
     const tbody = document.getElementById("childTableBody");
-    const statusFilter = document.getElementById("statusFilter"); // 상태 필터 추가
+    const statusFilter = document.getElementById("statusFilter");
+    const deliveryFilter = document.getElementById("deliveryFilter"); // 새로 추가된 필터
 
-    // HTML 요소가 없으면 실행 중단 (오류 방지)
     if (!searchInput || !regionFilter || !tbody || !statusFilter) return;
 
     const keyword = searchInput.value.trim();
     const regionValue = regionFilter.value;
-    const statusValue = statusFilter.value; // 필터 값 가져오기
+    const statusValue = statusFilter.value;
+    const deliveryValue = deliveryFilter ? deliveryFilter.value : ""; // 배송 필터 값
 
     tbody.innerHTML = "";
 
@@ -72,34 +75,43 @@ function renderChildren() {
     childrenData
         .filter(c => (!keyword || c.name.includes(keyword) || c.address.includes(keyword)))
         .filter(c => (!regionValue || c.region_id == regionValue))
-        .filter(c => (!statusValue || c.status_code === statusValue)) // 상태 필터링 추가
+        .filter(c => (!statusValue || c.status_code === statusValue))
+        .filter(c => {
+            // [추가] 배송 상태 필터링 로직
+            if (!deliveryValue) return true; // 전체 보기
+            if (deliveryValue === "DELIVERED") return c.delivery_status_code === "DELIVERED";
+            if (deliveryValue === "NOT_DELIVERED") return c.delivery_status_code !== "DELIVERED";
+            return true;
+        })
         .forEach(c => {
-
+            // 카운팅 로직
             if (c.status_code === "NICE") nice++;
             else if (c.status_code === "NAUGHTY") naughty++;
             else pending++;
 
             const regionName = (regions.find(r => r.RegionID == c.region_id) || {}).RegionName || "(미지정)";
             
-            // 배송 상태 뱃지 클래스
-            let deliveryBadgeClass = "bg-secondary"; // 기본값
-            if (c.delivery_status_code === "DELIVERED") {
-                deliveryBadgeClass = "badge-delivered";
-            } else if (c.delivery_status_code === "PENDING") {
-                deliveryBadgeClass = "badge-pending"; 
+            // 배송 완료 여부 확인
+            const isDelivered = (c.delivery_status_code === "DELIVERED");
+
+            // 1. 배송 완료 상태 뱃지
+            let deliveryBadgeClass = "bg-secondary";
+            if (isDelivered) deliveryBadgeClass = "badge-delivered";
+            else if (c.delivery_status_code === "PENDING") deliveryBadgeClass = "badge-pending"; 
+            
+            // 2. 상태 변경 셀렉트 박스 처리 (완료되면 disabled)
+            const statusDisabled = isDelivered ? "disabled" : "";
+            
+            // 3. 삭제 버튼 처리 (완료되면 '완료됨' 텍스트 / 아니면 쓰레기통 아이콘)
+            let actionHtml;
+            if (isDelivered) {
+                actionHtml = `<span class="text-muted small fw-bold">완료됨</span>`; 
             } else {
-                deliveryBadgeClass = "bg-secondary";
-            }
-            
-            // Wishlist 버튼 클래스
-            const wishlistButtonClass = "btn-main";
-            
-            let deleteButtonHtml = `
-                <button class="btn btn-danger btn-sm" onclick="deleteChild(${c.child_id})">삭제</button>
-            `;
-            if (c.delivery_status_code === "DELIVERED") {
-                // 배송 완료 시 삭제 버튼 대신 완료 텍스트 렌더링
-                deleteButtonHtml = `<span class="text-muted small">완료됨</span>`; 
+                // 쓰레기통 아이콘 적용
+                actionHtml = `
+                    <button class="btn btn-outline-danger btn-sm" onclick="deleteChild(${c.child_id})" title="삭제">
+                        🗑
+                    </button>`;
             }
 
             tbody.innerHTML += `
@@ -111,7 +123,8 @@ function renderChildren() {
 
                     <td>
                         <select class="form-select form-select-sm"
-                                onchange="updateStatus(${c.child_id}, this.value)">
+                                onchange="updateStatus(${c.child_id}, this.value)"
+                                ${statusDisabled}>
                             <option value="PENDING" ${c.status_code==="PENDING"?"selected":""}>PENDING</option>
                             <option value="NICE" ${c.status_code==="NICE"?"selected":""}>NICE</option>
                             <option value="NAUGHTY" ${c.status_code==="NAUGHTY"?"selected":""}>NAUGHTY</option>
@@ -125,7 +138,7 @@ function renderChildren() {
                     </td>
 
                     <td>
-                        <button class="btn ${wishlistButtonClass} btn-sm" onclick="openWishlistModal('${c.child_id}')">
+                        <button class="btn btn-main btn-sm" onclick="openWishlistModal('${c.child_id}')">
                             🎁 보기
                         </button>
                     </td>
@@ -137,13 +150,13 @@ function renderChildren() {
                     </td>
 
                     <td>
-                        ${deleteButtonHtml}
+                        ${actionHtml}
                     </td>
                 </tr>
             `;
         });
 
-    // 요약 패널 업데이트 (요소가 존재할 때만)
+    // 요약 패널 업데이트
     const elNice = document.getElementById("countNice");
     const elNaughty = document.getElementById("countNaughty");
     const elPending = document.getElementById("countPending");
@@ -215,7 +228,7 @@ async function saveNote() {
         Swal.fire({
             icon: "success",
             title: "저장 완료!",
-            text: "아이 설명(특이 사항)이 성공적으로 저장되었습니다.",
+            text: "추가 사항이 성공적으로 저장되었습니다.",
             timer: 2000, // 2초 후 자동 닫힘
             showConfirmButton: false
         });
@@ -224,7 +237,7 @@ async function saveNote() {
         Swal.fire({
             icon: "error",
             title: "저장 실패",
-            text: "아이 설명 저장 중 오류가 발생했습니다.",
+            text: "추가 사항 저장 중 오류가 발생했습니다.",
         });
     }
 
@@ -240,7 +253,7 @@ async function saveNote() {
 async function deleteChild(childId) {
     const child = childrenData.find(c => c.child_id === childId);
     if (child && child.delivery_status_code === "DELIVERED") {
-        showToast("⚠️ 배송이 완료된 아이는 삭제할 수 없습니다.");
+        showToast("배송이 완료된 아이는 삭제할 수 없습니다.");
         return;
     }
 

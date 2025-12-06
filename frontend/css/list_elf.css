@@ -439,25 +439,118 @@ body {
     color: #8b5e00;
 }
 
-
 .toast-container {
-    top: 20px !important; 
-    left: 50% !important; 
+    top: 20px !important;
+    left: 50% !important;
     transform: translateX(-50%);
-    right: auto !important; 
+    right: auto !important;
     z-index: 9999;
 }
 
 #scdmsToast {
-    background-color: var(--scdms-gold-dark) !important;
+    background-color: var(--scdms-gold) !important;
     color: #333333 !important;
     border-radius: 999px; 
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
-    max-width: 350px; 
-    font-weight: 600;
-    text-align: center !important;
+    min-width: 320px; 
+    overflow: hidden;
 }
 
-#scdmsToastMessage {
-    padding-right: 1.5rem !important;
+#scdmsToast .d-flex {
+    width: 100%;
+    justify-content: center;
+    align-items: center;    
+    position: relative;     
+}
+
+#scdmsToast .toast-body {
+    flex-grow: 1;
+    text-align: center;    
+    padding: 12px 40px;  
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+#scdmsToast .btn-close {
+    display: none;
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;      
+    justify-content: space-between;
+    align-items: flex-end; 
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-input {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    min-width: 200px;
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+.search-input:focus {
+    border-color: var(--scdms-gold);
+    box-shadow: 0 0 0 3px rgba(245, 197, 66, 0.2);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.filter-select {
+    border: none;
+    background: transparent;
+    padding: 6px 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+    outline: none;
+    cursor: pointer;
+    border-radius: 6px;
+}
+.filter-select:hover {
+    background-color: #f3f4f6; /* 호버 시 회색 배경 */
+}
+
+.filter-group > div {
+    background-color: #ddd !important; /* 구분선 색상 강제 지정 */
+}
+
+.table-responsive,
+#rulesContainer {
+    max-height: 500px;      
+    overflow-y: auto;   
+    border-bottom: 1px solid #e9d599;
+    background-color: #fff;  
+    display: block;        
+    border-radius: 0 0 12px 12px; 
+}
+
+.listElf-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10; 
+    background: #ffe9a9; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+}
+
+.page-header h1 {
+    font-weight: bold; 
 }
