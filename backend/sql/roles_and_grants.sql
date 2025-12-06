@@ -149,10 +149,14 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "Raw_Materials"
   TO role_giftelf;
 
 -- Finished_Goods
--- Santa, ListElf : R
+-- Santa: R, U
+-- ListElf : R
 -- GiftElf : C, R, U, D
 GRANT SELECT ON TABLE "Finished_Goods"
-  TO role_santa, role_listelf;
+  TO role_listelf;
+
+GRANT SELECT, UPDATE ON TABLE "Finished_Goods"
+  TO role_santa;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "Finished_Goods"
   TO role_giftelf;
@@ -178,9 +182,9 @@ GRANT INSERT, SELECT ON TABLE "Production_Usage"
 -- ------------------------
 
 -- Reindeer
--- Santa  : R
+-- Santa  : R, U
 -- Keeper : C, R, U, D
-GRANT SELECT ON TABLE reindeer
+GRANT SELECT, UPDATE ON TABLE reindeer
   TO role_santa;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE reindeer
