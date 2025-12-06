@@ -211,6 +211,8 @@ GRANT SELECT ON TABLE ready_reindeer_view
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE delivery_group
   TO role_santa;
 
+GRANT USAGE, SELECT ON SEQUENCE delivery_group_group_id_seq TO role_santa;
+
 GRANT SELECT ON TABLE delivery_group
   TO role_keeper;
 
