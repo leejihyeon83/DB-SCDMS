@@ -15,11 +15,11 @@ def apply_permissions(engine: Engine):
         return
 
     try:
-        # 1. SQL 파일 읽기
+        #  SQL 파일 읽기
         with open(sql_file_path, "r", encoding="utf-8") as f:
             sql_script = f.read()
 
-        # 2. DB에 실행
+        #  DB에 실행
         with engine.connect() as conn:
             with conn.begin():
                 conn.execute(text(sql_script))
