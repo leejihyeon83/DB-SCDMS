@@ -43,9 +43,7 @@ def update_reindeer_status(
     if reindeer.current_stamina < 30 or reindeer.current_magic < 30:
         reindeer.status = "RESTING"
 
-    # 커밋 & 갱신
     db.commit()
-    db.refresh(reindeer)
 
     return reindeer
 
@@ -68,12 +66,10 @@ def log_reindeer_health(
     log = ReindeerHealthLog(
         reindeer_id=payload.reindeer_id,
         notes=payload.notes,
-        # log_timestamp는 넣지 않음 → DB에서 now() 자동 설정
     )
 
     db.add(log)
     db.commit()
-    db.refresh(log)
 
     return log
 

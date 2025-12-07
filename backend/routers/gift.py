@@ -48,7 +48,6 @@ def mine_material(data: MaterialUpdate, db: Session = Depends(get_authorized_db)
     # 정상 업데이트
     material.stock_quantity = new_quantity
     db.commit()
-    db.refresh(material)
 
     return {
         "message": "재료 재고 업데이트 완료",
