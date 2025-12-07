@@ -54,8 +54,10 @@ def create_delivery_group(
         status="PENDING",
     )
     db.add(group)
+    
+    db.flush()
+    
     db.commit()
-    db.refresh(group)
 
     return group.group_id
 

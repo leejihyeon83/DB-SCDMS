@@ -123,11 +123,6 @@ def create_production_job(data: ProductionCreateRequest, db: Session = Depends(g
             )
             db.add(usage)
 
-        # 여기서 예외가 없으면 contextmanager가 db.commit()
-        # 예외가 발생하면 db.rollback() 후 예외 재전파
-        db.refresh(log)
-        db.refresh(gift)
-
     return {
         "message": "생산 Job 생성 완료",
         "job_id": log.job_id,
